@@ -1,0 +1,9 @@
+/Users/boboboost/Documents/Codes/GitHub/OpenGL-Learning/cmake-build-debug/CMakeFiles/OpenGL_Learning.dir
+/Users/boboboost/Documents/Codes/GitHub/OpenGL-Learning/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/boboboost/Documents/Codes/GitHub/OpenGL-Learning/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/boboboost/Documents/Codes/GitHub/OpenGL-Learning/cmake-build-debug/glfw/CMakeFiles/edit_cache.dir
+/Users/boboboost/Documents/Codes/GitHub/OpenGL-Learning/cmake-build-debug/glfw/CMakeFiles/rebuild_cache.dir
+/Users/boboboost/Documents/Codes/GitHub/OpenGL-Learning/cmake-build-debug/glfw/src/CMakeFiles/glfw.dir
+/Users/boboboost/Documents/Codes/GitHub/OpenGL-Learning/cmake-build-debug/glfw/src/CMakeFiles/update_mappings.dir
+/Users/boboboost/Documents/Codes/GitHub/OpenGL-Learning/cmake-build-debug/glfw/src/CMakeFiles/edit_cache.dir
+/Users/boboboost/Documents/Codes/GitHub/OpenGL-Learning/cmake-build-debug/glfw/src/CMakeFiles/rebuild_cache.dir
