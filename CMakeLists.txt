@@ -12,7 +12,7 @@ set(GLFW_LINK ${PROJECT_SOURCE_DIR}/dependencies/GLFW/lib/libglfw.3.dylib)
 link_libraries(${OPENGL} ${GLEW_LINK} ${GLFW_LINK})
 
 set( OPENGL-LEARNING-SRC
-        src/Application.cpp
+        main.cpp
 )
 
 add_executable( OpenGL_Learning ${OPENGL-LEARNING-SRC})
