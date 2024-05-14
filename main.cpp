@@ -1,9 +1,4 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
+#include "config.h"
 
 #if defined(_MSC_VER)
     #define DEBUG_BREAK __debugbreak()
@@ -133,7 +128,6 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     #ifdef __APPLE__
-        std::cout << "I'm apple machine" << std::endl;
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
 
@@ -183,7 +177,7 @@ int main(void)
     GLCall(glEnableVertexAttribArray(0));
     GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
 
-    ShaderProgramSource source = ParseShader("../res/shaders/Basic.shader");
+    ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
     unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
     GLCall(glUseProgram(shader));
 
@@ -194,7 +188,7 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT);
 
         // glDrawArrays(GL_TRIANGLES, 0, 6);
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr));
+        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
