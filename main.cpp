@@ -3,6 +3,7 @@
 
 #include "src/VertexBuffer.h"
 #include "src/IndexBuffer.h"
+#include "src/VertexArray.h"
 
 struct ShaderProgramSource
 {
@@ -128,20 +129,17 @@ int main(void)
         2, 3, 0
     };
 
-    // Core OpenGL requires that we use a VAO so it knows what to do with our vertex inputs. If we fail to bind a VAO, OpenGL will most likely refuse to draw anything.
-    // Learn more about this from https://learnopengl.com/Getting-started/Hello-Triangle
-    // https://stackoverflow.com/questions/62990972/why-is-opengl-giving-me-the-error-error-01-version-330-is-not-support
-    unsigned int VBO, VAO;
-    GLCall(glGenVertexArrays(1, &VAO));
-    GLCall(glBindVertexArray(VAO));
-
+    // VertexBuffer with VAO
+    VertexArray va;
     VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+    VertexBufferLayout layout;
+    layout.Push<float>(2);
+    va.AddBuffer(vb, layout);
 
-    GLCall(glEnableVertexAttribArray(0));
-    GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
-
+    // IndexBuffer
     IndexBuffer ib(indices, 6);
 
+    // Shader
     ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
     unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
     GLCall(glUseProgram(shader));
@@ -150,7 +148,8 @@ int main(void)
     ASSERT(location != -1);
     GLCall(glUniform4f(location, 0.8f, 0.3f, 0.8f, 1.0f));
 
-    GLCall(glBindVertexArray(0));
+    // Test unbind Shader, VertexBuffer and IndexBuffer
+    va.Unbind();
     GLCall(glUseProgram(0));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
@@ -172,17 +171,17 @@ int main(void)
         GLCall(glUseProgram(shader));
         GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
 
-        GLCall(glBindVertexArray(VAO));
-        ib.Bind();
-
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-
         if (r > 1.0f)
             increment = -1.0f;
         else if (r < 0.0f)
             increment = 1.0f;
         
         r += increment * deltaTime.count();
+
+        va.Bind();
+        ib.Bind();
+
+        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
