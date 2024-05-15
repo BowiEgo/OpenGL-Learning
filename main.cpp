@@ -1,7 +1,9 @@
 #include "config.h"
 
 #include "src/Renderer.h"
+
 #include "src/VertexBuffer.h"
+#include "src/VertexBufferLayout.h"
 #include "src/IndexBuffer.h"
 #include "src/VertexArray.h"
 #include "src/Shader.h"
@@ -72,6 +74,10 @@ int main(void)
     ib.Unbind();
     shader.Unbind();
 
+    // Renderer
+    Renderer renderer;
+
+    // Animation variables
     float r = 0.0f;
     float increment = 1.0f;
     
@@ -84,15 +90,12 @@ int main(void)
         lastTime = currentTime;
 
         /* Render here */
-        GLCall(glClear(GL_COLOR_BUFFER_BIT));
+        renderer.Clear();
 
         shader.Bind();
         shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-        va.Bind();
-        ib.Bind();
-
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+        renderer.Draw(va, ib, shader);
 
         // Animation
         if (r > 1.0f)
