@@ -1,41 +1,8 @@
 #include "config.h"
+#include "src/Renderer.h"
 
-#if defined(_MSC_VER)
-    #define DEBUG_BREAK __debugbreak()
-#elif defined(__APPLE__) || defined(__MACH__)
-    #include <signal.h>
-    #define DEBUG_BREAK __builtin_trap()
-#elif defined(__linux__)
-    #include <signal.h>
-    #define DEBUG_BREAK raise(SIGTRAP)
-#else
-    #error "Platform not supported"
-#endif
-
-void triggerBreakpoint() {
-    DEBUG_BREAK;
-}
-
-#define ASSERT(x) if(!(x)) triggerBreakpoint();
-#define GLCall(x) GLClearError();\
-    x;\
-    ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-
-static void GLClearError()
-{
-    while (glGetError() != GL_NO_ERROR);
-}
-
-static bool GLLogCall(const char* function, const char* file, int line)
-{
-    while (GLenum error  = glGetError())
-    {
-        std::cout << "[OpenGL Error] (" << error << "):" << function <<
-            " " << file << ":" << line << std::endl;
-        return false;
-    }
-    return true;
-}
+#include "src/VertexBuffer.h"
+#include "src/IndexBuffer.h"
 
 struct ShaderProgramSource
 {
@@ -165,19 +132,15 @@ int main(void)
     // Learn more about this from https://learnopengl.com/Getting-started/Hello-Triangle
     // https://stackoverflow.com/questions/62990972/why-is-opengl-giving-me-the-error-error-01-version-330-is-not-support
     unsigned int VBO, VAO;
-    GLCall(glGenBuffers(1, &VBO));
     GLCall(glGenVertexArrays(1, &VAO));
     GLCall(glBindVertexArray(VAO));
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, VBO));
-    GLCall(glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), positions, GL_STATIC_DRAW));
 
-    unsigned int ibo;
-    GLCall(glGenBuffers(1, &ibo));
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
-    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW));
+    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
 
     GLCall(glEnableVertexAttribArray(0));
     GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
+
+    IndexBuffer ib(indices, 6);
 
     ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
     unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
@@ -187,8 +150,13 @@ int main(void)
     ASSERT(location != -1);
     GLCall(glUniform4f(location, 0.8f, 0.3f, 0.8f, 1.0f));
 
+    GLCall(glBindVertexArray(0));
+    GLCall(glUseProgram(0));
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+
     float r = 0.0f;
-    float increment = 0.05f;
+    float increment = 1.0f;
     
     auto lastTime = std::chrono::high_resolution_clock::now();
     /* Loop until the user closes the window */
@@ -201,16 +169,20 @@ int main(void)
         /* Render here */
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-        // glDrawArrays(GL_TRIANGLES, 0, 6);
+        GLCall(glUseProgram(shader));
         GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
+
+        GLCall(glBindVertexArray(VAO));
+        ib.Bind();
+
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
         if (r > 1.0f)
-            increment = -0.05f;
+            increment = -1.0f;
         else if (r < 0.0f)
-            increment = 0.05f;
+            increment = 1.0f;
         
-        r += increment * deltaTime.count() * 20.0f;
+        r += increment * deltaTime.count();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

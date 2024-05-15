@@ -9,12 +9,14 @@ set(GLEW_LINK ${PROJECT_SOURCE_DIR}/dependencies/GL/lib/libGLEW.2.1.0.dylib)
 set(GLFW_LINK ${PROJECT_SOURCE_DIR}/dependencies/GLFW/lib/libglfw.3.dylib)
 link_libraries(${OPENGL} ${GLEW_LINK} ${GLFW_LINK})
 
-set( OPENGL-LEARNING-SRC
+set(OPENGL-LEARNING-SRC
         config.h
         main.cpp
 )
 
-add_executable( OpenGL_Learning ${OPENGL-LEARNING-SRC})
+file(GLOB_RECURSE SRC_FILES "src/*.cpp")
+
+add_executable(OpenGL_Learning ${OPENGL-LEARNING-SRC} ${SRC_FILES})
 
 target_include_directories(OpenGL_Learning PRIVATE dependencies)
 
