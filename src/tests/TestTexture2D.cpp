@@ -36,13 +36,15 @@ namespace test {
         layout.Push<float>(2);
         layout.Push<float>(2);
         m_VAO->AddBuffer(*m_VertexBuffer, layout);
-        
+
         // IndexBuffer
         m_IndexBuffer = std::make_unique<IndexBuffer>(indices, 6);
 
         // Shader
         m_Shader = std::make_unique<Shader>("res/shaders/Basic.shader");
         m_Shader->Bind();
+        // m_Shader->SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+        // shader.SetUniformMat4f("u_MVP", mvp);
 
         // Texture
         m_Texture = std::make_unique<Texture>("res/textures/Avatar.png");
@@ -76,7 +78,7 @@ namespace test {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), m_TranslationA);
             glm::mat4 mvp = m_Proj * m_View * model;
             m_Shader->Bind(); 
-            m_Shader->SetUniformMat4f("u_MVP", mvp);
+            m_Shader->SetUniformMat4("u_MVP", mvp);
 
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
         }
@@ -85,7 +87,7 @@ namespace test {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), m_TranslationB);
             glm::mat4 mvp = m_Proj * m_View * model;
             m_Shader->Bind(); 
-            m_Shader->SetUniformMat4f("u_MVP", mvp);
+            m_Shader->SetUniformMat4("u_MVP", mvp);
 
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
         }
@@ -93,13 +95,11 @@ namespace test {
 
     void TestTexture2D::OnImGuiRender()
     {
-        ImGuiIO& io = ImGui::GetIO();
-        
         ImGui::SliderFloat("TranslationA-X", &m_TranslationA.x, 0.0f, 960.0f);
         ImGui::SliderFloat("TranslationA-Y", &m_TranslationA.y, 0.0f, 540.0f);
 
         ImGui::SliderFloat("TranslationB-X", &m_TranslationB.x, 0.0f, 960.0f);
         ImGui::SliderFloat("TranslationB-Y", &m_TranslationB.y, 0.0f, 540.0f);
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     }
 }
