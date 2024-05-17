@@ -1,13 +1,13 @@
 #include "config.h"
 
-#include "src/Renderer.h"
+#include "Renderer.h"
 
-#include "src/VertexBuffer.h"
-#include "src/VertexBufferLayout.h"
-#include "src/IndexBuffer.h"
-#include "src/VertexArray.h"
-#include "src/Shader.h"
-#include "src/Texture.h"
+#include "VertexBuffer.h"
+#include "VertexBufferLayout.h"
+#include "IndexBuffer.h"
+#include "VertexArray.h"
+#include "Shader.h"
+#include "Texture.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"

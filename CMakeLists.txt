@@ -10,8 +10,8 @@ set(GLFW_LINK ${CMAKE_SOURCE_DIR}/dependencies/GLFW/lib/libglfw.3.dylib)
 link_libraries(${OPENGL} ${GLEW_LINK} ${GLFW_LINK})
 
 set(OPENGL-LEARNING-SRC
-        config.h
-        main.cpp
+        src/config.h
+        src/Application.cpp
 )
 
 file(GLOB_RECURSE SRC_FILES "src/*.cpp")
@@ -21,6 +21,7 @@ list(REMOVE_ITEM SRC_FILES ${CMAKE_SOURCE_DIR}/src/vendor/imgui/imgui/main.cpp)
 
 add_executable(OpenGL_Learning ${OPENGL-LEARNING-SRC} ${SRC_FILES})
 
+include_directories(src)
 target_include_directories(OpenGL_Learning PRIVATE dependencies)
 target_include_directories(OpenGL_Learning PRIVATE src/vendor/glm)
 target_include_directories(OpenGL_Learning PRIVATE src/vendor/imgui)
