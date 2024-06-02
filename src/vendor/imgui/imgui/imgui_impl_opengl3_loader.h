@@ -538,67 +538,6 @@ union ImGL3WProcs {
 
 GL3W_API extern union ImGL3WProcs imgl3wProcs;
 
-/* OpenGL functions */
-#define glActiveTexture                   imgl3wProcs.gl.ActiveTexture
-#define glAttachShader                    imgl3wProcs.gl.AttachShader
-#define glBindBuffer                      imgl3wProcs.gl.BindBuffer
-#define glBindSampler                     imgl3wProcs.gl.BindSampler
-#define glBindTexture                     imgl3wProcs.gl.BindTexture
-#define glBindVertexArray                 imgl3wProcs.gl.BindVertexArray
-#define glBlendEquation                   imgl3wProcs.gl.BlendEquation
-#define glBlendEquationSeparate           imgl3wProcs.gl.BlendEquationSeparate
-#define glBlendFuncSeparate               imgl3wProcs.gl.BlendFuncSeparate
-#define glBufferData                      imgl3wProcs.gl.BufferData
-#define glBufferSubData                   imgl3wProcs.gl.BufferSubData
-#define glClear                           imgl3wProcs.gl.Clear
-#define glClearColor                      imgl3wProcs.gl.ClearColor
-#define glCompileShader                   imgl3wProcs.gl.CompileShader
-#define glCreateProgram                   imgl3wProcs.gl.CreateProgram
-#define glCreateShader                    imgl3wProcs.gl.CreateShader
-#define glDeleteBuffers                   imgl3wProcs.gl.DeleteBuffers
-#define glDeleteProgram                   imgl3wProcs.gl.DeleteProgram
-#define glDeleteShader                    imgl3wProcs.gl.DeleteShader
-#define glDeleteTextures                  imgl3wProcs.gl.DeleteTextures
-#define glDeleteVertexArrays              imgl3wProcs.gl.DeleteVertexArrays
-#define glDetachShader                    imgl3wProcs.gl.DetachShader
-#define glDisable                         imgl3wProcs.gl.Disable
-#define glDisableVertexAttribArray        imgl3wProcs.gl.DisableVertexAttribArray
-#define glDrawElements                    imgl3wProcs.gl.DrawElements
-#define glDrawElementsBaseVertex          imgl3wProcs.gl.DrawElementsBaseVertex
-#define glEnable                          imgl3wProcs.gl.Enable
-#define glEnableVertexAttribArray         imgl3wProcs.gl.EnableVertexAttribArray
-#define glFlush                           imgl3wProcs.gl.Flush
-#define glGenBuffers                      imgl3wProcs.gl.GenBuffers
-#define glGenTextures                     imgl3wProcs.gl.GenTextures
-#define glGenVertexArrays                 imgl3wProcs.gl.GenVertexArrays
-#define glGetAttribLocation               imgl3wProcs.gl.GetAttribLocation
-#define glGetError                        imgl3wProcs.gl.GetError
-#define glGetIntegerv                     imgl3wProcs.gl.GetIntegerv
-#define glGetProgramInfoLog               imgl3wProcs.gl.GetProgramInfoLog
-#define glGetProgramiv                    imgl3wProcs.gl.GetProgramiv
-#define glGetShaderInfoLog                imgl3wProcs.gl.GetShaderInfoLog
-#define glGetShaderiv                     imgl3wProcs.gl.GetShaderiv
-#define glGetString                       imgl3wProcs.gl.GetString
-#define glGetStringi                      imgl3wProcs.gl.GetStringi
-#define glGetUniformLocation              imgl3wProcs.gl.GetUniformLocation
-#define glGetVertexAttribPointerv         imgl3wProcs.gl.GetVertexAttribPointerv
-#define glGetVertexAttribiv               imgl3wProcs.gl.GetVertexAttribiv
-#define glIsEnabled                       imgl3wProcs.gl.IsEnabled
-#define glIsProgram                       imgl3wProcs.gl.IsProgram
-#define glLinkProgram                     imgl3wProcs.gl.LinkProgram
-#define glPixelStorei                     imgl3wProcs.gl.PixelStorei
-#define glPolygonMode                     imgl3wProcs.gl.PolygonMode
-#define glReadPixels                      imgl3wProcs.gl.ReadPixels
-#define glScissor                         imgl3wProcs.gl.Scissor
-#define glShaderSource                    imgl3wProcs.gl.ShaderSource
-#define glTexImage2D                      imgl3wProcs.gl.TexImage2D
-#define glTexParameteri                   imgl3wProcs.gl.TexParameteri
-#define glUniform1i                       imgl3wProcs.gl.Uniform1i
-#define glUniformMatrix4fv                imgl3wProcs.gl.UniformMatrix4fv
-#define glUseProgram                      imgl3wProcs.gl.UseProgram
-#define glVertexAttribPointer             imgl3wProcs.gl.VertexAttribPointer
-#define glViewport                        imgl3wProcs.gl.Viewport
-
 #ifdef __cplusplus
 }
 #endif

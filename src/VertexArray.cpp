@@ -3,6 +3,8 @@
 #include "VertexBufferLayout.h"
 #include "Renderer.h"
 
+#include <iostream>
+
 VertexArray::VertexArray()
 {
     GLCall(glGenVertexArrays(1, &m_RendererID));
@@ -27,7 +29,6 @@ void VertexArray::AddBuffer(const VertexBuffer &vb, const VertexBufferLayout &la
             element.normalized, layout.GetStride(), (const void*)(intptr_t)offset));
         offset += element.count * VertexBufferElement::GetSizeOfType(element.type);
     }
-    
 }
 
 void VertexArray::Bind() const

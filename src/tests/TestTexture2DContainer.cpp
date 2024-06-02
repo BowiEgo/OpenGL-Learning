@@ -1,6 +1,6 @@
 #include "TestTexture2DContainer.h"
 
-#include "imgui/imgui.h"
+#include "imgui.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -11,7 +11,7 @@ namespace test {
         m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)))
     {
         float vertices[4 * 8] = {
-            //-- positions ----------- color --------- texCoord --
+            //------ positions ----------- color --------- texCoord --
               0.0f,   0.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // left-down
             200.0f,   0.0f, 0.0f,   0.0f, 1.0f, 0.0f,   2.0f, 0.0f,   // right-down
             200.0f, 200.0f, 0.0f,   1.0f, 0.0f, 0.0f,   2.0f, 2.0f,   // right-top
@@ -19,7 +19,7 @@ namespace test {
         };
 
         // float vertices[4 * 8] = {
-        //     //-- positions ----------- color --------- texCoord --
+        //     //------ positions ----------- color --------- texCoord --
         //       0.0f,   0.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.45f, 0.45f,   // left-down
         //     200.0f,   0.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.55f, 0.45f,   // right-down
         //     200.0f, 200.0f, 0.0f,   1.0f, 0.0f, 0.0f,   0.55f, 0.55f,   // right-top

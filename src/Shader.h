@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "Log.h"
+
 #include "glm/glm.hpp"
 
 struct ShaderProgramSource
@@ -13,12 +15,9 @@ struct ShaderProgramSource
 
 class Shader
 {
-private:
-    std::string m_FilePath;
-    unsigned int m_RendererID;
-    mutable std::unordered_map<std::string, int> m_UniformLocationCache;
 public:
     Shader(const std::string& filepath);
+    Shader(const std::string& vertexSrc, const std::string& fragmentSrc);
     ~Shader();
 
     void Bind() const;
@@ -37,4 +36,9 @@ private:
     ShaderProgramSource ParseShader(const std::string& filepath);
     unsigned int CompileShader(unsigned int type, const std::string& source);
     unsigned int CreateShader(const std::string& vertextShader, const std::string& fragmentShader);
+private:
+    std::string m_FilePath;
+    std::string m_Name;
+    unsigned int m_RendererID;
+    mutable std::unordered_map<std::string, int> m_UniformLocationCache;
 };

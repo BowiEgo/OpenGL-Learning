@@ -1,0 +1,15 @@
+{
+	"dependencies": [
+		"spdlog",
+		"glfw3",
+		{
+			"name": "glad",
+			"features": ["gl-api-46"]
+		},
+		{
+			"name": "imgui",
+			"features": ["docking-experimental"]
+		},
+		"glm"
+	]
+}

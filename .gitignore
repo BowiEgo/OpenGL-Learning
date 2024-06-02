@@ -3,7 +3,7 @@
 .vscode/
 build/
 cmake-build-debug/
+vcpkg_installed/
 
 # Files
 .DS_Store
-imgui.ini

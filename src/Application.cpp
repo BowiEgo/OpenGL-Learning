@@ -1,8 +1,11 @@
-#include "config.h"
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include "Log.h"
 #include "Renderer.h"
 
-#include "imgui/imgui.h"
+#include "imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
@@ -10,9 +13,12 @@
 #include "tests/TestTexture2D.h"
 #include "tests/TestTexture2DContainer.h"
 #include "tests/TestTransform.h"
+#include "tests/TestCoordinate.h"
 
 int main(void)
 {
+    Log::Init();
+
     GLFWwindow* window;
 
     /* Initialize the library */
@@ -39,7 +45,9 @@ int main(void)
 
     glfwSwapInterval(1);
 
-    if(glewInit() != GLEW_OK)
+    int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+
+    if(!status)
         std::cout << "Failed to initialize GLEW" << std::endl;
 
     std::cout << glGetString(GL_VERSION) << std::endl;
@@ -67,6 +75,7 @@ int main(void)
     testMenu->RegisterTest<test::TestTexture2D>("Basic Texture 2D");
     testMenu->RegisterTest<test::TestTexture2DContainer>("Texture 2D Container");
     testMenu->RegisterTest<test::TestTransform>("Transform");
+    testMenu->RegisterTest<test::TestCoordinate>("Coordinate");
 
     test::TestClearColor test;
     
@@ -88,6 +97,7 @@ int main(void)
             ImGui::Begin("Test");
             if (currentTest != testMenu && ImGui::Button("<-"))
             {
+                GLCall(glDisable(GL_DEPTH_TEST));
                 delete currentTest;
                 currentTest = testMenu;
             }
