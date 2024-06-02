@@ -57,6 +57,9 @@ namespace test {
         opts2.wrapT = GL_REPEAT;
         m_Texture2 = std::make_unique<Texture>("../res/textures/awesomeface.png", opts2);
         m_Shader->SetUniform1i("u_Texture2", 1);
+
+        // Uniform
+        m_Shader->SetUniform1f("u_Mix", m_Mix);
     }
 
     TestTexture2DContainer::~TestTexture2DContainer()

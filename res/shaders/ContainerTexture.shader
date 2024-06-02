@@ -14,7 +14,7 @@ void main()
 {
     gl_Position = u_MVP * a_Position;
     v_Color = a_Color;
-    v_TexCoord = a_TexCoord;
+    v_TexCoord = vec2(a_TexCoord.x, 1.0 - a_TexCoord.y);
 }
 
 #shader fragment
