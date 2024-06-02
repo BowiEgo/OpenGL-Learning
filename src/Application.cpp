@@ -8,6 +8,7 @@
 
 #include "tests/TestClearColor.h"
 #include "tests/TestTexture2D.h"
+#include "tests/TestTexture2DContainer.h"
 
 int main(void)
 {
@@ -62,7 +63,8 @@ int main(void)
     currentTest = testMenu;
 
     testMenu->RegisterTest<test::TestClearColor>("Clear Color");
-    testMenu->RegisterTest<test::TestTexture2D>("Texture 2D");
+    testMenu->RegisterTest<test::TestTexture2D>("Basic Texture 2D");
+    testMenu->RegisterTest<test::TestTexture2DContainer>("Texture 2D Container");
 
     test::TestClearColor test;
     

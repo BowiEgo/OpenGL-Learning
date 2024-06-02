@@ -13,10 +13,11 @@ namespace test {
         m_TranslationA(200, 200, 0), m_TranslationB(400, 200, 0)
     {
         float positions[] = {
+            //-- positions -- texCoord --
             -50.0f, -50.0f, 0.0f, 0.0f, // 0
-            50.0f, -50.0f, 1.0f, 0.0f, // 1
-            50.0f, 50.0f, 1.0f, 1.0f, // 2
-            -50.0f, 50.0f, 0.0f, 1.0f  // 3
+             50.0f, -50.0f, 1.0f, 0.0f, // 1
+             50.0f,  50.0f, 1.0f, 1.0f, // 2
+            -50.0f,  50.0f, 0.0f, 1.0f  // 3
         };
 
         unsigned int indices[] = {
@@ -41,13 +42,13 @@ namespace test {
         m_IndexBuffer = std::make_unique<IndexBuffer>(indices, 6);
 
         // Shader
-        m_Shader = std::make_unique<Shader>("res/shaders/Basic.shader");
+        m_Shader = std::make_unique<Shader>("../res/shaders/Basic.shader");
         m_Shader->Bind();
         // m_Shader->SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
         // shader.SetUniformMat4f("u_MVP", mvp);
 
         // Texture
-        m_Texture = std::make_unique<Texture>("res/textures/Avatar.png");
+        m_Texture = std::make_unique<Texture>("../res/textures/Avatar.png");
         m_Shader->SetUniform1i("u_Texture", 0);
 
         // Test unbind VertexArray, VertexBuffer, IndexBuffer and Shader
