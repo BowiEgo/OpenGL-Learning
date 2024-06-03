@@ -6,8 +6,8 @@
 #include "Renderer.h"
 
 #include "imgui.h"
-#include "imguiOpenGL/imgui_impl_glfw.h"
-#include "imguiOpenGL/imgui_impl_opengl3.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 #include "Input.h"
 #include "KeyCodes.h"
@@ -147,7 +147,7 @@ int main(void)
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backup_current_context);
         }
-        
+
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
