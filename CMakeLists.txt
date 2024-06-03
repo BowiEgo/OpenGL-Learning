@@ -11,11 +11,13 @@ set(OPENGL-LEARNING-SRC
 )
 
 file(GLOB_RECURSE SRC_FILES "src/*.cpp")
+file(GLOB_RECURSE VENDORS_FILES "vendors/*.cpp")
 
-# list(FILTER SRC_FILES EXCLUDE REGEX ${CMAKE_SOURCE_DIR}/src/vendor/glm/core/dummy.cpp)
-list(REMOVE_ITEM SRC_FILES ${CMAKE_SOURCE_DIR}/src/vendor/imgui/imgui/main.cpp)
-
-add_executable(OpenGL_Learning ${OPENGL-LEARNING-SRC} ${SRC_FILES})
+add_executable(OpenGL_Learning
+        ${OPENGL-LEARNING-SRC}
+        ${SRC_FILES}
+        ${VENDORS_FILES}
+)
 
 include_directories(src)
 
@@ -35,8 +37,4 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
                                       glm::glm-header-only
 )
 
-# target_include_directories(OpenGL_Learning PRIVATE dependencies)
-# target_include_directories(OpenGL_Learning PRIVATE src/vendor/glm)
-target_include_directories(OpenGL_Learning PRIVATE src/vendor/imgui)
-# target_link_libraries(OpenGL_Learning OpenGL::GL)
-# target_link_libraries(OpenGL_Learning "-framework GLUT")
+target_include_directories(OpenGL_Learning PRIVATE "${PROJECT_SOURCE_DIR}/vendors")
