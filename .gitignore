@@ -7,3 +7,4 @@ vcpkg_installed/
 
 # Files
 .DS_Store
+imgui.ini

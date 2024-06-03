@@ -1,14 +1,13 @@
 #include "TestTransform.h"
 
-#include <GLFW/glfw3.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 namespace test {
-    TestTransform::TestTransform()
-      : m_Proj(glm::ortho(-480.0f, 480.0f, -270.0f, 270.0f, -1.0f, 1.0f)),
+    TestTransform::TestTransform(GLFWwindow* window)
+      : Test(window),
+        m_Proj(glm::ortho(-480.0f, 480.0f, -270.0f, 270.0f, -1.0f, 1.0f)),
         m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f))),
         m_Transform(glm::mat4(1.0f))
     {

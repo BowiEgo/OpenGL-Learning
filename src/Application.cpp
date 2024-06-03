@@ -9,11 +9,15 @@
 #include "imguiOpenGL/imgui_impl_glfw.h"
 #include "imguiOpenGL/imgui_impl_opengl3.h"
 
+#include "Input.h"
+#include "KeyCodes.h"
+
 #include "tests/TestClearColor.h"
 #include "tests/TestTexture2D.h"
 #include "tests/TestTexture2DContainer.h"
 #include "tests/TestTransform.h"
 #include "tests/TestCoordinate.h"
+#include "tests/TestCamera.h"
 
 int main(void)
 {
@@ -25,8 +29,8 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -52,6 +56,9 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << std::endl;
 
+    // Input
+    Input::Create(window);
+
     // Blending
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -63,12 +70,17 @@ int main(void)
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
-    ImGui_ImplOpenGL3_Init();
+    ImGui_ImplOpenGL3_Init("#version 410");
 
     test::Test* currentTest = nullptr;
-    test::TestMenu* testMenu = new test::TestMenu(currentTest);
+    test::TestMenu* testMenu = new test::TestMenu(currentTest, window);
     currentTest = testMenu;
 
     testMenu->RegisterTest<test::TestClearColor>("Clear Color");
@@ -76,12 +88,36 @@ int main(void)
     testMenu->RegisterTest<test::TestTexture2DContainer>("Texture 2D Container");
     testMenu->RegisterTest<test::TestTransform>("Transform");
     testMenu->RegisterTest<test::TestCoordinate>("Coordinate");
+    testMenu->RegisterTest<test::TestCamera>("Camera");
 
-    test::TestClearColor test;
-    
+    // test::TestClearColor test;
+
+    auto backTestMenu = [&]()
+    {
+        if (currentTest != testMenu)
+        {
+            GLCall(glDisable(GL_DEPTH_TEST));
+            delete currentTest;
+            currentTest = testMenu;
+        }
+    };
+
+    float deltaTime = 0.0f;
+    float lastTime = 0.0f;
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        if (Input::IsKeyPressed(OPL_KEY_ESCAPE))
+            glfwSetWindowShouldClose(window, true);
+        if (Input::IsKeyPressed(OPL_KEY_BACKSPACE))
+            backTestMenu();
+
+
+        float currentTime = glfwGetTime();
+        deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+
         GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
         /* Render here */
         renderer.Clear();
@@ -92,15 +128,11 @@ int main(void)
         ImGui::NewFrame();
         if (currentTest)
         {
-            currentTest->OnUpdate(0.0f);
+            currentTest->OnUpdate(deltaTime);
             currentTest->OnRender();
             ImGui::Begin("Test");
-            if (currentTest != testMenu && ImGui::Button("<-"))
-            {
-                GLCall(glDisable(GL_DEPTH_TEST));
-                delete currentTest;
-                currentTest = testMenu;
-            }
+            if (ImGui::Button("<-"))
+                backTestMenu();
             currentTest->OnImGuiRender();
             ImGui::End();
         }
@@ -108,7 +140,14 @@ int main(void)
         // ImGui rendering
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            GLFWwindow* backup_current_context = glfwGetCurrentContext();
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            glfwMakeContextCurrent(backup_current_context);
+        }
+        
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 

@@ -10,7 +10,7 @@ namespace test {
     class TestTexture2DContainer : public Test
     {
     public:
-        TestTexture2DContainer();
+        TestTexture2DContainer(GLFWwindow* window);
         ~TestTexture2DContainer();
 
         void OnUpdate(float deltaTime) override;

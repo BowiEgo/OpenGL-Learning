@@ -6,8 +6,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 namespace test {
-    TestTexture2DContainer::TestTexture2DContainer()
-        : m_Proj(glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f)),
+    TestTexture2DContainer::TestTexture2DContainer(GLFWwindow* window)
+      : Test(window),
+        m_Proj(glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f)),
         m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)))
     {
         float vertices[4 * 8] = {

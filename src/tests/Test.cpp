@@ -3,8 +3,8 @@
 
 namespace test
 {
-    TestMenu::TestMenu(Test*& currentTestPointer)
-        : m_CurrentTest(currentTestPointer)
+    TestMenu::TestMenu(Test*& currentTestPointer, GLFWwindow* window)
+        : m_CurrentTest(currentTestPointer), m_Window(window)
     {
     }
 

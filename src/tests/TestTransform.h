@@ -10,7 +10,7 @@ namespace test {
     class TestTransform : public Test
     {
     public:
-        TestTransform();
+        TestTransform(GLFWwindow* window);
         ~TestTransform();
 
         void OnUpdate(float deltaTime) override;

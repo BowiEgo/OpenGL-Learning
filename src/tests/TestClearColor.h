@@ -8,7 +8,7 @@ namespace test {
     private:
         float m_ClearColor[4];
     public:
-        TestClearColor();
+        TestClearColor(GLFWwindow* window);
         ~TestClearColor();
 
         void OnUpdate(float deltaTime) override;
