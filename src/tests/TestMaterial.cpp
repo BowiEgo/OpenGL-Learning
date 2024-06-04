@@ -1,4 +1,4 @@
-#include "TestBasicLighting.h"
+#include "TestMaterial.h"
 
 #include "imgui.h"
 
@@ -10,7 +10,7 @@
 #include "KeyCodes.h"
 
 namespace test {
-    TestBasicLighting::TestBasicLighting(GLFWwindow* window)
+    TestMaterial::TestMaterial(GLFWwindow* window)
       : Test(window), m_ObjPositions(glm::vec3(0.0)), m_LightPosition(glm::vec3(1.2f, 1.0f, 2.0f))
     {
         GLCall(glEnable(GL_DEPTH_TEST));
@@ -91,43 +91,63 @@ namespace test {
         // Shader
         // --------------------
         // Object shader
-        std::string vertexSrc = FileSystem::ReadFile("../res/shaders/Color.vert");
-        std::string fragSrc = FileSystem::ReadFile("../res/shaders/Color.frag");
+        std::string vertexSrc = FileSystem::ReadFile("../res/shaders/Material.vert");
+        std::string fragSrc = FileSystem::ReadFile("../res/shaders/Material.frag");
         m_ObjShader = std::make_unique<Shader>(vertexSrc, fragSrc);
-
-        glm::vec3 m_ObjectColor(1.0f, 0.5f, 0.31f);
-        glm::vec3 u_LightColor(1.0f, 1.0f, 1.0f);
 
         // Shader uniforms
         m_ObjShader->Bind();
-        m_ObjShader->SetUniform3f("u_ObjectColor", m_ObjectColor.x, m_ObjectColor.y, m_ObjectColor.z);
-        m_ObjShader->SetUniform3f("u_LightColor", u_LightColor.x, u_LightColor.y, u_LightColor.z);
+        m_ObjShader->SetUniformVec3("u_Material.ambient",   m_MaterialAmbient);
+        m_ObjShader->SetUniformVec3("u_Material.diffuse",   m_MaterialDiffuse);
+        m_ObjShader->SetUniformVec3("u_Material.specular",  m_MaterialSpecular);
+        m_ObjShader->  SetUniform1f("u_Material.shininess", m_MaterialShininess);
+        m_ObjShader->SetUniformVec3("u_Light.ambient",  m_LightAmbient);
+        m_ObjShader->SetUniformVec3("u_Light.diffuse",  m_LightDiffuse);
+        m_ObjShader->SetUniformVec3("u_Light.specular", m_LightSpecular);
 
         // Light shader
         std::string lightVertexSrc = FileSystem::ReadFile("../res/shaders/LightCube.vert");
         std::string lightFragSrc = FileSystem::ReadFile("../res/shaders/LightCube.frag");
         m_LightShader = std::make_unique<Shader>(lightVertexSrc, lightFragSrc);
+        m_LightShader->Bind();
+        m_LightShader->SetUniformVec3("u_Color", { 1.0f, 1.0f, 1.0f });
     }
 
-    TestBasicLighting::~TestBasicLighting()
+    TestMaterial::~TestMaterial()
     {
     }
 
-    void TestBasicLighting::OnUpdate(float deltaTime)
+    void TestMaterial::OnUpdate(float deltaTime)
     {
         ProcessInput(deltaTime);
     }
 
-    void TestBasicLighting::OnRender()
+    void TestMaterial::OnRender()
     {
         GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
         Renderer renderer;
 
+        float currentTime = glfwGetTime();
+
         float radius = 2.0f;
-        m_LightPosition.x = sin(glfwGetTime()) * radius;
-        m_LightPosition.z = cos(glfwGetTime()) * radius;
+        m_LightPosition.x = sin(currentTime) * radius;
+        m_LightPosition.z = cos(currentTime) * radius;
+
+        // glm::vec3 lightColor = m_LightAmbient * m_LightDiffuse * m_LightSpecular;
+        // lightColor.x = (sin(currentTime * 2.0f) + 1.0f) * 0.5;
+        // lightColor.y = (sin(currentTime * 0.7f) + 1.0f) * 0.5;
+        // lightColor.z = (sin(currentTime * 1.3f) + 1.0f) * 0.5;
+
+        // glm::vec3 diffuseColor = lightColor   * glm::vec3(0.5f);
+        // glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+
+        float lightColor[3] = {
+            (m_LightAmbient[0] + m_LightDiffuse[0] + m_LightSpecular[0]) / 3.0f,
+            (m_LightAmbient[1] + m_LightDiffuse[1] + m_LightSpecular[1]) / 3.0f,
+            (m_LightAmbient[2] + m_LightDiffuse[2] + m_LightSpecular[2]) / 3.0f,
+        };
 
         {
             // --------------------
@@ -141,33 +161,41 @@ namespace test {
             // Draw object
             // --------------------
             m_ObjShader->Bind();
-            m_ObjShader->SetUniformMat4("modelMatrix", model);
-            m_ObjShader->SetUniformMat4("viewMatrix", m_View);
-            m_ObjShader->SetUniformMat4("projectionMatrix", m_Proj);
-            m_ObjShader->SetUniform3f("u_LightPosition", m_LightPosition.x, m_LightPosition.y, m_LightPosition.z);
-            m_ObjShader->SetUniform3f("u_CameraPosition", m_Camera->GetPosition().x, m_Camera->GetPosition().y, m_Camera->GetPosition().z);
-            m_ObjShader->SetUniform1f("u_AmbientStrength", m_AmbientStrength);
-            m_ObjShader->SetUniform1f("u_SpecularStrength", m_SpecularStrength);
-            m_ObjShader->SetUniform1f("u_Shininess", m_Shininess);
+            m_ObjShader->SetUniformMat4("modelMatrix",          model);
+            m_ObjShader->SetUniformMat4("viewMatrix",           m_View);
+            m_ObjShader->SetUniformMat4("projectionMatrix",     m_Proj);
+            m_ObjShader->SetUniformVec3("u_CameraPosition",     m_Camera->GetPosition());
+
+            m_ObjShader->SetUniformVec3("u_Material.ambient",   m_MaterialAmbient);
+            m_ObjShader->SetUniformVec3("u_Material.diffuse",   m_MaterialDiffuse);
+            m_ObjShader->SetUniformVec3("u_Material.specular",  m_MaterialSpecular);
+            m_ObjShader->  SetUniform1f("u_Material.shininess", m_MaterialShininess);
+
+            m_ObjShader->SetUniformVec3("u_Light.position", m_LightPosition);
+            m_ObjShader->SetUniformVec3("u_Light.ambient",  m_LightAmbient);
+            m_ObjShader->SetUniformVec3("u_Light.diffuse",  m_LightDiffuse);
+            m_ObjShader->SetUniformVec3("u_Light.specular", m_LightSpecular);
+
             renderer.Draw(*m_ObjShader, *m_Obj_VAO);
 
             // --------------------
             // Draw light
             // --------------------
-            m_LightShader->Bind();
             model = glm::translate(model, m_LightPosition);
             model = glm::scale(model, glm::vec3(0.2f));
+            m_LightShader->Bind();
             m_LightShader->SetUniformMat4("modelMatrix", model);
             m_LightShader->SetUniformMat4("viewMatrix", m_View);
             m_LightShader->SetUniformMat4("projectionMatrix", m_Proj);
+            m_LightShader->SetUniformVec3("u_Color", lightColor);
 
             renderer.Draw(*m_LightShader, *m_Light_VAO);
         }
     }
 
-    void TestBasicLighting::OnImGuiRender()
+    void TestMaterial::OnImGuiRender()
     {
-        ImGui::Text("Camera");
+        ImGui::SeparatorText("Camera");
         float fov = m_Camera->GetFOV();
         if (ImGui::SliderFloat("FOV", &fov, 0.0f, 180.0f))
             m_Camera->SetFOV(fov);
@@ -184,15 +212,21 @@ namespace test {
         if (ImGui::SliderFloat("CamPosZ", &camPos.z, -10.0f, 10.0f))
             m_Camera->SetPositionZ(camPos.z);
 
-        ImGui::Text("Light");
-        ImGui::SliderFloat("AmbientStrength", &m_AmbientStrength, 0.0f, 1.0f);
-        ImGui::SliderFloat("SpecularStrength", &m_SpecularStrength, 0.0f, 10.0f);
-        ImGui::SliderInt("Shininess", (int*)&m_Shininess, 0, 256);
+        ImGui::Bullet();ImGui::Text("Material attributes");
+        ImGui::SliderFloat3("Ambient##Material", m_MaterialAmbient, 0.0f, 1.0f);
+        ImGui::SliderFloat3("Diffuse##Material", m_MaterialDiffuse, 0.0f, 1.0f);
+        ImGui::SliderFloat3("Specular##Material", m_MaterialSpecular, 0.0f, 1.0f);
+        ImGui::SliderFloat("Shininess##Material", &m_MaterialShininess, 0.0f, 256.0f);
+
+        ImGui::Bullet();ImGui::Text("Light attributes");
+        ImGui::SliderFloat3("Ambient##Light", m_LightAmbient, 0.0f, 1.0f);
+        ImGui::SliderFloat3("Diffuse##Light", m_LightDiffuse, 0.0f, 1.0f);
+        ImGui::SliderFloat3("Specular##Light", m_LightSpecular, 0.0f, 1.0f);
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     }
 
-    void TestBasicLighting::ProcessInput(float deltaTime)
+    void TestMaterial::ProcessInput(float deltaTime)
     {
     }
 }

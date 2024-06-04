@@ -19,6 +19,7 @@
 #include "tests/TestCoordinate.h"
 #include "tests/TestCamera.h"
 #include "tests/TestBasicLighting.h"
+#include "tests/TestMaterial.h"
 
 int main(void)
 {
@@ -91,6 +92,7 @@ int main(void)
     testMenu->RegisterTest<test::TestCoordinate>("Coordinate");
     testMenu->RegisterTest<test::TestCamera>("Camera");
     testMenu->RegisterTest<test::TestBasicLighting>("Color");
+    testMenu->RegisterTest<test::TestMaterial>("Material");
 
     // test::TestClearColor test;
 
