@@ -6,30 +6,34 @@
 #include "VertexBufferLayout.h"
 #include "Texture.h"
 
+#include "FileSystem/FileSystem.h"
+
+#include "Camera.h"
+
+#include <memory>
+
 namespace test {
-    class TestCoordinate : public Test
+    class TestBasicLighting : public Test
     {
     public:
-        TestCoordinate(GLFWwindow* window);
-        ~TestCoordinate();
+        TestBasicLighting(GLFWwindow* window);
+        ~TestBasicLighting();
 
         void OnUpdate(float deltaTime) override;
         void OnRender() override;
         void OnImGuiRender() override;
-     private:
-        std::unique_ptr<VertexArray> m_VAO;
+        void ProcessInput(float deltaTime);
+    private:
+        std::unique_ptr<VertexArray> m_Obj_VAO, m_Light_VAO;
         std::unique_ptr<VertexBuffer> m_VBO;
         std::unique_ptr<IndexBuffer> m_IBO;
-        std::unique_ptr<Shader> m_Shader;
+        std::unique_ptr<Shader> m_ObjShader, m_LightShader;
         std::unique_ptr<Texture> m_Texture1, m_Texture2;
-        std::vector<glm::vec3> m_CubePositions;
+        glm::vec3 m_ObjPositions, m_LightPosition;
 
         glm::mat4 m_Proj, m_View;
         float m_Mix = 0.2;
-        float m_FOV = 45.0f;
-        float m_AspectRatio = 960.0f / 540.0f;
-        float m_ViewX = 0.0f;
-        float m_ViewY = 0.0f;
-        float m_ViewZ = -3.0f;
+
+        std::unique_ptr<Camera> m_Camera;
     };
 }

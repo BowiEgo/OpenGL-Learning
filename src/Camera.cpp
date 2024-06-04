@@ -33,6 +33,14 @@ Camera::~Camera()
 {
 }
 
+void Camera::SetPosition(std::initializer_list<float> position)
+{
+    if (position.size() == 3) {
+        auto it = position.begin();
+        m_CameraPos = glm::vec3(*it, *(it + 1), *(it + 2));
+    }
+}
+
 void Camera::ProcessKeyboardMovement(float deltaTime)
 {
     float cameraSpeed = 2.5f * deltaTime;

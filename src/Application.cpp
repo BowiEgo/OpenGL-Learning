@@ -18,6 +18,7 @@
 #include "tests/TestTransform.h"
 #include "tests/TestCoordinate.h"
 #include "tests/TestCamera.h"
+#include "tests/TestBasicLighting.h"
 
 int main(void)
 {
@@ -89,6 +90,7 @@ int main(void)
     testMenu->RegisterTest<test::TestTransform>("Transform");
     testMenu->RegisterTest<test::TestCoordinate>("Coordinate");
     testMenu->RegisterTest<test::TestCamera>("Camera");
+    testMenu->RegisterTest<test::TestBasicLighting>("Color");
 
     // test::TestClearColor test;
 

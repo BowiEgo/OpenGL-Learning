@@ -24,7 +24,6 @@ namespace test {
         void OnImGuiRender() override;
         void ProcessInput(float deltaTime);
     private:
-        unsigned int VAO;
         std::unique_ptr<VertexArray> m_VAO;
         std::unique_ptr<VertexBuffer> m_VBO;
         std::unique_ptr<IndexBuffer> m_IBO;

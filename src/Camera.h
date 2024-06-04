@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <initializer_list>
 
 class Camera
 {
@@ -22,6 +23,10 @@ public:
 
     inline void SetFOV(float fov) { m_FOV = fov; }
     inline void SetAspectRatio(float aspectRatio) { m_AspectRatio = aspectRatio; }
+    void SetPosition(std::initializer_list<float> position);
+    inline void SetPositionX(float x) { m_CameraPos.x = x; };
+    inline void SetPositionY(float y) { m_CameraPos.y = y; };
+    inline void SetPositionZ(float z) { m_CameraPos.z = z; };
 
     void ProcessKeyboardMovement(float deltaTime);
     void ProcessMouseMovement();
