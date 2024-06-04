@@ -128,6 +128,7 @@ int main(void)
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        
         if (currentTest)
         {
             currentTest->OnUpdate(deltaTime);
@@ -141,6 +142,7 @@ int main(void)
        
         // ImGui rendering
         ImGui::Render();
+
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {

@@ -89,7 +89,7 @@ namespace test {
             m_Shader->SetUniformMat4("u_MVP", mvp);
             m_Shader->SetUniform1f("u_Mix", m_Mix);
 
-            renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
+            renderer.Draw(*m_Shader, *m_VAO, *m_IndexBuffer);
         }
     }
 

@@ -35,5 +35,8 @@ namespace test {
         float m_Mix = 0.2;
 
         std::unique_ptr<Camera> m_Camera;
+
+        float m_AmbientStrength = 0.1f, m_SpecularStrength = 0.5f;
+        unsigned int m_Shininess = 32;
     };
 }

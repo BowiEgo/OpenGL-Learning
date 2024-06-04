@@ -29,6 +29,8 @@ void VertexArray::AddBuffer(const VertexBuffer &vb, const VertexBufferLayout &la
             element.normalized, layout.GetStride(), (const void*)(intptr_t)offset));
         offset += element.count * VertexBufferElement::GetSizeOfType(element.type);
     }
+
+    m_Count = vb.GetCount();
 }
 
 void VertexArray::Bind() const

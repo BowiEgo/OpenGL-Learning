@@ -82,7 +82,7 @@ namespace test {
             m_Shader->Bind(); 
             m_Shader->SetUniformMat4("u_MVP", mvp);
 
-            renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
+            renderer.Draw(*m_Shader, *m_VAO, *m_IndexBuffer);
         }
 
         {
@@ -91,7 +91,7 @@ namespace test {
             m_Shader->Bind(); 
             m_Shader->SetUniformMat4("u_MVP", mvp);
 
-            renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
+            renderer.Draw(*m_Shader, *m_VAO, *m_IndexBuffer);
         }
     }
 

@@ -26,51 +26,48 @@ namespace test {
         // --------------------
         // Model datas
         // --------------------
-        GLfloat vertices[] = {
-            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  // A 0
-             0.5f, -0.5f, -0.5f,  1.0f, 0.0f,  // B 1
-             0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  // C 2
-            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  // D 3
-            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  // E 4
-             0.5f, -0.5f,  0.5f,  1.0f, 0.0f,   // F 5
-             0.5f,  0.5f,  0.5f,  1.0f, 1.0f,   // G 6
-            -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,   // H 7
-    
-            -0.5f,  0.5f, -0.5f,  0.0f, 0.0f,  // D 8
-            -0.5f, -0.5f, -0.5f,  1.0f, 0.0f,  // A 9
-            -0.5f, -0.5f,  0.5f,  1.0f, 1.0f,  // E 10
-            -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,  // H 11
-             0.5f, -0.5f, -0.5f,  0.0f, 0.0f,   // B 12
-             0.5f,  0.5f, -0.5f,  1.0f, 0.0f,   // C 13
-             0.5f,  0.5f,  0.5f,  1.0f, 1.0f,   // G 14
-             0.5f, -0.5f,  0.5f,  0.0f, 1.0f,   // F 15
-    
-            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  // A 16
-             0.5f, -0.5f, -0.5f,  1.0f, 0.0f,   // B 17
-             0.5f, -0.5f,  0.5f,  1.0f, 1.0f,   // F 18
-            -0.5f, -0.5f,  0.5f,  0.0f, 1.0f,  // E 19
-             0.5f,  0.5f, -0.5f,  0.0f, 0.0f,  // C 20
-            -0.5f,  0.5f, -0.5f,  1.0f, 0.0f,  // D 21
-            -0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  // H 22
-             0.5f,  0.5f,  0.5f,  0.0f, 1.0f,  // G 23
-        };
-        // index data
-        GLuint indices[] = {
-            // front and back
-             0,  3,  2,
-             2,  1,  0,
-             4,  5,  6,
-             6,  7,  4,
-            // left and right
-            11,  8,  9,
-             9, 10, 11,
-            12, 13, 14,
-            14, 15, 12,
-            // bottom and top
-            16, 17, 18,
-            18, 19, 16,
-            20, 21, 22,
-            22, 23, 20
+        float vertices[] = {
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+             0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
         };
         
         // --------------------
@@ -80,9 +77,7 @@ namespace test {
 
         VertexBufferLayout layout;
         layout.Push<float>(3);
-        layout.Push<float>(2);
-
-        m_IBO = std::make_unique<IndexBuffer>(indices, 36);
+        layout.Push<float>(3);
 
         // Object model
         m_Obj_VAO = std::make_unique<VertexArray>();
@@ -130,6 +125,10 @@ namespace test {
 
         Renderer renderer;
 
+        float radius = 2.0f;
+        m_LightPosition.x = sin(glfwGetTime()) * radius;
+        m_LightPosition.z = cos(glfwGetTime()) * radius;
+
         {
             // --------------------
             // Model View Projection
@@ -142,11 +141,15 @@ namespace test {
             // Draw object
             // --------------------
             m_ObjShader->Bind();
-            m_ObjShader->SetUniformMat4("model", model);
-            m_ObjShader->SetUniformMat4("view", m_View);
-            m_ObjShader->SetUniformMat4("projection", m_Proj);
-
-            renderer.Draw(*m_Obj_VAO, *m_IBO, *m_ObjShader);
+            m_ObjShader->SetUniformMat4("modelMatrix", model);
+            m_ObjShader->SetUniformMat4("viewMatrix", m_View);
+            m_ObjShader->SetUniformMat4("projectionMatrix", m_Proj);
+            m_ObjShader->SetUniform3f("u_LightPosition", m_LightPosition.x, m_LightPosition.y, m_LightPosition.z);
+            m_ObjShader->SetUniform3f("u_CameraPosition", m_Camera->GetPosition().x, m_Camera->GetPosition().y, m_Camera->GetPosition().z);
+            m_ObjShader->SetUniform1f("u_AmbientStrength", m_AmbientStrength);
+            m_ObjShader->SetUniform1f("u_SpecularStrength", m_SpecularStrength);
+            m_ObjShader->SetUniform1f("u_Shininess", m_Shininess);
+            renderer.Draw(*m_ObjShader, *m_Obj_VAO);
 
             // --------------------
             // Draw light
@@ -154,16 +157,17 @@ namespace test {
             m_LightShader->Bind();
             model = glm::translate(model, m_LightPosition);
             model = glm::scale(model, glm::vec3(0.2f));
-            m_LightShader->SetUniformMat4("model", model);
-            m_LightShader->SetUniformMat4("view", m_View);
-            m_LightShader->SetUniformMat4("projection", m_Proj);
+            m_LightShader->SetUniformMat4("modelMatrix", model);
+            m_LightShader->SetUniformMat4("viewMatrix", m_View);
+            m_LightShader->SetUniformMat4("projectionMatrix", m_Proj);
 
-            renderer.Draw(*m_Light_VAO, *m_IBO, *m_LightShader);
+            renderer.Draw(*m_LightShader, *m_Light_VAO);
         }
     }
 
     void TestBasicLighting::OnImGuiRender()
     {
+        ImGui::Text("Camera");
         float fov = m_Camera->GetFOV();
         if (ImGui::SliderFloat("FOV", &fov, 0.0f, 180.0f))
             m_Camera->SetFOV(fov);
@@ -173,20 +177,22 @@ namespace test {
             m_Camera->SetAspectRatio(aspectRatio);
 
         glm::vec3 camPos = m_Camera->GetPosition();
-        if (ImGui::SliderFloat("CamPosX", &camPos.x, 0.0f, 10.0f))
+        if (ImGui::SliderFloat("CamPosX", &camPos.x, -10.0f, 10.0f))
             m_Camera->SetPositionX(camPos.x);
-        if (ImGui::SliderFloat("CamPosY", &camPos.y, 0.0f, 10.0f))
+        if (ImGui::SliderFloat("CamPosY", &camPos.y, -10.0f, 10.0f))
             m_Camera->SetPositionY(camPos.y);
-        if (ImGui::SliderFloat("CamPosZ", &camPos.z, 0.0f, 10.0f))
+        if (ImGui::SliderFloat("CamPosZ", &camPos.z, -10.0f, 10.0f))
             m_Camera->SetPositionZ(camPos.z);
+
+        ImGui::Text("Light");
+        ImGui::SliderFloat("AmbientStrength", &m_AmbientStrength, 0.0f, 10.0f);
+        ImGui::SliderFloat("SpecularStrength", &m_SpecularStrength, 0.0f, 10.0f);
+        ImGui::SliderInt("Shininess", (int*)&m_Shininess, 0, 256);
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     }
 
     void TestBasicLighting::ProcessInput(float deltaTime)
     {
-        // m_Camera->ProcessKeyboardMovement(deltaTime);
-        // m_Camera->ProcessMouseMovement();
-        // m_Camera->ProcessMouseScroll();
     }
 }

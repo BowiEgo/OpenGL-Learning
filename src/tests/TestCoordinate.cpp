@@ -160,7 +160,7 @@ namespace test {
                 glm::mat4 mvp = vp * model;
                 m_Shader->SetUniformMat4("u_MVP", mvp);
 
-                renderer.Draw(*m_VAO, *m_IBO, *m_Shader);
+                renderer.Draw(*m_Shader, *m_VAO, *m_IBO);
             }
         }
     }
