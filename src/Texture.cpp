@@ -56,5 +56,6 @@ void Texture::Unbind() const
 
 void Texture::SetWrapping(GLenum pname, GLint param) const
 {
+    Bind();
     GLCall(glTexParameteri(GL_TEXTURE_2D, pname, param));
 }

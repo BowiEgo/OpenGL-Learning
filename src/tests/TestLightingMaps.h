@@ -13,11 +13,11 @@
 #include <memory>
 
 namespace test {
-    class TestBasicLighting : public Test
+    class TestLightingMaps : public Test
     {
     public:
-        TestBasicLighting(GLFWwindow* window);
-        ~TestBasicLighting();
+        TestLightingMaps(GLFWwindow* window);
+        ~TestLightingMaps();
 
         void OnUpdate(float deltaTime) override;
         void OnRender() override;
@@ -28,14 +28,16 @@ namespace test {
         std::unique_ptr<VertexBuffer> m_VBO;
         std::unique_ptr<IndexBuffer> m_IBO;
         std::unique_ptr<Shader> m_ObjShader, m_LightShader;
+        std::unique_ptr<Texture> m_DiffuseTexture, m_SpecularTexture, m_EmissionTexture;
         glm::vec3 m_ObjPositions, m_LightPosition;
 
         glm::mat4 m_Proj, m_View;
-        float m_Mix = 0.2;
-
         std::unique_ptr<Camera> m_Camera;
 
-        float m_AmbientStrength = 0.1f, m_SpecularStrength = 0.5f;
-        unsigned int m_Shininess = 32;
+        float m_MaterialShininess = 32.0f, m_MaterialEmmisionStength = 1.0f;
+
+        float m_LightAmbient[3] = { 0.2f, 0.2f, 0.2f },
+              m_LightDiffuse[3] = { 0.5f, 0.5f, 0.5f },
+              m_LightSpecular[3] = { 1.0f, 1.0f, 1.0f };
     };
 }

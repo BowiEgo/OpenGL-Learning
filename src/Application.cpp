@@ -20,6 +20,7 @@
 #include "tests/TestCamera.h"
 #include "tests/TestBasicLighting.h"
 #include "tests/TestMaterial.h"
+#include "tests/TestLightingMaps.h"
 
 int main(void)
 {
@@ -93,6 +94,7 @@ int main(void)
     testMenu->RegisterTest<test::TestCamera>("Camera");
     testMenu->RegisterTest<test::TestBasicLighting>("Color");
     testMenu->RegisterTest<test::TestMaterial>("Material");
+    testMenu->RegisterTest<test::TestLightingMaps>("LightingMaps");
 
     // test::TestClearColor test;
 

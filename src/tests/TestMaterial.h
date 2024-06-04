@@ -28,7 +28,6 @@ namespace test {
         std::unique_ptr<VertexBuffer> m_VBO;
         std::unique_ptr<IndexBuffer> m_IBO;
         std::unique_ptr<Shader> m_ObjShader, m_LightShader;
-        std::unique_ptr<Texture> m_Texture1, m_Texture2;
         glm::vec3 m_ObjPositions, m_LightPosition;
 
         glm::mat4 m_Proj, m_View;
