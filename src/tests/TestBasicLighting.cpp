@@ -101,12 +101,14 @@ namespace test {
         // Shader uniforms
         m_ObjShader->Bind();
         m_ObjShader->SetUniform3f("u_ObjectColor", m_ObjectColor.x, m_ObjectColor.y, m_ObjectColor.z);
-        m_ObjShader->SetUniform3f("u_LightColor", u_LightColor.x, u_LightColor.y, u_LightColor.z);
+        m_ObjShader->SetUniformVec3("u_LightColor", u_LightColor);
 
         // Light shader
         std::string lightVertexSrc = FileSystem::ReadFile("../res/shaders/LightCube.vert");
         std::string lightFragSrc = FileSystem::ReadFile("../res/shaders/LightCube.frag");
         m_LightShader = std::make_unique<Shader>(lightVertexSrc, lightFragSrc);
+        m_LightShader->Bind();
+        m_LightShader->SetUniformVec3("u_Color", u_LightColor);
     }
 
     TestBasicLighting::~TestBasicLighting()
@@ -120,7 +122,7 @@ namespace test {
 
     void TestBasicLighting::OnRender()
     {
-        GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
         Renderer renderer;

@@ -92,7 +92,7 @@ int main(void)
     testMenu->RegisterTest<test::TestTransform>("Transform");
     testMenu->RegisterTest<test::TestCoordinate>("Coordinate");
     testMenu->RegisterTest<test::TestCamera>("Camera");
-    testMenu->RegisterTest<test::TestBasicLighting>("Color");
+    testMenu->RegisterTest<test::TestBasicLighting>("BasicLighting");
     testMenu->RegisterTest<test::TestMaterial>("Material");
     testMenu->RegisterTest<test::TestLightingMaps>("LightingMaps");
 
@@ -124,7 +124,7 @@ int main(void)
         deltaTime = currentTime - lastTime;
         lastTime = currentTime;
 
-        GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
         /* Render here */
         renderer.Clear();
 
