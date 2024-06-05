@@ -113,6 +113,7 @@ namespace test {
 
     TestBasicLighting::~TestBasicLighting()
     {
+        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
     }
 
     void TestBasicLighting::OnUpdate(float deltaTime)
@@ -174,10 +175,6 @@ namespace test {
         if (ImGui::SliderFloat("FOV", &fov, 0.0f, 180.0f))
             m_Camera->SetFOV(fov);
 
-        float aspectRatio = m_Camera->GetAspectRatio();
-        if (ImGui::SliderFloat("AspectRatio", &aspectRatio, 0.0f, 10.0f))
-            m_Camera->SetAspectRatio(aspectRatio);
-
         glm::vec3 camPos = m_Camera->GetPosition();
         if (ImGui::SliderFloat("CamPosX", &camPos.x, -10.0f, 10.0f))
             m_Camera->SetPositionX(camPos.x);
@@ -196,5 +193,10 @@ namespace test {
 
     void TestBasicLighting::ProcessInput(float deltaTime)
     {
+    }
+
+    void TestBasicLighting::SetCameraAspectRatio(float aspectRatio)
+    {
+        m_Camera->SetAspectRatio(aspectRatio);
     }
 }

@@ -33,6 +33,12 @@ Camera::~Camera()
 {
 }
 
+void Camera::SetAspectRatio(float aspectRatio)
+{
+    if (m_AspectRatio != aspectRatio)
+        m_AspectRatio = aspectRatio;
+}
+
 void Camera::SetPosition(const float position[3])
 {
     m_CameraPos = glm::vec3(position[0], position[1], position[2]);

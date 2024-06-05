@@ -55,10 +55,12 @@ namespace test {
 
     TestTransform::~TestTransform()
     {
+        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
     }
 
     void TestTransform::OnUpdate(float deltaTime)
     {
+        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
     }
 
     void TestTransform::OnRender()

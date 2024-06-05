@@ -1,9 +1,9 @@
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "Log.h"
 #include "Renderer.h"
+#include "Framebuffer.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -23,6 +23,33 @@
 #include "tests/TestLightingMaps.h"
 #include "tests/TestLightCasters.h"
 
+void RenderUI()
+{
+    // Create a dockspace
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->WorkPos);
+    ImGui::SetNextWindowSize(viewport->WorkSize);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+    window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+    ImGui::Begin("DockSpace Demo", nullptr, window_flags);
+
+    ImGuiIO& io = ImGui::GetIO();
+    if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+    {
+        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+    }
+    else
+    {
+        ImGui::Text("Docking is not enabled!");
+    }
+    ImGui::End();
+}
+
 int main(void)
 {
     Log::Init();
@@ -41,7 +68,7 @@ int main(void)
     #endif
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(960, 540, "OpenGL Learning", NULL, NULL);
+    window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGL Learning", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -113,6 +140,13 @@ int main(void)
     float deltaTime = 0.0f;
     float lastTime = 0.0f;
 
+    // Framebuffer
+    FramebufferSpecification fbSpec;
+    fbSpec.Width = 1280;
+    fbSpec.Height = 720;
+    std::shared_ptr<Framebuffer> m_Framebuffer = Framebuffer::Create(fbSpec);
+    glm::vec2 m_ViewportSize(0.0f);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -126,7 +160,7 @@ int main(void)
         deltaTime = currentTime - lastTime;
         lastTime = currentTime;
 
-        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
+        GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
         /* Render here */
         renderer.Clear();
 
@@ -134,18 +168,37 @@ int main(void)
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        
+
+        RenderUI();
+
         if (currentTest)
         {
+            currentTest->SetCameraAspectRatio(m_ViewportSize.x / m_ViewportSize.y);
             currentTest->OnUpdate(deltaTime);
+            m_Framebuffer->Bind();
             currentTest->OnRender();
+            m_Framebuffer->Unbind();
             ImGui::Begin("Test");
             if (ImGui::Button("<-"))
                 backTestMenu();
             currentTest->OnImGuiRender();
             ImGui::End();
         }
-       
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+        ImGui::Begin("Viewport");
+        ImVec2 viewportPanelSize =  ImGui::GetContentRegionAvail();
+        if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize))
+        {
+            m_Framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
+            m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+            currentTest->SetCameraAspectRatio(viewportPanelSize.x / viewportPanelSize.y);
+        }
+        uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+        ImGui::Image((void*)(uintptr_t)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+        ImGui::End();
+        ImGui::PopStyleVar();
+
         // ImGui rendering
         ImGui::Render();
 

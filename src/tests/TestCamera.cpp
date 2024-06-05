@@ -113,6 +113,7 @@ namespace test {
 
     TestCamera::~TestCamera()
     {
+        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
     }
 
     void TestCamera::OnUpdate(float deltaTime)
@@ -159,9 +160,7 @@ namespace test {
         if (ImGui::SliderFloat("FOV", &fov, 0.0f, 180.0f))
             m_Camera->SetFOV(fov);
 
-        float aspectRatio = m_Camera->GetAspectRatio();
-        if (ImGui::SliderFloat("AspectRatio", &aspectRatio, 0.0f, 10.0f))
-            m_Camera->SetAspectRatio(aspectRatio);
+        
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     }
@@ -172,5 +171,10 @@ namespace test {
         m_Camera->ProcessKeyboardMovement(deltaTime);
         m_Camera->ProcessMouseMovement();
         m_Camera->ProcessMouseScroll();
+    }
+
+    void TestCamera::SetCameraAspectRatio(const float aspectRatio)
+    {
+        m_Camera->SetAspectRatio(aspectRatio);
     }
 }

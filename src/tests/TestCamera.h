@@ -23,6 +23,7 @@ namespace test {
         void OnRender() override;
         void OnImGuiRender() override;
         void ProcessInput(float deltaTime);
+        void SetCameraAspectRatio(const float aspectRatio) override;
     private:
         std::unique_ptr<VertexArray> m_VAO;
         std::unique_ptr<VertexBuffer> m_VBO;

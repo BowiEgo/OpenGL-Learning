@@ -8,7 +8,7 @@
 namespace test {
     TestTexture2DContainer::TestTexture2DContainer(GLFWwindow* window)
       : Test(window),
-        m_Proj(glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f)),
+        m_Proj(glm::ortho(0.0f, WINDOW_WIDTH, 0.0f, WINDOW_HEIGHT, -1.0f, 1.0f)),
         m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)))
     {
         float vertices[4 * 8] = {
@@ -65,6 +65,7 @@ namespace test {
 
     TestTexture2DContainer::~TestTexture2DContainer()
     {
+        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
     }
 
     void TestTexture2DContainer::OnUpdate(float deltaTime)

@@ -130,6 +130,7 @@ namespace test {
 
     TestLightCasters::~TestLightCasters()
     {
+        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
     }
 
     void TestLightCasters::OnUpdate(float deltaTime)
@@ -239,9 +240,7 @@ namespace test {
         if (ImGui::SliderFloat("FOV", &fov, 0.0f, 180.0f))
             m_Camera->SetFOV(fov);
 
-        float aspectRatio = m_Camera->GetAspectRatio();
-        if (ImGui::SliderFloat("AspectRatio", &aspectRatio, 0.0f, 10.0f))
-            m_Camera->SetAspectRatio(aspectRatio);
+        
 
         if (ImGui::SliderFloat3("Position##Camera", m_CameraPos, -5.0f, 5.0f))
             m_Camera->SetPosition(m_CameraPos);
@@ -285,5 +284,10 @@ namespace test {
 
     void TestLightCasters::ProcessInput(float deltaTime)
     {
+    }
+
+    void TestLightCasters::SetCameraAspectRatio(float aspectRatio)
+    {
+        m_Camera->SetAspectRatio(aspectRatio);
     }
 }

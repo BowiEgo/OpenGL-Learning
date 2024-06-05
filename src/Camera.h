@@ -7,7 +7,7 @@ class Camera
 {
 public:
     Camera(float fov = 45.0f,
-        float aspectRatio = 960.0f / 540.0f,
+        float aspectRatio = WINDOW_WIDTH / WINDOW_HEIGHT,
         const float position[3] = nullptr,
         const float target[3] = nullptr
     );
@@ -22,7 +22,7 @@ public:
     inline glm::vec3 GetUp() const { return m_CameraUp; }
 
     inline void SetFOV(float fov) { m_FOV = fov; }
-    inline void SetAspectRatio(float aspectRatio) { m_AspectRatio = aspectRatio; }
+    void SetAspectRatio(float aspectRatio);
     void SetPosition(const float position[3]);
     void SetPosition(glm::vec3 position);
     void SetPositionX(float x);
@@ -35,7 +35,7 @@ public:
     void ProcessMouseScroll();
 private:
     float m_FOV = 45.0f;
-    float m_AspectRatio = 960.0f / 540.0f;
+    float m_AspectRatio = WINDOW_WIDTH / WINDOW_HEIGHT;
     glm::vec3 m_CameraPos;
     glm::vec3 m_CameraTarget;
     glm::vec3 m_CameraFront, m_CameraRight, m_CameraUp = glm::vec3(0.0f, 1.0f,  0.0f);

@@ -29,7 +29,7 @@ std::string ReadFile(const std::string& filepath)
 namespace test {
     TestCoordinate::TestCoordinate(GLFWwindow* window)
       : Test(window),
-        m_Proj(glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 0.1f, 100.f)),
+        m_Proj(glm::perspective(glm::radians(45.0f), WINDOW_WIDTH / WINDOW_HEIGHT, 0.1f, 100.f)),
         m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f)))
     {
         GLCall(glEnable(GL_DEPTH_TEST));
@@ -127,6 +127,7 @@ namespace test {
 
     TestCoordinate::~TestCoordinate()
     {
+        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
     }
 
     void TestCoordinate::OnUpdate(float deltaTime)
@@ -175,5 +176,9 @@ namespace test {
         ImGui::SliderFloat("ViewZ", &m_ViewZ, -5.0f, 5.0f);
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    }
+    
+    void TestCoordinate::SetCameraAspectRatio(const float aspectRatio)
+    {
     }
 }

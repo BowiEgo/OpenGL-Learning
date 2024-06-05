@@ -38,3 +38,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 target_include_directories(OpenGL_Learning PRIVATE "${PROJECT_SOURCE_DIR}/vendors")
+
+target_compile_definitions(OpenGL_Learning PRIVATE WINDOW_WIDTH=1280.0f WINDOW_HEIGHT=720.0f)

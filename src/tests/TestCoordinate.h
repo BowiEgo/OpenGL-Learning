@@ -16,6 +16,7 @@ namespace test {
         void OnUpdate(float deltaTime) override;
         void OnRender() override;
         void OnImGuiRender() override;
+        void SetCameraAspectRatio(const float aspectRatio) override;
      private:
         std::unique_ptr<VertexArray> m_VAO;
         std::unique_ptr<VertexBuffer> m_VBO;
@@ -27,7 +28,7 @@ namespace test {
         glm::mat4 m_Proj, m_View;
         float m_Mix = 0.2;
         float m_FOV = 45.0f;
-        float m_AspectRatio = 960.0f / 540.0f;
+        float m_AspectRatio = WINDOW_WIDTH / WINDOW_HEIGHT;
         float m_ViewX = 0.0f;
         float m_ViewY = 0.0f;
         float m_ViewZ = -3.0f;

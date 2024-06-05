@@ -9,7 +9,7 @@
 namespace test {
     TestTexture2D::TestTexture2D(GLFWwindow* window)
       : Test(window),
-        m_Proj(glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f)),
+        m_Proj(glm::ortho(0.0f, WINDOW_WIDTH, 0.0f, WINDOW_HEIGHT, -1.0f, 1.0f)),
         m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0))),
         m_TranslationA(200, 200, 0), m_TranslationB(400, 200, 0)
     {
@@ -61,6 +61,7 @@ namespace test {
     
     TestTexture2D::~TestTexture2D()
     {
+        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
     }
 
     void TestTexture2D::OnUpdate(float deltaTime)
@@ -97,11 +98,11 @@ namespace test {
 
     void TestTexture2D::OnImGuiRender()
     {
-        ImGui::SliderFloat("TranslationA-X", &m_TranslationA.x, 0.0f, 960.0f);
-        ImGui::SliderFloat("TranslationA-Y", &m_TranslationA.y, 0.0f, 540.0f);
+        ImGui::SliderFloat("TranslationA-X", &m_TranslationA.x, 0.0f, WINDOW_WIDTH);
+        ImGui::SliderFloat("TranslationA-Y", &m_TranslationA.y, 0.0f, WINDOW_HEIGHT);
 
-        ImGui::SliderFloat("TranslationB-X", &m_TranslationB.x, 0.0f, 960.0f);
-        ImGui::SliderFloat("TranslationB-Y", &m_TranslationB.y, 0.0f, 540.0f);
+        ImGui::SliderFloat("TranslationB-X", &m_TranslationB.x, 0.0f, WINDOW_WIDTH);
+        ImGui::SliderFloat("TranslationB-Y", &m_TranslationB.y, 0.0f, WINDOW_HEIGHT);
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     }
 }

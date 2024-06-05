@@ -6,6 +6,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "Camera.h"
+
 namespace test {
     class Test
     {
@@ -14,9 +16,10 @@ namespace test {
         Test(GLFWwindow* window) : m_Window(window) {}
         virtual ~Test() {};
 
-        virtual void OnUpdate(float deltaTime) {}
+        virtual void OnUpdate(const float deltaTime) {}
         virtual void OnRender() {}
         virtual void OnImGuiRender() {}
+        virtual void SetCameraAspectRatio(const float aspectRatio) {};
     protected:
         GLFWwindow* m_Window;
     };
