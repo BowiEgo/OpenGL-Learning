@@ -7,12 +7,18 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
+out vec3 v_FragPosition;
 out vec3 v_Normal;
 out vec2 v_TexCoords;
 
 void main()
 {
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(a_Position, 1.0);
+    vec4 modelPosition = modelMatrix * vec4(a_Position, 1.0);
+    vec4 viewPosition = viewMatrix * modelPosition;
+    vec4 projectionPosition = projectionMatrix * viewPosition;
+
+    gl_Position = projectionPosition;
+    v_FragPosition = vec3(modelPosition);
     v_Normal = a_Normal;
     v_TexCoords = a_TexCoords;
 }

@@ -33,12 +33,46 @@ Camera::~Camera()
 {
 }
 
-void Camera::SetPosition(std::initializer_list<float> position)
+void Camera::SetPosition(const float position[3])
 {
-    if (position.size() == 3) {
-        auto it = position.begin();
-        m_CameraPos = glm::vec3(*it, *(it + 1), *(it + 2));
-    }
+    m_CameraPos = glm::vec3(position[0], position[1], position[2]);
+    m_CameraFront = glm::normalize(m_CameraTarget - m_CameraPos);
+    m_CameraRight = glm::normalize(glm::cross(m_CameraFront, m_CameraUp));
+}
+
+void Camera::SetPosition(glm::vec3 position)
+{
+    m_CameraPos = position;
+    m_CameraFront = glm::normalize(m_CameraTarget - m_CameraPos);
+    m_CameraRight = glm::normalize(glm::cross(m_CameraFront, m_CameraUp));
+}
+
+void Camera::SetPositionX(float x)
+{
+    m_CameraPos.x = x;
+    m_CameraFront = glm::normalize(m_CameraTarget - m_CameraPos);
+    m_CameraRight = glm::normalize(glm::cross(m_CameraFront, m_CameraUp));
+}
+
+void Camera::SetPositionY(float y)
+{
+    m_CameraPos.y = y;
+    m_CameraFront = glm::normalize(m_CameraTarget - m_CameraPos);
+    m_CameraRight = glm::normalize(glm::cross(m_CameraFront, m_CameraUp));
+}
+
+void Camera::SetPositionZ(float z)
+{
+    m_CameraPos.z = z;
+    m_CameraFront = glm::normalize(m_CameraTarget - m_CameraPos);
+    m_CameraRight = glm::normalize(glm::cross(m_CameraFront, m_CameraUp));
+}
+
+void Camera::SetTarget(const float target[3])
+{
+    m_CameraTarget = glm::vec3(target[0], target[1], target[2]);
+    m_CameraFront = glm::normalize(m_CameraTarget - m_CameraPos);
+    m_CameraRight = glm::normalize(glm::cross(m_CameraFront, m_CameraUp));
 }
 
 void Camera::ProcessKeyboardMovement(float deltaTime)

@@ -21,6 +21,7 @@
 #include "tests/TestBasicLighting.h"
 #include "tests/TestMaterial.h"
 #include "tests/TestLightingMaps.h"
+#include "tests/TestLightCasters.h"
 
 int main(void)
 {
@@ -95,6 +96,7 @@ int main(void)
     testMenu->RegisterTest<test::TestBasicLighting>("BasicLighting");
     testMenu->RegisterTest<test::TestMaterial>("Material");
     testMenu->RegisterTest<test::TestLightingMaps>("LightingMaps");
+    testMenu->RegisterTest<test::TestLightCasters>("LightCasters");
 
     // test::TestClearColor test;
 

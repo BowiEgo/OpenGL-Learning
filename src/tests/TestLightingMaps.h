@@ -27,7 +27,7 @@ namespace test {
         std::unique_ptr<VertexArray> m_Obj_VAO, m_Light_VAO;
         std::unique_ptr<VertexBuffer> m_VBO;
         std::unique_ptr<IndexBuffer> m_IBO;
-        std::unique_ptr<Shader> m_ObjShader, m_LightShader;
+        std::unique_ptr<Shader> m_ObjShader, m_LightCubeShader;
         std::unique_ptr<Texture> m_DiffuseTexture, m_SpecularTexture, m_EmissionTexture;
         glm::vec3 m_ObjPositions, m_LightPosition;
 

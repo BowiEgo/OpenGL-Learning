@@ -23,10 +23,12 @@ public:
 
     inline void SetFOV(float fov) { m_FOV = fov; }
     inline void SetAspectRatio(float aspectRatio) { m_AspectRatio = aspectRatio; }
-    void SetPosition(std::initializer_list<float> position);
-    inline void SetPositionX(float x) { m_CameraPos.x = x; };
-    inline void SetPositionY(float y) { m_CameraPos.y = y; };
-    inline void SetPositionZ(float z) { m_CameraPos.z = z; };
+    void SetPosition(const float position[3]);
+    void SetPosition(glm::vec3 position);
+    void SetPositionX(float x);
+    void SetPositionY(float y);
+    void SetPositionZ(float z);
+    void SetTarget(const float target[3]);
 
     void ProcessKeyboardMovement(float deltaTime);
     void ProcessMouseMovement();

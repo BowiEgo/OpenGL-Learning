@@ -108,9 +108,9 @@ namespace test {
         // Light shader
         std::string lightVertexSrc = FileSystem::ReadFile("../res/shaders/LightCube.vert");
         std::string lightFragSrc = FileSystem::ReadFile("../res/shaders/LightCube.frag");
-        m_LightShader = std::make_unique<Shader>(lightVertexSrc, lightFragSrc);
-        m_LightShader->Bind();
-        m_LightShader->SetUniformVec3("u_Color", { 1.0f, 1.0f, 1.0f });
+        m_LightCubeShader = std::make_unique<Shader>(lightVertexSrc, lightFragSrc);
+        m_LightCubeShader->Bind();
+        m_LightCubeShader->SetUniformVec3("u_Color", { 1.0f, 1.0f, 1.0f });
     }
 
     TestMaterial::~TestMaterial()
@@ -183,13 +183,13 @@ namespace test {
             // --------------------
             model = glm::translate(model, m_LightPosition);
             model = glm::scale(model, glm::vec3(0.2f));
-            m_LightShader->Bind();
-            m_LightShader->SetUniformMat4("modelMatrix", model);
-            m_LightShader->SetUniformMat4("viewMatrix", m_View);
-            m_LightShader->SetUniformMat4("projectionMatrix", m_Proj);
-            m_LightShader->SetUniformVec3("u_Color", lightColor);
+            m_LightCubeShader->Bind();
+            m_LightCubeShader->SetUniformMat4("modelMatrix", model);
+            m_LightCubeShader->SetUniformMat4("viewMatrix", m_View);
+            m_LightCubeShader->SetUniformMat4("projectionMatrix", m_Proj);
+            m_LightCubeShader->SetUniformVec3("u_Color", lightColor);
 
-            renderer.Draw(*m_LightShader, *m_Light_VAO);
+            renderer.Draw(*m_LightCubeShader, *m_Light_VAO);
         }
     }
 
