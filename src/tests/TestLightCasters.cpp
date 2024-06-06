@@ -143,9 +143,9 @@ namespace test {
         float currentTime = glfwGetTime();
 
         float lightColor[3] = {
-            (m_LightAmbient[0] + m_LightDiffuse[0] + m_LightSpecular[0]) / 3.0f,
-            (m_LightAmbient[1] + m_LightDiffuse[1] + m_LightSpecular[1]) / 3.0f,
-            (m_LightAmbient[2] + m_LightDiffuse[2] + m_LightSpecular[2]) / 3.0f,
+            (m_LightAmbient[0] + m_LightDiffuse[0] + m_LightSpecular[0]) / 2.0f,
+            (m_LightAmbient[1] + m_LightDiffuse[1] + m_LightSpecular[1]) / 2.0f,
+            (m_LightAmbient[2] + m_LightDiffuse[2] + m_LightSpecular[2]) / 2.0f,
         };
 
         m_DiffuseTexture->Bind();
@@ -174,14 +174,19 @@ namespace test {
             m_ObjShader->SetUniformVec3("u_DirectionalLight.specular",  m_LightSpecular);
             m_ObjShader->SetUniformVec3("u_DirectionalLight.direction", m_DirectionalLightDir);
 
-            m_ObjShader->SetUniformBool("u_PointLight.enable",    m_IsEnabled_PointLight);
-            m_ObjShader->SetUniformVec3("u_PointLight.ambient",   m_LightAmbient);
-            m_ObjShader->SetUniformVec3("u_PointLight.diffuse",   m_LightDiffuse);
-            m_ObjShader->SetUniformVec3("u_PointLight.specular",  m_LightSpecular);
-            m_ObjShader->SetUniformVec3("u_PointLight.position",  m_PointLightPos);
-            m_ObjShader->  SetUniform1f("u_PointLight.constant",  1.0f);
-            m_ObjShader->  SetUniform1f("u_PointLight.linear",    0.09f);
-            m_ObjShader->  SetUniform1f("u_PointLight.quadratic", 0.032f);
+            m_ObjShader->  SetUniform1i("u_NR_PointLights",  m_PointLightPositions.size());
+            for (int i = 0; i < m_PointLightPositions.size(); i++)
+            {
+                std::string uniformBase = "u_PointLights[" + std::to_string(i) + "].";
+                m_ObjShader->SetUniformBool((uniformBase + "enable").c_str(),    m_IsEnabled_PointLight);
+                m_ObjShader->SetUniformVec3((uniformBase + "ambient").c_str(),   m_LightAmbient);
+                m_ObjShader->SetUniformVec3((uniformBase + "diffuse").c_str(),   m_LightDiffuse);
+                m_ObjShader->SetUniformVec3((uniformBase + "specular").c_str(),  m_LightSpecular);
+                m_ObjShader->SetUniformVec3((uniformBase + "position").c_str(),  m_PointLightPositions[i]);
+                m_ObjShader->  SetUniform1f((uniformBase + "constant").c_str(),  1.0f);
+                m_ObjShader->  SetUniform1f((uniformBase + "linear").c_str(),    0.09f);
+                m_ObjShader->  SetUniform1f((uniformBase + "quadratic").c_str(), 0.032f);
+            }
 
             m_ObjShader->SetUniformBool("u_SpotLight.enable",      m_IsEnabled_SpotLight);
             m_ObjShader->SetUniformVec3("u_SpotLight.ambient",     m_LightAmbient);
@@ -212,16 +217,21 @@ namespace test {
             // --------------------
             if (m_IsEnabled_PointLight)
             {
-                model = glm::mat4(1.0f);
-                model = glm::translate(model, glm::vec3(m_PointLightPos[0], m_PointLightPos[1], m_PointLightPos[2]));
-                model = glm::scale(model, glm::vec3(0.2f));
                 m_PointLightCubeShader->Bind();
                 m_PointLightCubeShader->SetUniformMat4("projectionMatrix", m_Camera->GetProjMatrix());
                 m_PointLightCubeShader->SetUniformMat4("viewMatrix", m_Camera->GetViewMatrix());
-                m_PointLightCubeShader->SetUniformMat4("modelMatrix", model);
                 m_PointLightCubeShader->SetUniformVec3("u_Color", lightColor);
+                
+                for (int i = 0; i < m_PointLightPositions.size(); i++)
+                {
+                    model = glm::mat4(1.0f);
+                    model = glm::translate(model, m_PointLightPositions[i]);
+                    model = glm::scale(model, glm::vec3(0.2f));
+                    m_PointLightCubeShader->SetUniformMat4("modelMatrix", model);
+  
 
-                renderer.Draw(*m_PointLightCubeShader, *m_LightCube_VAO);
+                    renderer.Draw(*m_PointLightCubeShader, *m_LightCube_VAO);
+                }
             }
         }
     }
@@ -248,8 +258,8 @@ namespace test {
 
         ImGui::Bullet();ImGui::Text("Point Light");
         ImGui::SameLine();ImGui::ToggleButton("IsEnabled##PointLight", &m_IsEnabled_PointLight);
-        if (m_IsEnabled_PointLight)
-            ImGui::SliderFloat3("Position##PointLight", m_PointLightPos, -5.0f, 5.0f);
+        // if (m_IsEnabled_PointLight)
+        //     ImGui::SliderFloat3("Position##PointLight", m_PointLightPos, -5.0f, 5.0f);
 
         ImGui::Bullet();ImGui::Text("Spot Light");
         ImGui::SameLine();ImGui::ToggleButton("IsEnabled##SpotLight", &m_IsEnabled_SpotLight);

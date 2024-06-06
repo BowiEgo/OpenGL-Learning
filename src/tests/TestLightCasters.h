@@ -11,6 +11,7 @@
 #include "Camera.h"
 
 #include <memory>
+#include <vector>
 
 namespace test {
     class TestLightCasters : public Test
@@ -58,12 +59,17 @@ namespace test {
         float m_DirectionalLightDir[3] = { -0.2f, -1.0f, -0.3f };
 
         bool m_IsEnabled_PointLight = true;
-        float m_PointLightPos[3] = { 1.2f, 1.0f, 2.0f };
+        std::vector<glm::vec3> m_PointLightPositions = {
+            glm::vec3( 0.7f,  0.2f,  2.0f),
+            glm::vec3( 2.3f, -3.3f, -4.0f),
+            glm::vec3(-4.0f,  2.0f, -12.0f),
+            glm::vec3( 0.0f,  0.0f, -3.0f)
+        };
 
         bool m_IsEnabled_SpotLight = true;
-        float m_SpotLightPhi = 24.0f;
+        float m_SpotLightPhi = 16.0f;
         float m_SpotLightCutOff = glm::cos(glm::radians(m_SpotLightPhi));
-        float m_SpotLight_SoftEdge = 5.0f;
-        float m_SpotLightOuterCutOff = glm::cos(glm::radians(m_SpotLightPhi + 5.0f));
+        float m_SpotLight_SoftEdge = 1.5f;
+        float m_SpotLightOuterCutOff = glm::cos(glm::radians(m_SpotLightPhi + m_SpotLight_SoftEdge));
     };
 }

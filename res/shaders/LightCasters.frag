@@ -1,4 +1,7 @@
 #version 330 core
+
+#define MAX_LIGHTS 10
+
 struct Material {
     vec3 ambient;
     vec3 diffuse;
@@ -56,8 +59,12 @@ uniform vec3 u_CameraPosition;
 uniform float u_Time;
 
 uniform TexturedMaterial u_Material;
+
 uniform DirLight u_DirectionalLight;
-uniform PointLight u_PointLight;
+
+uniform int u_NR_PointLights;
+uniform PointLight u_PointLights[MAX_LIGHTS];
+
 uniform SpotLight u_SpotLight;
 
 in vec3 v_FragPosition;
@@ -151,13 +158,17 @@ vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
 void main()
 {
+    vec3 final = vec3(0.0);
+    vec3 pointLights = vec3(0.0);
+
     vec3 viewDirection = normalize(u_CameraPosition - v_FragPosition);
 
-    vec3 final = vec3(0.0);
     vec3 directionalLight = calcDirLight(u_DirectionalLight, v_Normal, viewDirection);
-    vec3 pointLight =       calcPointLight(u_PointLight, v_Normal, v_FragPosition, viewDirection);
     vec3 spotight =         calcSpotLight(u_SpotLight, v_Normal, v_FragPosition, viewDirection);
 
-    final = directionalLight + pointLight + spotight;
+    for(int i = 0; i < u_NR_PointLights; i++)
+        pointLights += calcPointLight(u_PointLights[i], v_Normal, v_FragPosition, viewDirection);
+
+    final = directionalLight + pointLights + spotight;
     FragColor = vec4(final, 1.0);
 }
