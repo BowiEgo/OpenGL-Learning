@@ -17,7 +17,6 @@ namespace test {
 
         // Camera
         m_Camera = std::make_unique<Camera>();
-        // glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         GLfloat vertices[] = {
             -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  // A 0
@@ -132,9 +131,7 @@ namespace test {
         m_Texture2->Bind(1);
 
         {
-            m_Proj = glm::perspective(glm::radians(m_Camera->GetFOV()), m_Camera->GetAspectRatio(), 0.1f, 100.f);
-            m_View = glm::lookAt(m_Camera->GetPosition(), m_Camera->GetPosition() + m_Camera->GetFront(), m_Camera->GetUp());
-            glm::mat4 vp = m_Proj * m_View;
+            glm::mat4 vp = m_Camera->GetProjMatrix() * m_Camera->GetViewMatrix();
 
             for (unsigned int i = 0; i < 10; i++)
             {
@@ -159,8 +156,6 @@ namespace test {
         float fov = m_Camera->GetFOV();
         if (ImGui::SliderFloat("FOV", &fov, 0.0f, 180.0f))
             m_Camera->SetFOV(fov);
-
-        
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     }

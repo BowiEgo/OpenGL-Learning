@@ -19,9 +19,7 @@ namespace test {
         // Camera
         // --------------------
         m_Camera = std::make_unique<Camera>();
-        m_Camera->SetPositionZ(6.0f);
         m_Camera->SetPosition({1.2f, 1.2f, 4.2f});
-        // glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         // --------------------
         // Model datas
@@ -136,17 +134,17 @@ namespace test {
             // --------------------
             // Model View Projection
             // --------------------
-            m_Proj = glm::perspective(glm::radians(m_Camera->GetFOV()), m_Camera->GetAspectRatio(), 0.1f, 100.f);
-            m_View = glm::lookAt(m_Camera->GetPosition(), m_Camera->GetTarget(), m_Camera->GetUp());
-            glm::mat4 model = glm::mat4(1.0f);
+            glm::mat4 proj = m_Camera->GetProjMatrix();
+            glm::mat4 view = m_Camera->GetViewMatrix();
+            glm::mat4 model(1.0f);
 
             // --------------------
             // Draw object
             // --------------------
             m_ObjShader->Bind();
+            m_ObjShader->SetUniformMat4("projectionMatrix", proj);
+            m_ObjShader->SetUniformMat4("viewMatrix", view);
             m_ObjShader->SetUniformMat4("modelMatrix", model);
-            m_ObjShader->SetUniformMat4("viewMatrix", m_View);
-            m_ObjShader->SetUniformMat4("projectionMatrix", m_Proj);
             m_ObjShader->SetUniform3f("u_LightPosition", m_LightPosition.x, m_LightPosition.y, m_LightPosition.z);
             m_ObjShader->SetUniform3f("u_CameraPosition", m_Camera->GetPosition().x, m_Camera->GetPosition().y, m_Camera->GetPosition().z);
             m_ObjShader->SetUniform1f("u_AmbientStrength", m_AmbientStrength);
@@ -160,9 +158,9 @@ namespace test {
             m_LightShader->Bind();
             model = glm::translate(model, m_LightPosition);
             model = glm::scale(model, glm::vec3(0.2f));
+            m_LightShader->SetUniformMat4("projectionMatrix", proj);
+            m_LightShader->SetUniformMat4("viewMatrix", view);
             m_LightShader->SetUniformMat4("modelMatrix", model);
-            m_LightShader->SetUniformMat4("viewMatrix", m_View);
-            m_LightShader->SetUniformMat4("projectionMatrix", m_Proj);
 
             renderer.Draw(*m_LightShader, *m_Light_VAO);
         }
@@ -193,6 +191,9 @@ namespace test {
 
     void TestBasicLighting::ProcessInput(float deltaTime)
     {
+        m_Camera->ProcessKeyboardMovement(deltaTime);
+        m_Camera->ProcessMouseMovement();
+        m_Camera->ProcessMouseScroll();
     }
 
     void TestBasicLighting::SetCameraAspectRatio(float aspectRatio)

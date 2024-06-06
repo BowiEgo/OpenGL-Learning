@@ -6,6 +6,27 @@ Input* Input::s_Instance = nullptr;
 GLFWwindow* Input::m_Window = nullptr;
 float Input::m_ScrollOffset = 0.0f;
 
+void Input::SetMousePos(float x, float y)
+{
+    glfwSetCursorPos(m_Window, x, y);
+}
+
+void Input::InitMousePos()
+{
+    SetMousePos(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+}
+
+void Input::DisableCursor()
+{
+    glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Input::EnableCursor()
+{
+    glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    InitMousePos();
+}
+
 bool Input::IsKeyPressedImpl(int keycode)
 {
     auto state = glfwGetKey(m_Window, keycode);

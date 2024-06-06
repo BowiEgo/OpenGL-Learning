@@ -4,6 +4,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include "Log.h"
+
 class Input
 {
 public:
@@ -22,18 +24,13 @@ public:
     inline static float GetMouseX() { return s_Instance->GetMouseXImpl(); }
     inline static float GetMouseY() { return s_Instance->GetMouseYImpl(); }
     inline static float GetMouseScroll() { return s_Instance->GetMouseScrollImpl(); }
-    inline static std::pair<float, float> ProcessMove() {
-        float mouseX = Input::GetMouseX();
-        float mouseY = Input::GetMouseY();
-        s_Instance->m_OffsetX = mouseX - s_Instance->m_LastMouseX;
-        s_Instance->m_OffsetY = mouseY - s_Instance->m_LastMouseY;
-        s_Instance->m_LastMouseX = mouseX;
-        s_Instance->m_LastMouseY = mouseY;
-        return { s_Instance->m_OffsetX, s_Instance->m_OffsetY };
-    };
     inline static float GetMouseOffsetX() { return s_Instance->m_OffsetX; };
     inline static float GetMouseOffsetY() { return s_Instance->m_OffsetY; };
+    static void SetMousePos(float x, float y);
+    static void InitMousePos();
 
+    static void DisableCursor();
+    static void EnableCursor();
 
 protected:
     static bool IsKeyPressedImpl(int keycode);

@@ -32,7 +32,6 @@ namespace test {
         std::unique_ptr<Texture> m_DiffuseTexture, m_SpecularTexture, m_EmissionTexture;
         glm::vec3 m_ObjPositions, m_LightPosition;
 
-        glm::mat4 m_Proj, m_View;
         std::unique_ptr<Camera> m_Camera;
 
         float m_MaterialShininess = 32.0f, m_MaterialEmmisionStength = 1.0f;

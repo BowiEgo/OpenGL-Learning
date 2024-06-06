@@ -169,17 +169,17 @@ namespace test {
             // --------------------
             // Model View Projection
             // --------------------
-            m_Proj = glm::perspective(glm::radians(m_Camera->GetFOV()), m_Camera->GetAspectRatio(), 0.1f, 100.f);
-            m_View = glm::lookAt(m_Camera->GetPosition(), m_Camera->GetTarget(), m_Camera->GetUp());
-            glm::mat4 model = glm::mat4(1.0f);
+            glm::mat4 proj = m_Camera->GetProjMatrix();
+            glm::mat4 view = m_Camera->GetViewMatrix();
+            glm::mat4 model(1.0f);
 
             // --------------------
             // Draw object
             // --------------------
             m_ObjShader->Bind();
+            m_ObjShader->SetUniformMat4("projectionMatrix",     proj);
+            m_ObjShader->SetUniformMat4("viewMatrix",           view);
             m_ObjShader->SetUniformMat4("modelMatrix",          model);
-            m_ObjShader->SetUniformMat4("viewMatrix",           m_View);
-            m_ObjShader->SetUniformMat4("projectionMatrix",     m_Proj);
             m_ObjShader->SetUniformVec3("u_CameraPosition",     m_Camera->GetPosition());
             m_ObjShader->  SetUniform1f("u_Time",               currentTime);
 
@@ -199,9 +199,9 @@ namespace test {
             model = glm::translate(model, m_LightPosition);
             model = glm::scale(model, glm::vec3(0.2f));
             m_LightCubeShader->Bind();
+            m_LightCubeShader->SetUniformMat4("projectionMatrix", proj);
+            m_LightCubeShader->SetUniformMat4("viewMatrix", view);
             m_LightCubeShader->SetUniformMat4("modelMatrix", model);
-            m_LightCubeShader->SetUniformMat4("viewMatrix", m_View);
-            m_LightCubeShader->SetUniformMat4("projectionMatrix", m_Proj);
             m_LightCubeShader->SetUniformVec3("u_Color", lightColor);
 
             renderer.Draw(*m_LightCubeShader, *m_Light_VAO);
@@ -214,14 +214,6 @@ namespace test {
         float fov = m_Camera->GetFOV();
         if (ImGui::SliderFloat("FOV", &fov, 0.0f, 180.0f))
             m_Camera->SetFOV(fov);
-
-        glm::vec3 camPos = m_Camera->GetPosition();
-        if (ImGui::SliderFloat("CamPosX", &camPos.x, -10.0f, 10.0f))
-            m_Camera->SetPositionX(camPos.x);
-        if (ImGui::SliderFloat("CamPosY", &camPos.y, -10.0f, 10.0f))
-            m_Camera->SetPositionY(camPos.y);
-        if (ImGui::SliderFloat("CamPosZ", &camPos.z, -10.0f, 10.0f))
-            m_Camera->SetPositionZ(camPos.z);
 
         ImGui::Bullet();ImGui::Text("Material attributes");
         ImGui::SliderFloat("Shininess##Material", &m_MaterialShininess, 0.0f, 256.0f);
@@ -237,6 +229,9 @@ namespace test {
 
     void TestLightingMaps::ProcessInput(float deltaTime)
     {
+        m_Camera->ProcessKeyboardMovement(deltaTime);
+        m_Camera->ProcessMouseMovement();
+        m_Camera->ProcessMouseScroll();
     }
     
     void TestLightingMaps::SetCameraAspectRatio(const float aspectRatio)

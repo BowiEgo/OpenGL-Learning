@@ -43,14 +43,10 @@ namespace test {
             glm::vec3(-1.3f,  1.0f,  -1.5f)  
         };
 
-        glm::mat4 m_Proj, m_View;
         std::unique_ptr<Camera> m_Camera;
-        float m_CameraPos[3] = { -2.0f, 0.38f, 4.2f };
-        float m_CameraTarget[3] = { 0.0f, 0.0f, 0.0f };
 
         glm::vec3 m_LightPosition = glm::vec3(1.2f, 1.0f, 2.0f);
         float m_MaterialShininess = 32.0f;
-
 
         float m_LightAmbient[3] = { 0.2f, 0.2f, 0.2f },
               m_LightDiffuse[3] = { 0.5f, 0.5f, 0.5f },

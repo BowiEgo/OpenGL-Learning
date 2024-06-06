@@ -25,8 +25,6 @@ namespace test {
         // Camera
         // --------------------
         m_Camera = std::make_unique<Camera>();
-        m_Camera->SetPosition(m_CameraPos);
-        // glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         // --------------------
         // Model datas
@@ -160,18 +158,16 @@ namespace test {
             // --------------------
             // Model View Projection
             // --------------------
-            m_Proj = glm::perspective(glm::radians(m_Camera->GetFOV()), m_Camera->GetAspectRatio(), 0.1f, 100.f);
-            m_View = glm::lookAt(m_Camera->GetPosition(), m_Camera->GetTarget(), m_Camera->GetUp());
-            glm::mat4 model;
-
+            glm::mat4 proj = m_Camera->GetProjMatrix();
+            glm::mat4 view = m_Camera->GetViewMatrix();
+            glm::mat4 model(1.0f);
             // --------------------
             // Draw object
             // --------------------
             m_ObjShader->Bind();
-            m_ObjShader->SetUniformMat4("viewMatrix",           m_View);
-            m_ObjShader->SetUniformMat4("projectionMatrix",     m_Proj);
-            m_ObjShader->SetUniformVec3("u_CameraPosition",     m_Camera->GetPosition());
-            // m_ObjShader->  SetUniform1f("u_Time",               currentTime);
+            m_ObjShader->SetUniformMat4("projectionMatrix", proj);
+            m_ObjShader->SetUniformMat4("viewMatrix",       view);
+            m_ObjShader->SetUniformVec3("u_CameraPosition", m_Camera->GetPosition());
 
             m_ObjShader->  SetUniform1f("u_Material.shininess",        m_MaterialShininess);
 
@@ -223,9 +219,9 @@ namespace test {
                 model = glm::translate(model, glm::vec3(m_PointLightPos[0], m_PointLightPos[1], m_PointLightPos[2]));
                 model = glm::scale(model, glm::vec3(0.2f));
                 m_PointLightCubeShader->Bind();
+                m_PointLightCubeShader->SetUniformMat4("projectionMatrix", m_Camera->GetProjMatrix());
+                m_PointLightCubeShader->SetUniformMat4("viewMatrix", m_Camera->GetViewMatrix());
                 m_PointLightCubeShader->SetUniformMat4("modelMatrix", model);
-                m_PointLightCubeShader->SetUniformMat4("viewMatrix", m_View);
-                m_PointLightCubeShader->SetUniformMat4("projectionMatrix", m_Proj);
                 m_PointLightCubeShader->SetUniformVec3("u_Color", lightColor);
 
                 renderer.Draw(*m_PointLightCubeShader, *m_LightCube_VAO);
@@ -239,13 +235,6 @@ namespace test {
         float fov = m_Camera->GetFOV();
         if (ImGui::SliderFloat("FOV", &fov, 0.0f, 180.0f))
             m_Camera->SetFOV(fov);
-
-        
-
-        if (ImGui::SliderFloat3("Position##Camera", m_CameraPos, -5.0f, 5.0f))
-            m_Camera->SetPosition(m_CameraPos);
-        if (ImGui::SliderFloat3("Target##Camera", m_CameraTarget, -5.0f, 5.0f))
-            m_Camera->SetTarget(m_CameraTarget);
 
         ImGui::Bullet();ImGui::Text("Material");
         ImGui::SliderFloat("Shininess##Material", &m_MaterialShininess, 0.0f, 256.0f);
@@ -284,6 +273,9 @@ namespace test {
 
     void TestLightCasters::ProcessInput(float deltaTime)
     {
+        m_Camera->ProcessKeyboardMovement(deltaTime);
+        m_Camera->ProcessMouseMovement();
+        m_Camera->ProcessMouseScroll();
     }
 
     void TestLightCasters::SetCameraAspectRatio(float aspectRatio)

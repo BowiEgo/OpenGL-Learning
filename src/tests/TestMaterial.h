@@ -31,7 +31,6 @@ namespace test {
         std::unique_ptr<Shader> m_ObjShader, m_LightCubeShader;
         glm::vec3 m_ObjPositions, m_LightPosition;
 
-        glm::mat4 m_Proj, m_View;
         std::unique_ptr<Camera> m_Camera;
 
         float m_MaterialAmbient[3] = { 1.0f, 0.5f, 0.31f },
