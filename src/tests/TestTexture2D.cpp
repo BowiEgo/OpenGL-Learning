@@ -49,7 +49,7 @@ namespace test {
         // shader.SetUniformMat4f("u_MVP", mvp);
 
         // Texture
-        m_Texture = std::make_unique<Texture>("../res/textures/Avatar.png");
+        m_Texture = std::make_unique<Texture2D>("../res/textures/Avatar.png");
         m_Shader->SetUniform1i("u_Texture", 0);
 
         // Test unbind VertexArray, VertexBuffer, IndexBuffer and Shader

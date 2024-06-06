@@ -4,7 +4,7 @@
 
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
-#include "Texture.h"
+#include "Texture2D.h"
 
 namespace test {
     class TestTransform : public Test
@@ -22,7 +22,7 @@ namespace test {
         std::unique_ptr<VertexBuffer> m_VertexBuffer;
         std::unique_ptr<IndexBuffer> m_IndexBuffer;
         std::unique_ptr<Shader> m_Shader, m_Shader2;
-        std::unique_ptr<Texture> m_Texture1, m_Texture2;
+        std::unique_ptr<Texture2D> m_Texture1, m_Texture2;
 
         glm::mat4 m_Proj, m_View;
         glm::mat4 m_Transform, m_Transform2;

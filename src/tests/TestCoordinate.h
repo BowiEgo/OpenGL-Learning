@@ -4,7 +4,7 @@
 
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
-#include "Texture.h"
+#include "Texture2D.h"
 
 namespace test {
     class TestCoordinate : public Test
@@ -22,7 +22,7 @@ namespace test {
         std::unique_ptr<VertexBuffer> m_VBO;
         std::unique_ptr<IndexBuffer> m_IBO;
         std::unique_ptr<Shader> m_Shader;
-        std::unique_ptr<Texture> m_Texture1, m_Texture2;
+        std::unique_ptr<Texture2D> m_Texture1, m_Texture2;
         std::vector<glm::vec3> m_CubePositions;
 
         glm::mat4 m_Proj, m_View;

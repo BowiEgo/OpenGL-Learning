@@ -27,6 +27,7 @@ find_package(glfw3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC spdlog::spdlog_header_only)
 target_link_libraries(${PROJECT_NAME} PRIVATE
@@ -35,6 +36,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
                                       glad::glad
                                       imgui::imgui
                                       glm::glm-header-only
+                                      assimp::assimp
 )
 
 target_include_directories(OpenGL_Learning PRIVATE "${PROJECT_SOURCE_DIR}/vendors")

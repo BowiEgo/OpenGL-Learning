@@ -4,7 +4,7 @@
 
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
-#include "Texture.h"
+#include "Texture2D.h"
 
 #include "FileSystem/FileSystem.h"
 
@@ -31,7 +31,7 @@ namespace test {
         std::unique_ptr<VertexBuffer> m_VBO;
         std::unique_ptr<IndexBuffer> m_IBO;
         std::unique_ptr<Shader> m_ObjShader, m_LightCubeShader;
-        std::unique_ptr<Texture> m_DiffuseTexture, m_SpecularTexture, m_EmissionTexture;
+        std::unique_ptr<Texture2D> m_DiffuseTexture, m_SpecularTexture, m_EmissionTexture;
         glm::vec3 m_ObjPositions, m_LightPosition;
 
         std::unique_ptr<Camera> m_Camera;

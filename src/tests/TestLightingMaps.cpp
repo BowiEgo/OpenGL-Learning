@@ -92,10 +92,10 @@ namespace test {
         // --------------------
         // Texture
         // --------------------
-        m_DiffuseTexture = std::make_unique<Texture>("../res/textures/container2.png");
-        m_SpecularTexture = std::make_unique<Texture>("../res/textures/container2_specular.png");
-        // m_SpecularTexture = std::make_unique<Texture>("../res/textures/container2_specular_color.png");
-        m_EmissionTexture = std::make_unique<Texture>("../res/textures/container2_matrix.jpeg");
+        m_DiffuseTexture = std::make_unique<Texture2D>("../res/textures/container2.png");
+        m_SpecularTexture = std::make_unique<Texture2D>("../res/textures/container2_specular.png");
+        // m_SpecularTexture = std::make_unique<Texture2D>("../res/textures/container2_specular_color.png");
+        m_EmissionTexture = std::make_unique<Texture2D>("../res/textures/container2_matrix.jpeg");
         m_EmissionTexture->SetWrapping(GL_TEXTURE_WRAP_S, GL_REPEAT);
         m_EmissionTexture->SetWrapping(GL_TEXTURE_WRAP_T, GL_REPEAT);
         // --------------------

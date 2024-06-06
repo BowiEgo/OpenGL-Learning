@@ -1,4 +1,4 @@
-#include "TestLightCasters.h"
+#include "TestModel.h"
 
 #include "imgui.h"
 
@@ -16,10 +16,14 @@
 #define LIGHT_TYPE_SPOT 2
 
 namespace test {
-    TestLightCasters::TestLightCasters(GLFWwindow* window)
+    TestModel::TestModel(GLFWwindow* window)
       : Test(window)
     {
         GLCall(glEnable(GL_DEPTH_TEST));
+        // --------------------
+        // Model
+        // --------------------
+        m_Model = std::make_unique<Model>("../res/models/nanosuit/nanosuit.obj");
 
         // --------------------
         // Camera
@@ -123,22 +127,24 @@ namespace test {
         m_SpotLightCubeShader = std::make_unique<Shader>(lightCubeVertexSrc, lightCubeFragSrc);
     }
 
-    TestLightCasters::~TestLightCasters()
+    TestModel::~TestModel()
     {
         GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
     }
 
-    void TestLightCasters::OnUpdate(float deltaTime)
+    void TestModel::OnUpdate(float deltaTime)
     {
         ProcessInput(deltaTime);
     }
 
-    void TestLightCasters::OnRender()
+    void TestModel::OnRender()
     {
         GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
         Renderer renderer;
+        
+        m_Model->Draw(m_ObjShader.get());
 
         float currentTime = glfwGetTime();
 
@@ -236,7 +242,7 @@ namespace test {
         }
     }
 
-    void TestLightCasters::OnImGuiRender()
+    void TestModel::OnImGuiRender()
     {
         ImGui::SeparatorText("Camera");
         float fov = m_Camera->GetFOV();
@@ -278,24 +284,24 @@ namespace test {
         }
     }
 
-    void TestLightCasters::ProcessInput(float deltaTime)
+    void TestModel::ProcessInput(float deltaTime)
     {
         m_Camera->ProcessKeyboardMovement(deltaTime);
         m_Camera->ProcessMouseMovement();
         m_Camera->ProcessMouseScroll();
     }
 
-    void TestLightCasters::SetCameraAspectRatio(float aspectRatio)
+    void TestModel::SetCameraAspectRatio(float aspectRatio)
     {
         m_Camera->SetAspectRatio(aspectRatio);
     }
 
-    void TestLightCasters::EnableCameraControll()
+    void TestModel::EnableCameraControll()
     {
         m_Camera->EnableControll();
     }
 
-    void TestLightCasters::DisableCameraControll()
+    void TestModel::DisableCameraControll()
     {
         m_Camera->DisableControll();
     }

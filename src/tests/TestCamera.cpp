@@ -84,11 +84,11 @@ namespace test {
         // Texture
         TextureOptions opts1;
         opts1.magFilter = GL_NEAREST;
-        m_Texture1 = std::make_unique<Texture>("../res/textures/container.jpg", opts1);
+        m_Texture1 = std::make_unique<Texture2D>("../res/textures/container.jpg", opts1);
         m_Shader->SetUniform1i("u_Texture1", 0);
 
         TextureOptions opts2;
-        m_Texture2 = std::make_unique<Texture>("../res/textures/awesomeface.png");
+        m_Texture2 = std::make_unique<Texture2D>("../res/textures/awesomeface.png");
         m_Shader->SetUniform1i("u_Texture2", 1);
 
         // Uniform

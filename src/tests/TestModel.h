@@ -9,16 +9,17 @@
 #include "FileSystem/FileSystem.h"
 
 #include "Camera.h"
+#include "Model.h"
 
 #include <memory>
 #include <vector>
 
 namespace test {
-    class TestLightCasters : public Test
+    class TestModel : public Test
     {
     public:
-        TestLightCasters(GLFWwindow* window);
-        ~TestLightCasters();
+        TestModel(GLFWwindow* window);
+        ~TestModel();
 
         void OnUpdate(float deltaTime) override;
         void OnRender() override;
@@ -28,6 +29,7 @@ namespace test {
         void EnableCameraControll() override;
         void DisableCameraControll() override;
     private:
+        std::unique_ptr<Model> m_Model;
         std::unique_ptr<VertexArray> m_Obj_VAO, m_LightCube_VAO;
         std::unique_ptr<VertexBuffer> m_VBO;
         std::unique_ptr<IndexBuffer> m_IBO;

@@ -3,12 +3,15 @@
 #include <vector>
 #include "Renderer.h"
 
+#include "Mesh.h"
+
 struct VertexBufferElement
 {
     /* data */
     unsigned int type;
     unsigned int count;
     unsigned char normalized;
+    unsigned int offset;
 
     static unsigned int GetSizeOfType(unsigned int type)
     {
@@ -40,6 +43,12 @@ public:
         static_assert(sizeof(T) == 0, "Unsupported type for VertexBufferLayout::Push");
     }
 
+    template<typename T>
+    void Push(unsigned int count, unsigned int offset)
+    {
+        static_assert(sizeof(T) == 0, "Unsupported type for VertexBufferLayout::Push");
+    }
+
     template<>
     void Push<float>(unsigned int count)
     {
@@ -59,6 +68,13 @@ public:
     {
         m_Elements.push_back({GL_UNSIGNED_BYTE, count, GL_TRUE});
         m_Stride += count * VertexBufferElement::GetSizeOfType(GL_UNSIGNED_BYTE);
+    }
+
+    template<>
+    void Push<Vertex>(unsigned int count, unsigned int offset)
+    {
+        m_Elements.push_back({GL_FLOAT, count, GL_FALSE, offset});
+        m_Stride = (unsigned int)sizeof(Vertex);
     }
 
     inline const std::vector<VertexBufferElement> GetElements() const { return m_Elements; }

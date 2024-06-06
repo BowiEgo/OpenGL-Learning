@@ -4,7 +4,7 @@
 
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
-#include "Texture.h"
+#include "Texture2D.h"
 
 #include "FileSystem/FileSystem.h"
 

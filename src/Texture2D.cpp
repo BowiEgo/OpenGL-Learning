@@ -1,11 +1,28 @@
-#include "Texture.h"
+#include "Texture2D.h"
 
 #include "stb_image/stb_image.h"
 #include <iostream>
 
-Texture::Texture(const std::string &path, const TextureOptions& options)
-    : m_FilePath(path), m_LocalBuffer(nullptr), m_Options(options),
-    m_Width(0), m_Height(0), m_Channels(0)
+Texture2D::Texture2D(const std::string &path, const TextureOptions &options)
+    : m_Type("texture_default"), m_FilePath(path), m_LocalBuffer(nullptr), m_Options(options),
+      m_Width(0), m_Height(0), m_Channels(0)
+{
+    SetupTexture2D(m_Type, path, options);
+}
+
+Texture2D::Texture2D(const std::string &type, const std::string &path, const TextureOptions &options)
+    : m_Type(type), m_FilePath(path), m_LocalBuffer(nullptr), m_Options(options),
+      m_Width(0), m_Height(0), m_Channels(0)
+{
+    SetupTexture2D(m_Type, path, options);
+}
+
+Texture2D::~Texture2D()
+{
+    GLCall(glDeleteTextures(1, &m_RendererID));
+}
+
+void Texture2D::SetupTexture2D(const std::string &type, const std::string &path, const TextureOptions &options)
 {
     stbi_set_flip_vertically_on_load(true);
     m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_Channels, 0);
@@ -18,7 +35,7 @@ Texture::Texture(const std::string &path, const TextureOptions& options)
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_Options.wrapS));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_Options.wrapT));
 
-    GLenum internalFormat = 0, dataFormat = 0;
+    GLenum internalFormat = GL_RGBA8, dataFormat = GL_RGBA;
     if (m_Channels == 4)
     {
         internalFormat = GL_RGBA8;
@@ -30,6 +47,7 @@ Texture::Texture(const std::string &path, const TextureOptions& options)
         dataFormat = GL_RGB;
     }
 
+    CORE_INFO("{0}, {1}, {2}, {3}, {4}, {5}",path, m_Channels, internalFormat, m_Width, m_Height, dataFormat);
     GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, dataFormat, GL_UNSIGNED_BYTE, m_LocalBuffer));
     GLCall(glGenerateMipmap(GL_TEXTURE_2D));
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
@@ -38,23 +56,18 @@ Texture::Texture(const std::string &path, const TextureOptions& options)
         stbi_image_free(m_LocalBuffer);
 }
 
-Texture::~Texture()
-{
-    GLCall(glDeleteTextures(1, &m_RendererID));
-}
-
-void Texture::Bind(unsigned int slot) const
+void Texture2D::Bind(unsigned int slot) const
 {
     GLCall(glActiveTexture(GL_TEXTURE0 + slot));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
 }
 
-void Texture::Unbind() const
+void Texture2D::Unbind() const
 {
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
-void Texture::SetWrapping(GLenum pname, GLint param) const
+void Texture2D::SetWrapping(GLenum pname, GLint param) const
 {
     Bind();
     GLCall(glTexParameteri(GL_TEXTURE_2D, pname, param));
