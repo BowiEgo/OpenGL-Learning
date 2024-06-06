@@ -1,6 +1,5 @@
 #include "Camera.h"
 
-#include "Log.h"
 #include "Input.h"
 #include "KeyCodes.h"
 
@@ -169,6 +168,9 @@ void Camera::SetTarget(const glm::vec3& target)
 
 void Camera::ProcessKeyboardMovement(const float& deltaTime)
 {
+    if (!m_Controll_Enabled)
+        return;
+
     float cameraSpeed = m_MoveSpeed * deltaTime;
     if (Input::IsKeyPressed(OPL_KEY_W))
         m_CameraPos += cameraSpeed * m_CameraFront;
@@ -194,6 +196,9 @@ void Camera::ProcessMouseMovement()
     m_LastX = Input::GetMouseX();
     m_LastY = Input::GetMouseY();
 
+    if (!m_Controll_Enabled)
+        return;
+
     float sensitivity = 1.0f;
 
     m_Yaw += xOffset * m_YawSpeed * sensitivity;
@@ -214,6 +219,9 @@ void Camera::ProcessMouseMovement()
 
 void Camera::ProcessMouseScroll()
 {
+    if (!m_Controll_Enabled)
+        return;
+
     float yScrollOffset = Input::GetMouseScroll();
 
     if (yScrollOffset != m_LastScroll)
@@ -227,6 +235,16 @@ void Camera::ProcessMouseScroll()
         m_LastScroll = yScrollOffset;
         UpdateProjMatrix();
     }
+}
+
+void Camera::EnableControll()
+{
+    m_Controll_Enabled = true;
+}
+
+void Camera::DisableControll()
+{
+    m_Controll_Enabled = false;
 }
 
 void Camera::UpdateProjMatrix()

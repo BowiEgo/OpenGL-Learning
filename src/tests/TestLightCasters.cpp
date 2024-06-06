@@ -112,9 +112,6 @@ namespace test {
         m_ObjShader->SetUniform1i("u_Material.specular",  1);
         m_ObjShader->SetUniform1i("u_Material.emmision",  2);
         m_ObjShader->SetUniform1f("u_Material.shininess", m_MaterialShininess);
-        m_ObjShader->SetUniform1i("u_DirectionalLight.type", LIGHT_TYPE_DIRECTIONAL);
-        m_ObjShader->SetUniform1i("u_PointLight.type",       LIGHT_TYPE_POINT);
-        m_ObjShader->SetUniform1i("u_SpotLight.type",        LIGHT_TYPE_SPOT);
 
         // LightCube shader
         std::string lightCubeVertexSrc = FileSystem::ReadFile("../res/shaders/LightCube.vert");
@@ -281,5 +278,15 @@ namespace test {
     void TestLightCasters::SetCameraAspectRatio(float aspectRatio)
     {
         m_Camera->SetAspectRatio(aspectRatio);
+    }
+
+    void TestLightCasters::EnableCameraControll()
+    {
+        m_Camera->EnableControll();
+    }
+
+    void TestLightCasters::DisableCameraControll()
+    {
+        m_Camera->DisableControll();
     }
 }

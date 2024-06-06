@@ -2,6 +2,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <initializer_list>
+#include "Log.h"
 
 class Camera
 {
@@ -39,6 +40,9 @@ public:
     void ProcessKeyboardMovement(const float& deltaTime);
     void ProcessMouseMovement();
     void ProcessMouseScroll();
+
+    void EnableControll();
+    void DisableControll();
 private:
     void UpdateProjMatrix();
     void UpdateCameraFront(const glm::vec3& direction);
@@ -50,14 +54,19 @@ private:
     float m_ZoomLevel = 1.0f;
     float m_AspectRatio;
     float m_Near, m_Far;
+
     glm::mat4 m_ProjMatrix, m_ViewMatrix;
+
     glm::vec3 m_CameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
     glm::vec3 m_CameraTarget = glm::vec3(0.0f, 0.0f ,0.0f);
     glm::vec3 m_CameraFront,
         m_CameraRight,
         m_CameraUp = glm::vec3(0.0f, 1.0f,  0.0f);
+
     float m_Pitch = 0.0f, m_Yaw = -90.0f;
     float m_LastX = 0.0f, m_LastY = 0.0f, m_LastScroll = 0.0f;
     bool m_FirstMouse = true;
     float m_MoveSpeed = 5.0f, m_PitchSpeed = 0.1f, m_YawSpeed = 0.1f;
+
+    bool m_Controll_Enabled = true;
 };

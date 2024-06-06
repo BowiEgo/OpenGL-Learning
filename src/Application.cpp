@@ -151,10 +151,17 @@ int main(void)
     while (!glfwWindowShouldClose(window))
     {
         if (Input::IsKeyPressed(OPL_KEY_ESCAPE))
-            glfwSetWindowShouldClose(window, true);
+        {
+            Input::EnableCursor();
+            currentTest->DisableCameraControll();
+        }
+        if (Input::IsKeyPressed(OPL_KEY_SPACE))
+        {
+            Input::DisableCursor();
+            currentTest->EnableCameraControll();
+        }
         if (Input::IsKeyPressed(OPL_KEY_BACKSPACE))
             backTestMenu();
-
 
         float currentTime = glfwGetTime();
         deltaTime = currentTime - lastTime;

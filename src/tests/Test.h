@@ -20,8 +20,11 @@ namespace test {
         virtual void OnRender() {}
         virtual void OnImGuiRender() {}
         virtual void SetCameraAspectRatio(const float aspectRatio) {};
+        virtual void EnableCameraControll() {};
+        virtual void DisableCameraControll() {};
     protected:
         GLFWwindow* m_Window;
+        std::unique_ptr<Camera> m_Camera;
     };
 
     class TestMenu : public Test

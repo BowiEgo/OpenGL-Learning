@@ -172,4 +172,14 @@ namespace test {
     {
         m_Camera->SetAspectRatio(aspectRatio);
     }
+
+    void TestCamera::EnableCameraControll()
+    {
+        m_Camera->EnableControll();
+    }
+
+    void TestCamera::DisableCameraControll()
+    {
+        m_Camera->DisableControll();
+    }
 }
