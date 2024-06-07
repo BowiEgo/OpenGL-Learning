@@ -10,6 +10,7 @@
 
 #include "Camera.h"
 #include "Model.h"
+#include "BoxGeometry.h"
 
 #include <memory>
 #include <vector>
@@ -30,7 +31,8 @@ namespace test {
         void DisableCameraControll() override;
     private:
         std::unique_ptr<Model> m_ModelNanosuit, m_ModelBackpack, m_ModelMichelle;
-        std::unique_ptr<VertexArray> m_Obj_VAO, m_LightCube_VAO;
+        std::unique_ptr<BoxGeometry> m_BoxGeometry, m_LightCubeGeometry;
+        std::shared_ptr<VertexArray> m_Obj_VAO, m_LightCube_VAO;
         std::unique_ptr<VertexBuffer> m_VBO;
         std::unique_ptr<IndexBuffer> m_IBO;
         std::unique_ptr<Shader> m_ObjShader, m_PointLightCubeShader;

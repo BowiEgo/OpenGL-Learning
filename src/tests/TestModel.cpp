@@ -41,64 +41,10 @@ namespace test {
         // m_ModelBackpack = std::make_unique<Model>("../res/models/backpack/backpack.obj", backpackModelOpts);
 
         // --------------------
-        // CubeModel datas
-        // --------------------
-        float vertices[] = {
-            // --- positions ---//---- normals ------//-- coords --
-            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-             0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-
-            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
-             0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
-
-            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-             0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-             0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-             0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-
-            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-             0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
-        };
-        m_VBO = std::make_unique<VertexBuffer>(vertices, sizeof(vertices));
-        VertexBufferLayout layout;
-        layout.Push<float>(3);
-        layout.Push<float>(3);
-        layout.Push<float>(2);
-
-        // --------------------
         // Box
         // --------------------
-        // model
-        m_Obj_VAO = std::make_unique<VertexArray>();
-        m_Obj_VAO->AddBuffer(*m_VBO, layout);
+        // geometry
+        m_BoxGeometry = std::make_unique<BoxGeometry>();
         // texture
         m_DiffuseTexture = std::make_unique<Texture2D>("../res/textures/container2.png");
         m_SpecularTexture = std::make_unique<Texture2D>("../res/textures/container2_specular.png");
@@ -108,9 +54,8 @@ namespace test {
         // --------------------
         // LightCube
         // --------------------
-        // model
-        m_LightCube_VAO = std::make_unique<VertexArray>();
-        m_LightCube_VAO->AddBuffer(*m_VBO, layout);
+        // geometry
+        m_LightCubeGeometry = std::make_unique<BoxGeometry>();
         // shader
         std::string lightCubeVertexSrc = FileSystem::ReadFile("../res/shaders/LightCube.vert");
         std::string lightCubeFragSrc = FileSystem::ReadFile("../res/shaders/LightCube.frag");
@@ -162,7 +107,7 @@ namespace test {
                 
                 m_Light->GetShader()->SetUniformMat4("modelMatrix", model);
 
-                renderer.Draw(*m_Light->GetShader(), *m_Obj_VAO);
+                renderer.Draw(*m_Light->GetShader(), *m_BoxGeometry->GetVAO());
             }
 
             // --------------------
@@ -184,7 +129,7 @@ namespace test {
                     model = glm::scale(model, glm::vec3(0.2f));
                     m_PointLightCubeShader->SetUniformMat4("modelMatrix", model);
 
-                    renderer.Draw(*m_PointLightCubeShader, *m_LightCube_VAO);
+                    renderer.Draw(*m_PointLightCubeShader, *m_LightCubeGeometry->GetVAO());
                 }
             }
 

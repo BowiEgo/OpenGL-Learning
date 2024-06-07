@@ -10,6 +10,8 @@ public:
 	VertexArray();
 	~VertexArray();
 
+	unsigned int GetID() const { return m_RendererID; };
+
 	void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
 
 	void Bind() const;
