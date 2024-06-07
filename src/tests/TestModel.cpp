@@ -11,6 +11,9 @@
 #include "Input.h"
 #include "KeyCodes.h"
 
+#include "BasicMaterial.h"
+#include "StandardMaterial.h"
+
 #define LIGHT_TYPE_DIRECTIONAL 0
 #define LIGHT_TYPE_POINT 1
 #define LIGHT_TYPE_SPOT 2
@@ -41,10 +44,10 @@ namespace test {
         // m_ModelBackpack = std::make_unique<Model>("../res/models/backpack/backpack.obj", backpackModelOpts);
 
         // --------------------
-        // Box
+        // Container
         // --------------------
-        // geometry
-        m_BoxGeometry = std::make_unique<BoxGeometry>();
+        // mesh
+        m_ContainerMesh = std::make_unique<Mesh>(std::make_shared<BoxGeometry>(), std::make_shared<StandardMaterial>(m_Light));
         // texture
         m_DiffuseTexture = std::make_unique<Texture2D>("../res/textures/container2.png");
         m_SpecularTexture = std::make_unique<Texture2D>("../res/textures/container2_specular.png");
@@ -55,13 +58,7 @@ namespace test {
         // LightCube
         // --------------------
         // geometry
-        m_LightCubeGeometry = std::make_unique<BoxGeometry>();
-        // shader
-        std::string lightCubeVertexSrc = FileSystem::ReadFile("../res/shaders/LightCube.vert");
-        std::string lightCubeFragSrc = FileSystem::ReadFile("../res/shaders/LightCube.frag");
-        m_PointLightCubeShader = std::make_unique<Shader>(lightCubeVertexSrc, lightCubeFragSrc);
-        m_PointLightCubeShader->Bind();
-        m_PointLightCubeShader->SetUniformVec3("u_Color", { 1.0f, 1.0f, 1.0f });
+        m_LightCubMesh = std::make_unique<Mesh>(std::make_shared<BoxGeometry>(), std::make_shared<BasicMaterial>());
     }
 
     TestModel::~TestModel()
@@ -93,9 +90,10 @@ namespace test {
 
         m_DiffuseTexture->Bind();
         m_SpecularTexture->Bind(1);
+
         {
             // --------------------
-            // Draw boxes
+            // Draw containers
             // --------------------
             glm::mat4 model(1.0f);
             for (unsigned int i = 0; i < m_ObjPositions.size(); i++)
@@ -104,10 +102,9 @@ namespace test {
                 model = glm::translate(model, m_ObjPositions[i]);
                 float angle = 20.0f * i;
                 model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-                
                 m_Light->GetShader()->SetUniformMat4("modelMatrix", model);
 
-                renderer.Draw(*m_Light->GetShader(), *m_BoxGeometry->GetVAO());
+                m_ContainerMesh->Draw();
             }
 
             // --------------------
@@ -117,19 +114,18 @@ namespace test {
             {
                 glm::mat4 proj = m_Camera->GetProjMatrix();
                 glm::mat4 view = m_Camera->GetViewMatrix();
-                m_PointLightCubeShader->Bind();
-                m_PointLightCubeShader->SetUniformMat4("projectionMatrix", proj);
-                m_PointLightCubeShader->SetUniformMat4("viewMatrix", view);
-                m_PointLightCubeShader->SetUniformVec3("u_Color", lightColor);
+                m_LightCubMesh->GetMaterial()->GetShader()->Bind();
+                m_LightCubMesh->GetMaterial()->GetShader()->SetUniformMat4("projectionMatrix", proj);
+                m_LightCubMesh->GetMaterial()->GetShader()->SetUniformMat4("viewMatrix", view);
+                m_LightCubMesh->GetMaterial()->SetColor(lightColor);
                 
                 for (int i = 0; i < m_Light->GetPointLightPositions().size(); i++)
                 {
                     model = glm::mat4(1.0f);
                     model = glm::translate(model, m_Light->GetPointLightPositions()[i]);
                     model = glm::scale(model, glm::vec3(0.2f));
-                    m_PointLightCubeShader->SetUniformMat4("modelMatrix", model);
-
-                    renderer.Draw(*m_PointLightCubeShader, *m_LightCubeGeometry->GetVAO());
+                    m_LightCubMesh->GetMaterial()->GetShader()->SetUniformMat4("modelMatrix", model);
+                    m_LightCubMesh->Draw();
                 }
             }
 

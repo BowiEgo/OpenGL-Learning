@@ -52,5 +52,7 @@ namespace test {
 
         std::shared_ptr<Camera> m_Camera;
         std::shared_ptr<Light> m_Light;
+        
+        std::unique_ptr<Mesh> m_ContainerMesh, m_LightCubMesh;
     };
 }

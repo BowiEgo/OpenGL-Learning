@@ -4,6 +4,7 @@
 #include "Renderer.h"
 
 #include "Mesh.h"
+#include "Geometry.h"
 
 struct VertexBufferElement
 {

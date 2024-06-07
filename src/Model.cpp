@@ -1,5 +1,7 @@
 #include "Model.h"
 
+#include "StandardMaterial.h"
+
 Model::Model(const std::string &path, std::shared_ptr<Camera> camera, const std::shared_ptr<Light> light, const ModelOptions &options)
     : m_Options(options)
 {
@@ -26,7 +28,7 @@ void Model::Draw()
 {
     m_Light->UpdateShader(m_Translate);
     for (unsigned int i = 0; i < m_Meshes.size(); i++)
-        m_Meshes[i].Draw(m_Light->GetShader().get());
+        m_Meshes[i].Draw();
 }
 
 void Model::LoadModel(const std::string &path)
@@ -126,7 +128,7 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
     }
 
-    return Mesh(vertices, indices, textures);
+    return Mesh(vertices, indices, textures, std::make_shared<StandardMaterial>(m_Light));
 }
 
 std::vector<std::shared_ptr<Texture2D>> Model::loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName)
