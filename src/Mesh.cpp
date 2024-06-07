@@ -11,9 +11,21 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 
     VertexBufferLayout layout;
 
+    // Vertex Positions
     layout.Push<Vertex>(3, 0);
+    // Vertex normals
     layout.Push<Vertex>(3, (unsigned int)offsetof(Vertex, Normal));
+    // Vertex texture coords
     layout.Push<Vertex>(2, (unsigned int)offsetof(Vertex, TexCoords));
+    // Vertex tangent
+    layout.Push<Vertex>(3, (unsigned int)offsetof(Vertex, Tangent));
+    // Vertex bitangent
+    layout.Push<Vertex>(3, (unsigned int)offsetof(Vertex, Bitangent));
+    // Bone ids
+    layout.Push<Vertex>(4, (unsigned int)offsetof(Vertex, m_BoneIDs));
+    // Bone weights
+    layout.Push<Vertex>(4, (unsigned int)offsetof(Vertex, m_Weights));
+
 
     m_VAO->AddBuffer(*m_VBO, layout);
 }
@@ -26,6 +38,8 @@ void Mesh::Draw(Shader* shader)
 {
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
+    unsigned int normalNr = 1;
+    unsigned int heightNr = 1;
 
     for(unsigned int i = 0; i < m_Textures.size(); i++)
     {
@@ -33,14 +47,17 @@ void Mesh::Draw(Shader* shader)
         texture->Bind(i);
         std::string number;
         std::string type = texture->GetType();
-        if(type == "texture_diffuse")
+        if(type == "Texture_Diffuse")
             number = std::to_string(diffuseNr++);
-        else if(type == "texture_specular")
+        else if(type == "Texture_Specular")
             number = std::to_string(specularNr++);
+        else if(type == "Texture_Normal")
+            number = std::to_string(normalNr++);
+        else if(type == "Texture_Height")
+            number = std::to_string(heightNr++);
 
-        shader->SetUniform1i(("material." + type + number).c_str(), i);
+        shader->SetUniform1i(("u_" + type + number).c_str(), i);
     }
-    glActiveTexture(GL_TEXTURE0);
 
     Renderer renderer;
     renderer.Draw(*shader, *m_VAO, *m_IBO);

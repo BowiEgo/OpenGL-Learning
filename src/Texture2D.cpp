@@ -35,7 +35,7 @@ void Texture2D::SetupTexture2D(const std::string &type, const std::string &path,
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_Options.wrapS));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_Options.wrapT));
 
-    GLenum internalFormat = GL_RGBA8, dataFormat = GL_RGBA;
+    GLenum internalFormat = 0, dataFormat = 0;
     if (m_Channels == 4)
     {
         internalFormat = GL_RGBA8;

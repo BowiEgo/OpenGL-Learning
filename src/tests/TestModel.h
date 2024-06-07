@@ -29,11 +29,11 @@ namespace test {
         void EnableCameraControll() override;
         void DisableCameraControll() override;
     private:
-        std::unique_ptr<Model> m_Model;
+        std::unique_ptr<Model> m_ModelNanosuit, m_ModelBackpack, m_ModelMichelle;
         std::unique_ptr<VertexArray> m_Obj_VAO, m_LightCube_VAO;
         std::unique_ptr<VertexBuffer> m_VBO;
         std::unique_ptr<IndexBuffer> m_IBO;
-        std::unique_ptr<Shader> m_ObjShader, m_PointLightCubeShader, m_SpotLightCubeShader;
+        std::unique_ptr<Shader> m_ObjShader, m_PointLightCubeShader;
         std::unique_ptr<Texture2D> m_DiffuseTexture, m_SpecularTexture;
         std::vector<glm::vec3> m_ObjPositions = {
             glm::vec3( 0.0f,  0.0f,   0.0f),
@@ -48,30 +48,7 @@ namespace test {
             glm::vec3(-1.3f,  1.0f,  -1.5f)  
         };
 
-        std::unique_ptr<Camera> m_Camera;
-
-        glm::vec3 m_LightPosition = glm::vec3(1.2f, 1.0f, 2.0f);
-        float m_MaterialShininess = 32.0f;
-
-        float m_LightAmbient[3] = { 0.2f, 0.2f, 0.2f },
-              m_LightDiffuse[3] = { 0.5f, 0.5f, 0.5f },
-              m_LightSpecular[3] = { 1.0f, 1.0f, 1.0f };
-
-        bool m_IsEnabled_DirectionalLight = true;
-        float m_DirectionalLightDir[3] = { -0.2f, -1.0f, -0.3f };
-
-        bool m_IsEnabled_PointLight = true;
-        std::vector<glm::vec3> m_PointLightPositions = {
-            glm::vec3( 0.7f,  0.2f,  2.0f),
-            glm::vec3( 2.3f, -3.3f, -4.0f),
-            glm::vec3(-4.0f,  2.0f, -12.0f),
-            glm::vec3( 0.0f,  0.0f, -3.0f)
-        };
-
-        bool m_IsEnabled_SpotLight = true;
-        float m_SpotLightPhi = 16.0f;
-        float m_SpotLightCutOff = glm::cos(glm::radians(m_SpotLightPhi));
-        float m_SpotLight_SoftEdge = 1.5f;
-        float m_SpotLightOuterCutOff = glm::cos(glm::radians(m_SpotLightPhi + m_SpotLight_SoftEdge));
+        std::shared_ptr<Camera> m_Camera;
+        std::shared_ptr<Light> m_Light;
     };
 }

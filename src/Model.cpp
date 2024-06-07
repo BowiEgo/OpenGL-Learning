@@ -1,22 +1,44 @@
 #include "Model.h"
 
-Model::Model(const std::string &path)
+Model::Model(const std::string &path, std::shared_ptr<Camera> camera, const std::shared_ptr<Light> light, const ModelOptions &options)
+    : m_Options(options)
 {
+    if (light == nullptr)
+    {
+        m_Light = std::make_shared<Light>(camera);
+    }
+    else
+    {
+        m_Light = light;
+    }
+
     LoadModel(path);
 }
 
-void Model::Draw(Shader *shader)
+void Model::Translate(float x, float y, float z)
 {
+    m_Translate[0] = x;
+    m_Translate[1] = y;
+    m_Translate[2] = z;
+}
+
+void Model::Draw()
+{
+    m_Light->UpdateShader(m_Translate);
     for (unsigned int i = 0; i < m_Meshes.size(); i++)
-        m_Meshes[i].Draw(shader);
+        m_Meshes[i].Draw(m_Light->GetShader().get());
 }
 
 void Model::LoadModel(const std::string &path)
 {
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    unsigned int flags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace;
+    if (m_Options.FlipUVs)
+        flags |= aiProcess_FlipUVs;
 
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+    const aiScene* scene = importer.ReadFile(path, flags);
+
+    if (scene == nullptr || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         CORE_ERROR("ERROR::ASSIMP::{0}", importer.GetErrorString());
         return;
@@ -67,6 +89,16 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
             vec.x = mesh->mTextureCoords[0][i].x; 
             vec.y = mesh->mTextureCoords[0][i].y;
             vertex.TexCoords = vec;
+            // // tangent
+            vector.x = mesh->mTangents[i].x;
+            vector.y = mesh->mTangents[i].y;
+            vector.z = mesh->mTangents[i].z;
+            vertex.Tangent = vector;
+            // // bitangent
+            vector.x = mesh->mBitangents[i].x;
+            vector.y = mesh->mBitangents[i].y;
+            vector.z = mesh->mBitangents[i].z;
+            vertex.Bitangent = vector;
         }
         else
             vertex.TexCoords = glm::vec2(0.0f, 0.0f);
@@ -84,16 +116,14 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
     if(mesh->mMaterialIndex >= 0)
     {
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
-        auto diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-        for (auto& tex : diffuseMaps)
-        {
-            textures.push_back(tex);
-        }
-        auto specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-        for (auto& tex : specularMaps)
-        {
-            textures.push_back(tex);
-        }
+        auto diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "Texture_Diffuse");
+        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+        auto specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "Texture_Specular");
+        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+        auto normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "Texture_Normal");
+        textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+        auto heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "Texture_Height");
+        textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
     }
 
     return Mesh(vertices, indices, textures);
@@ -102,12 +132,35 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 std::vector<std::shared_ptr<Texture2D>> Model::loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName)
 {
     std::vector<std::shared_ptr<Texture2D>> textures;
+    TextureOptions texOpts;
+    texOpts.wrapS = GL_REPEAT;
+    texOpts.wrapT = GL_REPEAT;
+    texOpts.minFilter = GL_LINEAR_MIPMAP_LINEAR;
+    texOpts.magFilter = GL_LINEAR;
+
     for(unsigned int i = 0; i < material->GetTextureCount(type); i++)
     {
         aiString path;
         material->GetTexture(type, i, &path);
-        std::shared_ptr<Texture2D> texture = std::make_unique<Texture2D>(typeName, m_Directory + "/" + path.C_Str());
-        textures.push_back(texture);
+        std::string filePath = m_Directory + "/" + path.C_Str();
+        // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
+        bool skip = false;
+        for(unsigned int j = 0; j < m_Textures_Loaded.size(); j++)
+        {
+            if(std::strcmp(m_Textures_Loaded[j]->GetFilePath().data(), filePath.c_str()) == 0)
+            {
+                textures.push_back(m_Textures_Loaded[j]);
+                skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
+                break;
+            }
+        }
+        if(!skip)
+        {
+            std::shared_ptr<Texture2D> texture = std::make_unique<Texture2D>(typeName, filePath, texOpts);
+
+            textures.push_back(texture);
+            m_Textures_Loaded.push_back(texture); // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.
+        }
     }
     return textures;
 }

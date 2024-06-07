@@ -27,11 +27,12 @@ public:
     inline int GetHeight() const { return m_Height; }
     inline unsigned int GetID() const { return m_RendererID; }
     inline std::string GetType() const { return m_Type; }
+    inline std::string GetFilePath() const { return m_FilePath; }
 private:
+    TextureOptions m_Options;
     unsigned int m_RendererID;
     std::string m_Type = "";
     std::string m_FilePath;
     unsigned char* m_LocalBuffer;
     int m_Width, m_Height, m_Channels; // BPP = Bits Per Pixel
-    TextureOptions m_Options;
 };
