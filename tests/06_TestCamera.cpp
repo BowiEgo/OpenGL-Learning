@@ -1,4 +1,4 @@
-#include "TestCoordinate.h"
+#include "06_TestCamera.h"
 
 #include "imgui.h"
 
@@ -6,33 +6,17 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-std::string ReadFile(const std::string& filepath)
-{
-    std::string result;
-    std::ifstream in(filepath, std::ios::in | std::ios::binary);
-    if (in)
-    {
-        in.seekg(0, std::ios::end);
-        result.resize(in.tellg());
-        in.seekg(0, std::ios::beg);
-        in.read(&result[0], result.size());
-        in.close();
-    }
-    else
-    {
-        CORE_ASSERT("Could not open file '{0}'", filepath);
-    }
-
-    return result;
-}
+#include "Input.h"
+#include "KeyCodes.h"
 
 namespace test {
-    TestCoordinate::TestCoordinate(GLFWwindow* window)
-      : Test(window),
-        m_Proj(glm::perspective(glm::radians(45.0f), WINDOW_WIDTH / WINDOW_HEIGHT, 0.1f, 100.f)),
-        m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f)))
+    TestCamera::TestCamera(GLFWwindow* window)
+      : Test(window)
     {
         GLCall(glEnable(GL_DEPTH_TEST));
+
+        // Camera
+        m_Camera = std::make_unique<Camera>();
 
         GLfloat vertices[] = {
             -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  // A 0
@@ -92,8 +76,8 @@ namespace test {
         m_IBO = std::make_unique<IndexBuffer>(indices, 36);
 
         // Shader
-        std::string vertexSrc = ReadFile("../res/shaders/ContainerTexture.vert");
-        std::string fragSrc = ReadFile("../res/shaders/ContainerTexture.frag");
+        std::string vertexSrc = FileSystem::ReadFile("../res/shaders/ContainerTexture.vert");
+        std::string fragSrc = FileSystem::ReadFile("../res/shaders/ContainerTexture.frag");
         m_Shader = std::make_unique<Shader>(vertexSrc, fragSrc);
         m_Shader->Bind();
 
@@ -112,29 +96,31 @@ namespace test {
 
         // CubePositions
         m_CubePositions = {
-            glm::vec3( 0.0f,  0.0f,   0.0f), 
-            glm::vec3( 2.0f,  5.0f, -15.0f), 
-            glm::vec3(-1.5f, -2.2f,  -2.5f),  
-            glm::vec3(-3.8f, -2.0f, -12.3f),  
-            glm::vec3( 2.4f, -0.4f,  -3.5f),  
-            glm::vec3(-1.7f,  3.0f,  -7.5f),  
-            glm::vec3( 1.3f, -2.0f,  -2.5f),  
-            glm::vec3( 1.5f,  2.0f,  -2.5f), 
-            glm::vec3( 1.5f,  0.2f,  -1.5f), 
+            glm::vec3( 0.0f,  0.0f,   0.0f),
+            glm::vec3( 2.0f,  5.0f, -15.0f),
+            glm::vec3(-1.5f, -2.2f,  -2.5f),
+            glm::vec3(-3.8f, -2.0f, -12.3f),
+            glm::vec3( 2.4f, -0.4f,  -3.5f),
+            glm::vec3(-1.7f,  3.0f,  -7.5f),
+            glm::vec3( 1.3f, -2.0f,  -2.5f),
+            glm::vec3( 1.5f,  2.0f,  -2.5f),
+            glm::vec3( 1.5f,  0.2f,  -1.5f),
             glm::vec3(-1.3f,  1.0f,  -1.5f)  
         };
+
     }
 
-    TestCoordinate::~TestCoordinate()
+    TestCamera::~TestCamera()
     {
         GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
     }
 
-    void TestCoordinate::OnUpdate(float deltaTime)
+    void TestCamera::OnUpdate(float deltaTime)
     {
+        ProcessInput(deltaTime);
     }
 
-    void TestCoordinate::OnRender()
+    void TestCamera::OnRender()
     {
         GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
@@ -145,9 +131,8 @@ namespace test {
         m_Texture2->Bind(1);
 
         {
-            m_Proj = glm::perspective(glm::radians(m_FOV), m_AspectRatio, 0.1f, 100.f);
-            m_View = glm::translate(glm::mat4(1.0f), glm::vec3(m_ViewX, m_ViewY, m_ViewZ));
-            glm::mat4 vp = m_Proj * m_View;
+            glm::mat4 vp = m_Camera->GetProjMatrix() * m_Camera->GetViewMatrix();
+
             for (unsigned int i = 0; i < 10; i++)
             {
                 glm::mat4 model = glm::mat4(1.0f);
@@ -166,19 +151,35 @@ namespace test {
         }
     }
 
-    void TestCoordinate::OnImGuiRender()
+    void TestCamera::OnImGuiRender()
     {
-        ImGui::SliderFloat("FOV", &m_FOV, 0.0f, 180.0f);
-        ImGui::SliderFloat("AspectRatio", &m_AspectRatio, 0.0f, 10.0f);
-
-        ImGui::SliderFloat("ViewX", &m_ViewX, -5.0f, 5.0f);
-        ImGui::SliderFloat("ViewY", &m_ViewY, -5.0f, 5.0f);
-        ImGui::SliderFloat("ViewZ", &m_ViewZ, -5.0f, 5.0f);
+        float fov = m_Camera->GetFOV();
+        if (ImGui::SliderFloat("FOV", &fov, 0.0f, 180.0f))
+            m_Camera->SetFOV(fov);
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     }
-    
-    void TestCoordinate::SetCameraAspectRatio(const float aspectRatio)
+
+    void TestCamera::ProcessInput(float deltaTime)
     {
+
+        m_Camera->ProcessKeyboardMovement(deltaTime);
+        m_Camera->ProcessMouseMovement();
+        m_Camera->ProcessMouseScroll();
+    }
+
+    void TestCamera::SetCameraAspectRatio(const float aspectRatio)
+    {
+        m_Camera->SetAspectRatio(aspectRatio);
+    }
+
+    void TestCamera::EnableCameraControll()
+    {
+        m_Camera->EnableControll();
+    }
+
+    void TestCamera::DisableCameraControll()
+    {
+        m_Camera->DisableControll();
     }
 }

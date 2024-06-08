@@ -12,17 +12,17 @@
 #include "Input.h"
 #include "KeyCodes.h"
 
-#include "../tests/TestClearColor.h"
-#include "../tests/TestTexture2D.h"
-#include "../tests/TestTexture2DContainer.h"
-#include "../tests/TestTransform.h"
-#include "../tests/TestCoordinate.h"
-#include "../tests/TestCamera.h"
-#include "../tests/TestBasicLighting.h"
-#include "../tests/TestMaterial.h"
-#include "../tests/TestLightingMaps.h"
-#include "../tests/TestLightCasters.h"
-#include "../tests/TestModel.h"
+#include "../tests/01_TestClearColor.h"
+#include "../tests/02_TestTexture2D.h"
+#include "../tests/03_TestTexture2DContainer.h"
+#include "../tests/04_TestTransform.h"
+#include "../tests/05_TestCoordinate.h"
+#include "../tests/06_TestCamera.h"
+#include "../tests/07_TestBasicLighting.h"
+#include "../tests/08_TestMaterial.h"
+#include "../tests/09_TestLightingMaps.h"
+#include "../tests/10_TestLightCasters.h"
+#include "../tests/11_TestModel.h"
 
 void RenderUI()
 {

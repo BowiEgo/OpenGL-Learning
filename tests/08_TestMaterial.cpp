@@ -1,4 +1,4 @@
-#include "TestLightingMaps.h"
+#include "08_TestMaterial.h"
 
 #include "imgui.h"
 
@@ -10,7 +10,7 @@
 #include "KeyCodes.h"
 
 namespace test {
-    TestLightingMaps::TestLightingMaps(GLFWwindow* window)
+    TestMaterial::TestMaterial(GLFWwindow* window)
       : Test(window), m_ObjPositions(glm::vec3(0.0)), m_LightPosition(glm::vec3(1.2f, 1.0f, 2.0f))
     {
         GLCall(glEnable(GL_DEPTH_TEST));
@@ -27,48 +27,47 @@ namespace test {
         // Model datas
         // --------------------
         float vertices[] = {
-            // --- positions ---//---- normals ------//-- coords --
-            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-             0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+             0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
 
-            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
-             0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-             0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-             0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-             0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-             0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
         };
         
         // --------------------
@@ -79,7 +78,6 @@ namespace test {
         VertexBufferLayout layout;
         layout.Push<float>(3);
         layout.Push<float>(3);
-        layout.Push<float>(2);
 
         // Object model
         m_Obj_VAO = std::make_unique<VertexArray>();
@@ -90,28 +88,19 @@ namespace test {
         m_Light_VAO->AddBuffer(*m_VBO, layout);
 
         // --------------------
-        // Texture
-        // --------------------
-        m_DiffuseTexture = std::make_unique<Texture2D>("../res/textures/container2.png");
-        m_SpecularTexture = std::make_unique<Texture2D>("../res/textures/container2_specular.png");
-        // m_SpecularTexture = std::make_unique<Texture2D>("../res/textures/container2_specular_color.png");
-        m_EmissionTexture = std::make_unique<Texture2D>("../res/textures/container2_matrix.jpeg");
-        m_EmissionTexture->SetWrapping(GL_TEXTURE_WRAP_S, GL_REPEAT);
-        m_EmissionTexture->SetWrapping(GL_TEXTURE_WRAP_T, GL_REPEAT);
-        // --------------------
         // Shader
         // --------------------
         // Object shader
-        std::string vertexSrc = FileSystem::ReadFile("../res/shaders/LightingMaps.vert");
-        std::string fragSrc = FileSystem::ReadFile("../res/shaders/LightingMaps.frag");
+        std::string vertexSrc = FileSystem::ReadFile("../res/shaders/Material.vert");
+        std::string fragSrc = FileSystem::ReadFile("../res/shaders/Material.frag");
         m_ObjShader = std::make_unique<Shader>(vertexSrc, fragSrc);
 
         // Shader uniforms
         m_ObjShader->Bind();
-        m_ObjShader->SetUniform1i("u_Material.diffuse",   0);
-        m_ObjShader->SetUniform1i("u_Material.specular",  1);
-        m_ObjShader->SetUniform1i("u_Material.emmision",  2);
-        m_ObjShader->SetUniform1f("u_Material.shininess", m_MaterialShininess);
+        m_ObjShader->SetUniformVec3("u_Material.ambient",   m_MaterialAmbient);
+        m_ObjShader->SetUniformVec3("u_Material.diffuse",   m_MaterialDiffuse);
+        m_ObjShader->SetUniformVec3("u_Material.specular",  m_MaterialSpecular);
+        m_ObjShader->  SetUniform1f("u_Material.shininess", m_MaterialShininess);
         m_ObjShader->SetUniformVec3("u_Light.ambient",  m_LightAmbient);
         m_ObjShader->SetUniformVec3("u_Light.diffuse",  m_LightDiffuse);
         m_ObjShader->SetUniformVec3("u_Light.specular", m_LightSpecular);
@@ -124,17 +113,17 @@ namespace test {
         m_LightCubeShader->SetUniformVec3("u_Color", { 1.0f, 1.0f, 1.0f });
     }
 
-    TestLightingMaps::~TestLightingMaps()
+    TestMaterial::~TestMaterial()
     {
         GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
     }
 
-    void TestLightingMaps::OnUpdate(float deltaTime)
+    void TestMaterial::OnUpdate(float deltaTime)
     {
         ProcessInput(deltaTime);
     }
 
-    void TestLightingMaps::OnRender()
+    void TestMaterial::OnRender()
     {
         GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
@@ -161,10 +150,6 @@ namespace test {
             (m_LightAmbient[2] + m_LightDiffuse[2] + m_LightSpecular[2]) / 3.0f,
         };
 
-        m_DiffuseTexture->Bind();
-        m_SpecularTexture->Bind(1);
-        m_EmissionTexture->Bind(2);
-
         {
             // --------------------
             // Model View Projection
@@ -181,10 +166,11 @@ namespace test {
             m_ObjShader->SetUniformMat4("viewMatrix",           view);
             m_ObjShader->SetUniformMat4("modelMatrix",          model);
             m_ObjShader->SetUniformVec3("u_CameraPosition",     m_Camera->GetPosition());
-            m_ObjShader->  SetUniform1f("u_Time",               currentTime);
 
+            m_ObjShader->SetUniformVec3("u_Material.ambient",   m_MaterialAmbient);
+            m_ObjShader->SetUniformVec3("u_Material.diffuse",   m_MaterialDiffuse);
+            m_ObjShader->SetUniformVec3("u_Material.specular",  m_MaterialSpecular);
             m_ObjShader->  SetUniform1f("u_Material.shininess", m_MaterialShininess);
-            m_ObjShader->  SetUniform1f("u_Material.emmisionStrength", m_MaterialEmmisionStength);
 
             m_ObjShader->SetUniformVec3("u_Light.position", m_LightPosition);
             m_ObjShader->SetUniformVec3("u_Light.ambient",  m_LightAmbient);
@@ -208,7 +194,7 @@ namespace test {
         }
     }
 
-    void TestLightingMaps::OnImGuiRender()
+    void TestMaterial::OnImGuiRender()
     {
         ImGui::SeparatorText("Camera");
         float fov = m_Camera->GetFOV();
@@ -216,8 +202,10 @@ namespace test {
             m_Camera->SetFOV(fov);
 
         ImGui::Bullet();ImGui::Text("Material attributes");
+        ImGui::SliderFloat3("Ambient##Material", m_MaterialAmbient, 0.0f, 1.0f);
+        ImGui::SliderFloat3("Diffuse##Material", m_MaterialDiffuse, 0.0f, 1.0f);
+        ImGui::SliderFloat3("Specular##Material", m_MaterialSpecular, 0.0f, 1.0f);
         ImGui::SliderFloat("Shininess##Material", &m_MaterialShininess, 0.0f, 256.0f);
-        ImGui::SliderFloat("EmmisionStength##Material", &m_MaterialEmmisionStength, 0.0f, 5.0f);
 
         ImGui::Bullet();ImGui::Text("Light attributes");
         ImGui::SliderFloat3("Ambient##Light", m_LightAmbient, 0.0f, 1.0f);
@@ -227,24 +215,24 @@ namespace test {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     }
 
-    void TestLightingMaps::ProcessInput(float deltaTime)
+    void TestMaterial::ProcessInput(float deltaTime)
     {
         m_Camera->ProcessKeyboardMovement(deltaTime);
         m_Camera->ProcessMouseMovement();
         m_Camera->ProcessMouseScroll();
     }
-    
-    void TestLightingMaps::SetCameraAspectRatio(const float aspectRatio)
+
+    void TestMaterial::SetCameraAspectRatio(float aspectRatio)
     {
         m_Camera->SetAspectRatio(aspectRatio);
     }
 
-    void TestLightingMaps::EnableCameraControll()
+    void TestMaterial::EnableCameraControll()
     {
         m_Camera->EnableControll();
     }
 
-    void TestLightingMaps::DisableCameraControll()
+    void TestMaterial::DisableCameraControll()
     {
         m_Camera->DisableControll();
     }
