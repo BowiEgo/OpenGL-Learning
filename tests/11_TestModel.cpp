@@ -59,12 +59,12 @@ namespace test {
         // Container
         // --------------------
         // texture
-        m_DiffuseTexture = std::make_shared<Texture2D>("Texture_Diffuse", "../res/textures/container2.png");
-        m_SpecularTexture = std::make_shared<Texture2D>("Texture_Specular", "../res/textures/container2_specular.png");
+        std::shared_ptr<Texture2D> diffuseTexture = std::make_shared<Texture2D>("Texture_Diffuse", "../res/textures/container2.png");
+        std::shared_ptr<Texture2D> specularTexture = std::make_shared<Texture2D>("Texture_Specular", "../res/textures/container2_specular.png");
         // material
         std::shared_ptr<StandardMaterial> containerMaterial = std::make_shared<StandardMaterial>();
-        containerMaterial->SetDiffuseTexture(m_DiffuseTexture.get());
-        containerMaterial->SetSpecularTexture(m_SpecularTexture.get());
+        containerMaterial->SetDiffuseTexture(diffuseTexture);
+        containerMaterial->SetSpecularTexture(specularTexture);
         // mesh
         m_ContainerMesh = std::make_shared<Mesh>(std::make_shared<BoxGeometry>(), std::make_shared<BasicMaterial>());
         for (unsigned int i = 0; i < m_ObjPositions.size(); i++)

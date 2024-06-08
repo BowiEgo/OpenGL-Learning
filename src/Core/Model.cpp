@@ -1,6 +1,6 @@
 #include "Model.h"
 
-#include "Core/Material/StandardMaterial.h"
+#include "Material/StandardMaterial.h"
 
 Model::Model(const std::string &path, const ModelOptions &options)
     : m_Options(options)

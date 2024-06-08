@@ -1,8 +1,6 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-
+#include "pch.h"
 #include "Camera.h"
 #include "Light/DirectionalLight.h"
 #include "Light/PointLight.h"

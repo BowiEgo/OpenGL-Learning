@@ -1,9 +1,9 @@
 #include "VertexArray.h"
 
-#include "Core/VertexBufferLayout.h"
-#include "Core/Renderer.h"
+#include "pch.h"
 
-#include <iostream>
+#include "VertexBufferLayout.h"
+#include "Renderer.h"
 
 VertexArray::VertexArray()
 {

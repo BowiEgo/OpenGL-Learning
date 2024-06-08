@@ -3,8 +3,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "Log.h"
-
 std::shared_ptr<Framebuffer> Framebuffer::Create(const FramebufferSpecification& spec)
 {
     return std::make_shared<Framebuffer>(spec);

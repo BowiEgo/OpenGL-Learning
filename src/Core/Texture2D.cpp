@@ -1,7 +1,6 @@
 #include "Texture2D.h"
 
 #include "stb_image/stb_image.h"
-#include <iostream>
 
 Texture2D::Texture2D(const std::string &path, const TextureOptions &options)
     : m_Type("texture_default"), m_FilePath(path), m_LocalBuffer(nullptr), m_Options(options),

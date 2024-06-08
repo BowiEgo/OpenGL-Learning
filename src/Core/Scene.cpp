@@ -1,7 +1,7 @@
-#include "Core/Scene.h"
+#include "Scene.h"
 
 #include "FileSystem/FileSystem.h"
-#include "Core/Material/StandardMaterial.h"
+#include "Material/StandardMaterial.h"
 
 Scene* Scene::s_Instance = nullptr;
 

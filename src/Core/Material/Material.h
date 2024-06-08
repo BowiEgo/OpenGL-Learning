@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Core/Shader.h"
+#include "pch.h"
 
-#include <memory>
+#include "Core/Shader.h"
 
 #define MATERIAL_TYPE_NONE 0
 #define MATERIAL_TYPE_BASIC 1

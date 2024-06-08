@@ -1,19 +1,18 @@
 #pragma once
 
-#include <string>
-#include <vector>
+#include "pch.h"
 
 #include <glm/glm.hpp>
 
-#include "Core/Vertex.h"
+#include "Vertex.h"
 #include "Geometry/Geometry.h"
 #include "Material/Material.h"
 
 #include "VertexArray.h"
-#include "Core/VertexBuffer.h"
+#include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
-#include "Core/Texture2D.h"
+#include "Texture2D.h"
 
 class Geometry;
 

@@ -1,8 +1,6 @@
 #pragma once
 
 #include <glm/gtc/matrix_transform.hpp>
-#include <initializer_list>
-#include "Log.h"
 
 class Camera
 {

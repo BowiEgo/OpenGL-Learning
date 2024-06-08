@@ -1,7 +1,5 @@
 #include "FileSystem.h"
 
-#include <iostream>
-
 std::string FileSystem::ReadFile(const std::string &filepath)
 {
     std::string result;

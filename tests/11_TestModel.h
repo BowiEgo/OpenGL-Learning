@@ -44,10 +44,6 @@ namespace test {
         std::shared_ptr<Model> m_ModelNanosuit, m_ModelBackpack, m_ModelMichelle;
 
         bool m_IsPointLightsEnabled = true;
-
-        std::unique_ptr<BoxGeometry> m_BoxGeometry, m_LightCubeGeometry;
-        std::unique_ptr<Shader> m_ObjShader, m_PointLightCubeShader;
-        std::shared_ptr<Texture2D> m_DiffuseTexture, m_SpecularTexture;
         std::vector<glm::vec3> m_ObjPositions = {
             glm::vec3( 0.0f,  0.0f,   0.0f),
             glm::vec3( 2.0f,  5.0f, -15.0f),
@@ -60,7 +56,6 @@ namespace test {
             glm::vec3( 1.5f,  0.2f,  -1.5f),
             glm::vec3(-1.3f,  1.0f,  -1.5f)  
         };
-
         std::vector<glm::vec3> m_PointLightPositions = {
             glm::vec3( 0.7f,  0.2f,  2.0f),
             glm::vec3( 2.3f, -3.3f, -4.0f),

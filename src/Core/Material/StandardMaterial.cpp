@@ -12,14 +12,14 @@ StandardMaterial::~StandardMaterial()
 {
 }
 
-void StandardMaterial::SetDiffuseTexture(Texture2D* texture)
+void StandardMaterial::SetDiffuseTexture(std::shared_ptr<Texture2D> texture)
 {
     m_DiffuseTexture = texture;
     Scene::GetStandardShader()->Bind();
     Scene::GetStandardShader()->SetUniform1i("u_Material.diffuse", 0);
 }
 
-void StandardMaterial::SetSpecularTexture(Texture2D* texture)
+void StandardMaterial::SetSpecularTexture(std::shared_ptr<Texture2D> texture)
 {
     m_SpecularTexture = texture;
     Scene::GetStandardShader()->Bind();

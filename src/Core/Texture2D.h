@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pch.h"
 #include "Core/Renderer.h"
 
 struct TextureOptions {

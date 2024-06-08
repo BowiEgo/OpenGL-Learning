@@ -12,14 +12,14 @@ public:
 
     inline unsigned int GetType() const override { return m_Type; }
 
-    void SetDiffuseTexture(Texture2D* texture);
-    void SetSpecularTexture(Texture2D* texture);
+    void SetDiffuseTexture(std::shared_ptr<Texture2D> texture);
+    void SetSpecularTexture(std::shared_ptr<Texture2D> texture);
 
     void BindTexture();
 private:
     unsigned int m_Type = MATERIAL_TYPE_STANDARD;
-    Texture2D* m_DiffuseTexture;
-    Texture2D* m_SpecularTexture;
+    std::shared_ptr<Texture2D> m_DiffuseTexture;
+    std::shared_ptr<Texture2D> m_SpecularTexture;
 
     float m_MaterialShininess = 32.0f, m_MaterialEmmisionStength = 1.0f;
 };

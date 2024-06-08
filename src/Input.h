@@ -1,10 +1,8 @@
 #pragma once
 
-#include <utility>
+#include "pch.h"
 
 #include <GLFW/glfw3.h>
-
-#include "Log.h"
 
 class Input
 {

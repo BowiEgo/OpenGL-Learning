@@ -1,10 +1,10 @@
 #pragma once
 
+#include "pch.h"
+
 #include "Core/Vertex.h"
 #include "Core/VertexBuffer.h"
 #include "Core/VertexBufferLayout.h"
-
-#include <memory>
 
 class Geometry
 {

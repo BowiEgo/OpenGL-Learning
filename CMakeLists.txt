@@ -6,6 +6,8 @@ project(OpenGL_Learning VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# Precompiled header
+
 set(OPENGL-LEARNING-SRC
         src/Application.cpp
 )
@@ -14,12 +16,14 @@ file(GLOB_RECURSE SRC_FILES "src/*.cpp")
 file(GLOB_RECURSE VENDORS_FILES "vendors/*.cpp")
 file(GLOB_RECURSE TESTS_FILES "tests/*.cpp")
 
-add_executable(OpenGL_Learning
+add_executable(${PROJECT_NAME}
         ${OPENGL-LEARNING-SRC}
         ${SRC_FILES}
         ${VENDORS_FILES}
         ${TESTS_FILES}
 )
+
+target_precompile_headers(${PROJECT_NAME} PRIVATE src/pch.h src/pch.cpp)
 
 include_directories(src)
 

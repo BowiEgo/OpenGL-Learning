@@ -1,9 +1,6 @@
 #pragma once
 
-#include <string>
-#include <unordered_map>
-
-#include "Log.h"
+#include "pch.h"
 
 #include "glm/glm.hpp"
 

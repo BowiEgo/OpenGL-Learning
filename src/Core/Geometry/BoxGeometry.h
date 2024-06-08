@@ -1,11 +1,11 @@
 #pragma once
 
+#include "pch.h"
+
 #include "Core/VertexBuffer.h"
 #include "Core/VertexBufferLayout.h"
 #include "Core/Texture2D.h"
 #include "Geometry.h"
-
-#include <memory>
 
 class BoxGeometry : public Geometry
 {

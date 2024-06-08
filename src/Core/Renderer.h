@@ -1,11 +1,8 @@
 #pragma once
 
-#include <iostream>
-#include <string>
-
 #include <glad/glad.h>
 
-#include "Log.h"
+#include "pch.h"
 
 #include "VertexArray.h"
 #include "IndexBuffer.h"
