@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Log.h"
-#include "Renderer.h"
+#include "Core/Renderer.h"
 #include "Framebuffer.h"
 
 #include "imgui.h"
@@ -12,17 +12,17 @@
 #include "Input.h"
 #include "KeyCodes.h"
 
-#include "tests/TestClearColor.h"
-#include "tests/TestTexture2D.h"
-#include "tests/TestTexture2DContainer.h"
-#include "tests/TestTransform.h"
-#include "tests/TestCoordinate.h"
-#include "tests/TestCamera.h"
-#include "tests/TestBasicLighting.h"
-#include "tests/TestMaterial.h"
-#include "tests/TestLightingMaps.h"
-#include "tests/TestLightCasters.h"
-#include "tests/TestModel.h"
+#include "../tests/TestClearColor.h"
+#include "../tests/TestTexture2D.h"
+#include "../tests/TestTexture2DContainer.h"
+#include "../tests/TestTransform.h"
+#include "../tests/TestCoordinate.h"
+#include "../tests/TestCamera.h"
+#include "../tests/TestBasicLighting.h"
+#include "../tests/TestMaterial.h"
+#include "../tests/TestLightingMaps.h"
+#include "../tests/TestLightCasters.h"
+#include "../tests/TestModel.h"
 
 void RenderUI()
 {

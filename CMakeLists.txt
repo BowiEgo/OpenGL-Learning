@@ -12,11 +12,13 @@ set(OPENGL-LEARNING-SRC
 
 file(GLOB_RECURSE SRC_FILES "src/*.cpp")
 file(GLOB_RECURSE VENDORS_FILES "vendors/*.cpp")
+file(GLOB_RECURSE TESTS_FILES "tests/*.cpp")
 
 add_executable(OpenGL_Learning
         ${OPENGL-LEARNING-SRC}
         ${SRC_FILES}
         ${VENDORS_FILES}
+        ${TESTS_FILES}
 )
 
 include_directories(src)

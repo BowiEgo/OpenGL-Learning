@@ -80,11 +80,9 @@ uniform PointLight u_PointLights[MAX_LIGHTS];
 
 uniform SpotLight u_SpotLight;
 
-
 vec3 texturedDiffuse = texture(u_Texture_Diffuse1, v_TexCoords).rgb;
 vec3 texturedSpecular = texture(u_Texture_Specular1, v_TexCoords).rgb;
 vec3 textureNormal = texture(u_Texture_Normal1, v_TexCoords).rgb;
-
 
 vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
@@ -123,7 +121,7 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     float distance    = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + 
-                 light.quadratic * (distance * distance));    
+                 light.quadratic * (distance * distance));
     // Final result
     vec3 ambient  = light.ambient  * texturedDiffuse;
     vec3 diffuse  = light.diffuse  * diff * texturedDiffuse;
