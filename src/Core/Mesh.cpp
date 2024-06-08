@@ -47,6 +47,11 @@ void Mesh::Setup()
     m_VAO->AddBuffer(*m_VBO, layout);
 }
 
+void Mesh::SetMaterial(Ref<Material> material)
+{
+    m_Material = material;
+}
+
 void Mesh::SetPosition(float position[3])
 {
     m_Position[0] = position[0];

@@ -7,6 +7,7 @@
 #include "Vertex.h"
 #include "Geometry/Geometry.h"
 #include "Material/Material.h"
+#include "Material/ShaderMaterial.h"
 
 #include "VertexArray.h"
 #include "VertexBuffer.h"
@@ -30,6 +31,7 @@ public:
     inline std::pair<float, glm::vec3> GetRotation() { return m_Rotation; }
 
     void Setup();
+    void SetMaterial(Ref<Material> material);
     void SetPosition(float position[3]);
     void SetPosition(glm::vec3& position);
     void SetPosition(float x, float y, float z);

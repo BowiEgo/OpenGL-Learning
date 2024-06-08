@@ -2,6 +2,7 @@
 
 #include "FileSystem/FileSystem.h"
 #include "Material/StandardMaterial.h"
+#include "Material/ShaderMaterial.h"
 
 Scene* Scene::s_Instance = nullptr;
 
@@ -120,6 +121,14 @@ void Scene::Update()
             dynamic_cast<StandardMaterial*>(material)->BindTexture();
             m_Meshes[i]->Draw(m_StandardShader.get());
             break;
+        case MATERIAL_TYPE_SHADER:
+            Ref<Shader> shader = dynamic_cast<ShaderMaterial*>(material)->GetShader();
+            shader->Bind();
+            shader->SetUniformMat4("projectionMatrix", proj);
+            shader->SetUniformMat4("viewMatrix",       view);
+            shader->SetUniformMat4("modelMatrix",      model);
+            m_Meshes[i]->Draw(shader.get());
+            break;
         }
     }
 
@@ -133,6 +142,6 @@ void Scene::Update()
         model = glm::translate(model, modelTranslate);
         m_StandardShader->Bind();
         m_StandardShader->SetUniformMat4("modelMatrix", model);
-        m_Models[i]->Draw(m_StandardShader.get());
+        m_Models[i]->Draw(m_StandardShader.get(), model);
     }
 }

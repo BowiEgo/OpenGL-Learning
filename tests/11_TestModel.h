@@ -40,7 +40,6 @@ namespace test {
         std::shared_ptr<DirectionalLight> m_DirectionalLight;
         std::vector<std::shared_ptr<PointLight>> m_PointLights;
         std::shared_ptr<SpotLight> m_SpotLight;
-        std::shared_ptr<Mesh> m_ContainerMesh, m_LightCubMesh;
         std::shared_ptr<Model> m_ModelNanosuit, m_ModelBackpack, m_ModelMichelle;
 
         bool m_IsPointLightsEnabled = true;

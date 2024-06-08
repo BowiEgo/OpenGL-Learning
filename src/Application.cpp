@@ -23,6 +23,7 @@
 #include "../tests/09_TestLightingMaps.h"
 #include "../tests/10_TestLightCasters.h"
 #include "../tests/11_TestModel.h"
+#include "../tests/12_TestDepth.h"
 
 void RenderUI()
 {
@@ -126,6 +127,7 @@ int main(void)
     testMenu->RegisterTest<test::TestLightingMaps>("LightingMaps");
     testMenu->RegisterTest<test::TestLightCasters>("LightCasters");
     testMenu->RegisterTest<test::TestModel>("Model");
+    testMenu->RegisterTest<test::TestDepth>("Depth");
 
     // test::TestClearColor test;
 

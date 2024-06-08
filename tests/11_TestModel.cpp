@@ -14,10 +14,6 @@
 #include "Core/Material/BasicMaterial.h"
 #include "Core/Material/StandardMaterial.h"
 
-#define LIGHT_TYPE_DIRECTIONAL 0
-#define LIGHT_TYPE_POINT 1
-#define LIGHT_TYPE_SPOT 2
-
 namespace test {
     TestModel::TestModel(GLFWwindow* window)
       : Test(window)
@@ -66,7 +62,6 @@ namespace test {
         containerMaterial->SetDiffuseTexture(diffuseTexture);
         containerMaterial->SetSpecularTexture(specularTexture);
         // mesh
-        m_ContainerMesh = std::make_shared<Mesh>(std::make_shared<BoxGeometry>(), std::make_shared<BasicMaterial>());
         for (unsigned int i = 0; i < m_ObjPositions.size(); i++)
         {
             std::shared_ptr<Mesh> containerMesh = std::make_shared<Mesh>(std::make_shared<BoxGeometry>(), containerMaterial);

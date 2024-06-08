@@ -8,6 +8,10 @@ Model::Model(const std::string &path, const ModelOptions &options)
     LoadModel(path);
 }
 
+Model::~Model()
+{
+}
+
 void Model::Translate(float x, float y, float z)
 {
     m_Translate[0] = x;
@@ -15,10 +19,23 @@ void Model::Translate(float x, float y, float z)
     m_Translate[2] = z;
 }
 
-void Model::Draw(Shader* shader)
+void Model::Draw(Shader* shader, glm::mat4 modelMatrix)
 {
     for (unsigned int i = 0; i < m_Meshes.size(); i++)
-        m_Meshes[i].Draw(shader);
+    {
+        Ref<Material> meshMaterial = m_Meshes[i]->GetMaterial();
+        if (meshMaterial->GetType() == MATERIAL_TYPE_SHADER)
+        {
+            Ref<Shader> customShader = std::dynamic_pointer_cast<ShaderMaterial>(meshMaterial)->GetShader();
+            customShader->Bind();
+            customShader->SetUniformMat4("modelMatrix", modelMatrix);
+            m_Meshes[i]->Draw(customShader.get());
+        }
+        else
+        {
+            m_Meshes[i]->Draw(shader);
+        }
+    }
 }
 
 void Model::LoadModel(const std::string &path)
@@ -54,7 +71,7 @@ void Model::ProcessNode(aiNode *node, const aiScene *scene)
     }
 }
 
-Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
+Ref<Mesh> Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -118,7 +135,7 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
     }
 
-    return Mesh(vertices, indices, textures, std::make_shared<StandardMaterial>());
+    return std::make_shared<Mesh>(vertices, indices, textures, std::make_shared<StandardMaterial>());
 }
 
 std::vector<std::shared_ptr<Texture2D>> Model::loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName)

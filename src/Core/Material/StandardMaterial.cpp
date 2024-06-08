@@ -28,6 +28,9 @@ void StandardMaterial::SetSpecularTexture(std::shared_ptr<Texture2D> texture)
 
 void StandardMaterial::BindTexture()
 {
-    m_DiffuseTexture->Bind();
-    m_SpecularTexture->Bind(1);
+    if (m_DiffuseTexture != nullptr)
+        m_DiffuseTexture->Bind();
+        
+    if (m_SpecularTexture != nullptr)
+        m_SpecularTexture->Bind(1);
 }

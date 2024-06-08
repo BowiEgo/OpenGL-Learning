@@ -7,6 +7,7 @@
 #define MATERIAL_TYPE_NONE 0
 #define MATERIAL_TYPE_BASIC 1
 #define MATERIAL_TYPE_STANDARD 2
+#define MATERIAL_TYPE_SHADER 3
 
 class Material
 {
