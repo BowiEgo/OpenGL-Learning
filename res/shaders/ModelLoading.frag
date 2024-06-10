@@ -2,11 +2,11 @@
 
 #define MAX_LIGHTS 10
 
+out vec4 FragColor;
+
 in vec3 v_FragPosition;
 in vec3 v_Normal;
 in vec2 v_TexCoords;
-
-out vec4 FragColor;
 
 uniform sampler2D u_Texture_Diffuse1;
 uniform sampler2D u_Texture_Diffuse2;

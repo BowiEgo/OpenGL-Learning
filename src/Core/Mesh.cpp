@@ -1,6 +1,10 @@
 #include "Mesh.h"
 
 #include "Core/VertexBufferLayout.h"
+#include "Material/MaterialManager.h"
+#include "Scene.h"
+
+#include <glm/gtc/matrix_transform.hpp>
 
 Mesh::Mesh(std::shared_ptr<Geometry> geometry, std::shared_ptr<Material> material)
     : m_Geometry(geometry), m_Material(material)
@@ -22,10 +26,10 @@ Mesh::~Mesh()
 
 void Mesh::Setup()
 {
-    m_VAO = std::make_shared<VertexArray>();
-    m_VBO = std::make_shared<VertexBuffer>(m_Vertices.data(), m_Vertices.size() * sizeof(Vertex));
+    m_VAO = std::make_unique<VertexArray>();
+    m_VBO = std::make_unique<VertexBuffer>(m_Vertices.data(), m_Vertices.size() * sizeof(Vertex));
     if (m_Indices.size() != 0)
-        m_IBO = std::make_shared<IndexBuffer>(&m_Indices[0], m_Indices.size());
+        m_IBO = std::make_unique<IndexBuffer>(&m_Indices[0], m_Indices.size());
 
     VertexBufferLayout layout;
 
@@ -85,12 +89,24 @@ void Mesh::SetRotation(std::pair<float, glm::vec3> &rotation)
     m_Rotation = rotation;
 }
 
-void Mesh::Draw(Shader* shader)
+void Mesh::SetOutline(bool enable)
+{
+    Outline_Enabled = enable;
+}
+
+void Mesh::SetOutlineWidth(float &width)
+{
+    m_Outline_Width = width;
+}
+
+void Mesh::Draw()
 {
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
     unsigned int normalNr = 1;
     unsigned int heightNr = 1;
+
+    GetMaterial()->BindShader();
 
     for(unsigned int i = 0; i < m_Textures.size(); i++)
     {
@@ -107,12 +123,50 @@ void Mesh::Draw(Shader* shader)
         else if(type == "Texture_Height")
             number = std::to_string(heightNr++);
 
-        shader->SetUniform1i(("u_" + type + number).c_str(), i);
+        GetMaterial()->UpdateShaderUniform(("u_" + type + number).c_str(), i);
+    }
+
+    GLCall(glStencilMask(0x00));
+
+    if (Outline_Enabled)
+    {
+        GLCall(glEnable(GL_STENCIL_TEST));
+        GLCall(glStencilFunc(GL_ALWAYS, 1, 0xFF)); 
+        GLCall(glStencilMask(0xFF));
     }
 
     Renderer renderer;
     if (m_IBO == nullptr)
-        renderer.Draw(*shader, *m_VAO);
+        renderer.Draw(*m_VAO);
     else
-        renderer.Draw(*shader, *m_VAO, *m_IBO);
+        renderer.Draw(*m_VAO, *m_IBO);
+}
+
+void Mesh::DrawOutline()
+{
+    if (!Outline_Enabled)
+        return;
+
+    GLCall(glDisable(GL_DEPTH_TEST));
+    GLCall(glEnable(GL_STENCIL_TEST));
+    GLCall(glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE));
+
+    GLCall(glStencilFunc(GL_NOTEQUAL, 1, 0xFF));
+    GLCall(glStencilMask(0x00));
+
+    Scene::GetMaterialManager()->GetOutlineMaterial()->BindShader();
+    Scene::GetMaterialManager()->GetOutlineMaterial()->UpdateShaderUniform("u_OutlineDrawType", Outline_DrawType);
+    Scene::GetMaterialManager()->GetOutlineMaterial()->UpdateShaderUniform("u_OutlineWidth", m_Outline_Width);
+
+    Renderer renderer;
+    if (m_IBO == nullptr)
+        renderer.Draw(*m_VAO);
+    else
+        renderer.Draw(*m_VAO, *m_IBO);
+
+    GLCall(glStencilFunc(GL_ALWAYS, 1, 0xFF));
+    GLCall(glStencilMask(0xFF));
+
+    GLCall(glEnable(GL_DEPTH_TEST));
+    GLCall(glDisable(GL_STENCIL_TEST));
 }

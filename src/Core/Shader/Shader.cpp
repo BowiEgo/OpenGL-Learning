@@ -1,5 +1,5 @@
 #include "Shader.h"
-#include "Renderer.h"
+#include "../Renderer.h"
 
 Shader::Shader(const std::string& filepath)
     : m_FilePath(filepath), m_RendererID(0)
@@ -37,6 +37,11 @@ void Shader::SetUniform1i(const std::string &name, int value)
 {
     GLCall(glUniform1i(GetUniformLoaction(name), value));
 }
+
+// void Shader::SetUniform1i(const std::string &name, unsigned int value)
+// {
+//     GLCall(glUniform1i(GetUniformLoaction(name), value));
+// }
 
 void Shader::SetUniform1f(const std::string& name, float value)
 {
@@ -86,6 +91,40 @@ void Shader::SetUniformMat3(const std::string& name, const glm::mat3& matrix)
 void Shader::SetUniformMat4(const std::string& name, const glm::mat4& matrix)
 {
     GLCall(glUniformMatrix4fv(GetUniformLoaction(name), 1, GL_FALSE, &matrix[0][0]));
+}
+
+void Shader::SetUniform(const std::string& name, const UniformValue& value)
+{
+    std::visit([&](auto&& arg) {
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, bool>) {
+            SetUniformBool(name, arg);
+        } else if constexpr (std::is_same_v<T, int>) {
+            SetUniform1i(name, arg);
+        } else if constexpr (std::is_same_v<T, unsigned int>) {
+            SetUniform1i(name, arg);
+        } else if constexpr (std::is_same_v<T, float>) {
+            SetUniform1f(name, arg);
+        } else if constexpr (std::is_same_v<T, std::pair<float, float>>) {
+            SetUniform2f(name, arg.first, arg.second);
+        } else if constexpr (std::is_same_v<T, std::tuple<float, float, float>>) {
+            SetUniform3f(name, std::get<0>(arg), std::get<1>(arg), std::get<2>(arg));
+        } else if constexpr (std::is_same_v<T, std::tuple<float, float, float, float>>) {
+            SetUniform4f(name, std::get<0>(arg), std::get<1>(arg), std::get<2>(arg), std::get<3>(arg));
+        } else if constexpr (std::is_same_v<T, glm::vec2>) {
+            SetUniformVec2(name, arg);
+        } else if constexpr (std::is_same_v<T, glm::vec3>) {
+            SetUniformVec3(name, arg);
+        } else if constexpr (std::is_same_v<T, float[3]>) {
+            SetUniformVec3(name, arg);
+        } else if constexpr (std::is_same_v<T, glm::vec4>) {
+            SetUniformVec4(name, arg);
+        } else if constexpr (std::is_same_v<T, glm::mat3>) {
+            SetUniformMat3(name, arg);
+        } else if constexpr (std::is_same_v<T, glm::mat4>) {
+            SetUniformMat4(name, arg);
+        }
+    }, value);
 }
 
 int Shader::GetUniformLoaction(const std::string& name) const

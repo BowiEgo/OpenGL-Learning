@@ -18,11 +18,11 @@ namespace test {
         void OnImGuiRender() override;
         void SetCameraAspectRatio(const float aspectRatio) override;
      private:
-        std::unique_ptr<VertexArray> m_VAO;
-        std::unique_ptr<VertexBuffer> m_VBO;
-        std::unique_ptr<IndexBuffer> m_IBO;
-        std::unique_ptr<Shader> m_Shader;
-        std::unique_ptr<Texture2D> m_Texture1, m_Texture2;
+        Ref<VertexArray> m_VAO;
+        Ref<VertexBuffer> m_VBO;
+        Ref<IndexBuffer> m_IBO;
+        Ref<Shader> m_Shader;
+        Ref<Texture2D> m_Texture1, m_Texture2;
         std::vector<glm::vec3> m_CubePositions;
 
         glm::mat4 m_Proj, m_View;

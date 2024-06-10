@@ -10,6 +10,21 @@ struct ShaderProgramSource
     std::string FragmentSource;
 };
 
+using UniformValue = std::variant<
+    bool,
+    int,
+    unsigned int,
+    float,
+    std::pair<float, float>,
+    std::tuple<float, float, float>,
+    std::tuple<float, float, float, float>,
+    glm::vec2,
+    glm::vec3,
+    glm::vec4,
+    glm::mat3,
+    glm::mat4
+>;
+
 class Shader
 {
 public:
@@ -23,6 +38,7 @@ public:
     // Set uniforms
     void SetUniformBool(const std::string& name, bool value);
     void SetUniform1i(const std::string& name, int value);
+    // void SetUniform1i(const std::string& name, unsigned int value);
     void SetUniform1f(const std::string& name, float value);
     void SetUniform2f(const std::string& name, float v0, float v1);
     void SetUniform3f(const std::string& name, float v0, float v1, float v2);
@@ -33,6 +49,7 @@ public:
     void SetUniformVec4(const std::string& name, const glm::vec4& vector);
     void SetUniformMat3(const std::string& name, const glm::mat3& matrix);
     void SetUniformMat4(const std::string& name, const glm::mat4& matrix);
+    void SetUniform(const std::string& name, const UniformValue& value);
 private:
     int GetUniformLoaction(const std::string& name) const;
     ShaderProgramSource ParseShader(const std::string& filepath);

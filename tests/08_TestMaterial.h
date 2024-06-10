@@ -27,13 +27,13 @@ namespace test {
         void EnableCameraControll() override;
         void DisableCameraControll() override;
     private:
-        std::unique_ptr<VertexArray> m_Obj_VAO, m_Light_VAO;
-        std::unique_ptr<VertexBuffer> m_VBO;
-        std::unique_ptr<IndexBuffer> m_IBO;
-        std::unique_ptr<Shader> m_ObjShader, m_LightCubeShader;
+        Ref<VertexArray> m_Obj_VAO, m_Light_VAO;
+        Ref<VertexBuffer> m_VBO;
+        Ref<IndexBuffer> m_IBO;
+        Ref<Shader> m_ObjShader, m_LightCubeShader;
         glm::vec3 m_ObjPositions, m_LightPosition;
 
-        std::unique_ptr<Camera> m_Camera;
+        Ref<Camera> m_Camera;
 
         float m_MaterialAmbient[3] = { 1.0f, 0.5f, 0.31f },
               m_MaterialDiffuse[3] = { 1.0f, 0.5f, 0.31f },

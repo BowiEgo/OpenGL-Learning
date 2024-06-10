@@ -1,6 +1,8 @@
 #include "Model.h"
 
+#include "Scene.h"
 #include "Material/StandardMaterial.h"
+#include "Material/MaterialManager.h"
 
 Model::Model(const std::string &path, const ModelOptions &options)
     : m_Options(options)
@@ -19,29 +21,71 @@ void Model::Translate(float x, float y, float z)
     m_Translate[2] = z;
 }
 
-void Model::Draw(Shader* shader, glm::mat4 modelMatrix)
+void Model::Scale(float x, float y, float z)
+{
+    m_Scale[0] = x;
+    m_Scale[1] = y;
+    m_Scale[2] = z;
+}
+
+void Model::SetOutlineWidth(float &width)
+{
+    m_Outline_Width = width;
+}
+
+void Model::Draw()
 {
     for (unsigned int i = 0; i < m_Meshes.size(); i++)
     {
-        Ref<Material> meshMaterial = m_Meshes[i]->GetMaterial();
-        if (meshMaterial->GetType() == MATERIAL_TYPE_SHADER)
+        m_Meshes[i]->GetMaterial()->UpdateShader(
+            GetTranslate(),
+            GetScale(),
+            GetRotation());
+
+        m_Meshes[i]->Draw();
+
+        if (Outline_Enabled && Outline_SingleMesh && m_Meshes[i]->Outline_Enabled)
         {
-            Ref<Shader> customShader = std::dynamic_pointer_cast<ShaderMaterial>(meshMaterial)->GetShader();
-            customShader->Bind();
-            customShader->SetUniformMat4("modelMatrix", modelMatrix);
-            m_Meshes[i]->Draw(customShader.get());
+            float* translate = GetTranslate();
+            float* scale = GetScale();
+            std::pair<float, glm::vec3>* rotation = GetRotation();
+            Scene::GetMaterialManager()->GetOutlineMaterial()->UpdateShader(
+                GetTranslate(),
+                GetScale(),
+                GetRotation());
+
+            m_Meshes[i]->SetOutlineWidth(m_Outline_Width);
+            m_Meshes[i]->DrawOutline();
         }
-        else
-        {
-            m_Meshes[i]->Draw(shader);
-        }
+    }
+
+    if (Outline_Enabled && !Outline_SingleMesh)
+    {
+        DrawOutline();
+    }
+}
+
+void Model::DrawOutline()
+{
+    for (unsigned int i = 0; i < m_Meshes.size(); i++)
+    {
+        float* translate = GetTranslate();
+        float* scale = GetScale();
+        std::pair<float, glm::vec3>* rotation = GetRotation();
+        Scene::GetMaterialManager()->GetOutlineMaterial()->UpdateShader(GetTranslate(), GetScale(), GetRotation());
+
+        m_Meshes[i]->SetOutlineWidth(m_Outline_Width);
+        m_Meshes[i]->DrawOutline();
     }
 }
 
 void Model::LoadModel(const std::string &path)
 {
     Assimp::Importer importer;
-    unsigned int flags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace;
+    unsigned int flags = aiProcess_Triangulate |
+        aiProcess_GenSmoothNormals |
+        aiProcess_CalcTangentSpace |
+        aiProcess_GenBoundingBoxes;
     if (m_Options.FlipUVs)
         flags |= aiProcess_FlipUVs;
 
@@ -71,42 +115,58 @@ void Model::ProcessNode(aiNode *node, const aiScene *scene)
     }
 }
 
-Ref<Mesh> Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
+Ref<Mesh> Model::ProcessMesh(aiMesh *aimesh, const aiScene *scene)
 {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<std::shared_ptr<Texture2D>> textures;
 
-    for(unsigned int i = 0; i < mesh->mNumVertices; i++)
+    const aiAABB &aabb = aimesh->mAABB;
+    if (aabb.mMin.x < m_AABB->mMin.x)
+        m_AABB->mMin.x = aabb.mMin.x;
+    if (aabb.mMax.x > m_AABB->mMax.x)
+        m_AABB->mMax.x = aabb.mMax.x;
+
+    if (aabb.mMin.y < m_AABB->mMin.y)
+        m_AABB->mMin.y = aabb.mMin.y;
+    if (aabb.mMax.y > m_AABB->mMax.y)
+        m_AABB->mMax.y = aabb.mMax.y;
+
+    if (aabb.mMin.z < m_AABB->mMin.z)
+        m_AABB->mMin.z = aabb.mMin.z;
+    if (aabb.mMax.z > m_AABB->mMax.z)
+        m_AABB->mMax.z = aabb.mMax.z;
+
+    for(unsigned int i = 0; i < aimesh->mNumVertices; i++)
     {
         Vertex vertex;
         // Handle vertex position
         glm::vec3 vector;
-        vector.x = mesh->mVertices[i].x;
-        vector.y = mesh->mVertices[i].y;
-        vector.z = mesh->mVertices[i].z; 
+        vector.x = aimesh->mVertices[i].x;
+        vector.y = aimesh->mVertices[i].y;
+        vector.z = aimesh->mVertices[i].z; 
         vertex.Position = vector;
         // Handle vertex normal
-        vector.x = mesh->mNormals[i].x;
-        vector.y = mesh->mNormals[i].y;
-        vector.z = mesh->mNormals[i].z;
+        vector.x = aimesh->mNormals[i].x;
+        vector.y = aimesh->mNormals[i].y;
+        vector.z = aimesh->mNormals[i].z;
         vertex.Normal = vector;
         // Handle vertex texture
-        if(mesh->mTextureCoords[0]) // Check if mesh has textureCoords
+        if(aimesh->mTextureCoords[0]) // Check if aimesh has textureCoords
         {
             glm::vec2 vec;
-            vec.x = mesh->mTextureCoords[0][i].x; 
-            vec.y = mesh->mTextureCoords[0][i].y;
+            vec.x = aimesh->mTextureCoords[0][i].x; 
+            vec.y = aimesh->mTextureCoords[0][i].y;
             vertex.TexCoords = vec;
             // // tangent
-            vector.x = mesh->mTangents[i].x;
-            vector.y = mesh->mTangents[i].y;
-            vector.z = mesh->mTangents[i].z;
+            vector.x = aimesh->mTangents[i].x;
+            vector.y = aimesh->mTangents[i].y;
+            vector.z = aimesh->mTangents[i].z;
             vertex.Tangent = vector;
             // // bitangent
-            vector.x = mesh->mBitangents[i].x;
-            vector.y = mesh->mBitangents[i].y;
-            vector.z = mesh->mBitangents[i].z;
+            vector.x = aimesh->mBitangents[i].x;
+            vector.y = aimesh->mBitangents[i].y;
+            vector.z = aimesh->mBitangents[i].z;
             vertex.Bitangent = vector;
         }
         else
@@ -115,16 +175,16 @@ Ref<Mesh> Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
         vertices.push_back(vertex);
     }
     // Handle indices
-    for(unsigned int i = 0; i < mesh->mNumFaces; i++)
+    for(unsigned int i = 0; i < aimesh->mNumFaces; i++)
     {
-        aiFace face = mesh->mFaces[i];
+        aiFace face = aimesh->mFaces[i];
         for(unsigned int j = 0; j < face.mNumIndices; j++)
             indices.push_back(face.mIndices[j]);
     }
     // Handle materials
-    if(mesh->mMaterialIndex >= 0)
+    if(aimesh->mMaterialIndex >= 0)
     {
-        aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+        aiMaterial *material = scene->mMaterials[aimesh->mMaterialIndex];
         auto diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "Texture_Diffuse");
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
         auto specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "Texture_Specular");
@@ -135,7 +195,10 @@ Ref<Mesh> Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
     }
 
-    return std::make_shared<Mesh>(vertices, indices, textures, std::make_shared<StandardMaterial>());
+    Ref<Mesh> mesh = std::make_shared<Mesh>(vertices, indices, textures, std::make_shared<StandardMaterial>());
+    mesh->Outline_Enabled = true;
+    mesh->Outline_DrawType = OUTLINE_DRAWTYPE_NORMAL;
+    return mesh;
 }
 
 std::vector<std::shared_ptr<Texture2D>> Model::loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName)

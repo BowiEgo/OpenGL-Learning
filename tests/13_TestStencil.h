@@ -1,24 +1,25 @@
 #pragma once
 
+#include "pch.h"
 #include "Test.h"
 
 #include "Core/VertexBuffer.h"
 #include "Core/VertexBufferLayout.h"
 #include "Core/Texture2D.h"
 
-#include "FileSystem/FileSystem.h"
-
 #include "Camera.h"
+#include "Core/Scene.h"
+#include "Core/Model.h"
 
-#include <memory>
-#include <vector>
+#include "Core/Light/DirectionalLight.h"
+#include "Core/Light/PointLight.h"
 
 namespace test {
-    class TestLightCasters : public Test
+    class TestStencil : public Test
     {
     public:
-        TestLightCasters(GLFWwindow* window);
-        ~TestLightCasters();
+        TestStencil(GLFWwindow* window);
+        ~TestStencil();
 
         void OnUpdate(float deltaTime) override;
         void OnRender() override;
@@ -28,11 +29,12 @@ namespace test {
         void EnableCameraControll() override;
         void DisableCameraControll() override;
     private:
-        Ref<VertexArray> m_Obj_VAO, m_LightCube_VAO;
-        Ref<VertexBuffer> m_VBO;
-        Ref<IndexBuffer> m_IBO;
-        Ref<Shader> m_ObjShader, m_PointLightCubeShader, m_SpotLightCubeShader;
-        Ref<Texture2D> m_DiffuseTexture, m_SpecularTexture;
+        Scene* m_Scene;
+
+        Ref<Camera> m_Camera;
+        Ref<DirectionalLight> m_DirectionalLight;
+        std::vector<Ref<PointLight>> m_PointLights;
+
         std::vector<glm::vec3> m_ObjPositions = {
             glm::vec3( 0.0f,  0.0f,   0.0f),
             glm::vec3( 2.0f,  5.0f, -15.0f),
@@ -45,20 +47,6 @@ namespace test {
             glm::vec3( 1.5f,  0.2f,  -1.5f),
             glm::vec3(-1.3f,  1.0f,  -1.5f)  
         };
-
-        Ref<Camera> m_Camera;
-
-        glm::vec3 m_LightPosition = glm::vec3(1.2f, 1.0f, 2.0f);
-        float m_MaterialShininess = 32.0f;
-
-        float m_LightAmbient[3] = { 0.2f, 0.2f, 0.2f },
-              m_LightDiffuse[3] = { 0.5f, 0.5f, 0.5f },
-              m_LightSpecular[3] = { 1.0f, 1.0f, 1.0f };
-
-        bool m_IsEnabled_DirectionalLight = true;
-        float m_DirectionalLightDir[3] = { -0.2f, -1.0f, -0.3f };
-
-        bool m_IsEnabled_PointLight = true;
         std::vector<glm::vec3> m_PointLightPositions = {
             glm::vec3( 0.7f,  0.2f,  2.0f),
             glm::vec3( 2.3f, -3.3f, -4.0f),
@@ -66,10 +54,11 @@ namespace test {
             glm::vec3( 0.0f,  0.0f, -3.0f)
         };
 
-        bool m_IsEnabled_SpotLight = true;
-        float m_SpotLightPhi = 16.0f;
-        float m_SpotLightCutOff = glm::cos(glm::radians(m_SpotLightPhi));
-        float m_SpotLight_SoftEdge = 1.5f;
-        float m_SpotLightOuterCutOff = glm::cos(glm::radians(m_SpotLightPhi + m_SpotLight_SoftEdge));
+        Ref<Model> m_ModelMichelle;
+        Ref<Model> m_ModelNanosuit;
+        std::vector<Ref<Mesh>> m_ContainerMeshes;
+
+        bool m_Model_Outline_Enable = true, m_Container_Outline_Enable = true;
+        float m_Outline_Width = 0.5f;
     };
 }

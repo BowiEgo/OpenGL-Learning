@@ -19,20 +19,46 @@ public:
     ~Model();
 
     void Translate(float x, float y, float z);
-    inline float* GetTranslate() { return m_Translate; };
-    inline std::vector<Ref<Mesh>>& GetMeshes() { return m_Meshes; };
+    void Scale(float x, float y, float z);
+    void Rotate(std::pair<float, glm::vec3>& rotation);
 
-    void Draw(Shader* shader, glm::mat4 modelMatrix = glm::mat4(1.0));
+    inline float* GetTranslate() { return m_Translate; }
+    inline float* GetScale() { return m_Scale; }
+    inline std::pair<float, glm::vec3>* GetRotation() { return &m_Rotation; }
+
+    inline std::vector<Ref<Mesh>>& GetMeshes() { return m_Meshes; }
+    inline Ref<aiAABB> GetAABB() { return m_AABB; }
+    inline glm::vec3 GetCenter() { return glm::vec3(
+        (m_AABB->mMax.x - m_AABB->mMin.x) / 1.0f,
+        (m_AABB->mMax.y - m_AABB->mMin.y) / 1.0f,
+        (m_AABB->mMax.z - m_AABB->mMin.z) / 1.0f
+    ); }
+
+    void SetOutlineWidth(float& width);
+
+    void Draw();
+    void DrawOutline();
 private:
     void LoadModel(const std::string& path);
     void ProcessNode(aiNode *node, const aiScene *scene);
     Ref<Mesh> ProcessMesh(aiMesh *mesh, const aiScene *scene);
     std::vector<std::shared_ptr<Texture2D>> loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName);
+public:
+    bool Outline_Enabled = false;
+    bool Outline_SingleMesh = false;
 private:
     ModelOptions m_Options;
+
     std::vector<std::shared_ptr<Texture2D>> m_Textures_Loaded;
     Ref<Material> m_Material;
     std::vector<Ref<Mesh>> m_Meshes;
     std::string m_Directory;
+
     float m_Translate[3] = { 0.0f, 0.0f, 0.0f };
+    float m_Scale[3] = { 1.0f, 1.0f, 1.0f };
+    std::pair<float, glm::vec3> m_Rotation = { 0.0, glm::vec3(0.0, 0.0, 1.0) };
+
+    Ref<aiAABB> m_AABB = std::make_shared<aiAABB>();
+
+    float m_Outline_Width = 1.0f;
 };

@@ -24,6 +24,7 @@
 #include "../tests/10_TestLightCasters.h"
 #include "../tests/11_TestModel.h"
 #include "../tests/12_TestDepth.h"
+#include "../tests/13_TestStencil.h"
 
 void RenderUI()
 {
@@ -128,6 +129,7 @@ int main(void)
     testMenu->RegisterTest<test::TestLightCasters>("LightCasters");
     testMenu->RegisterTest<test::TestModel>("Model");
     testMenu->RegisterTest<test::TestDepth>("Depth");
+    testMenu->RegisterTest<test::TestStencil>("Stencil");
 
     // test::TestClearColor test;
 

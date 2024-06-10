@@ -7,10 +7,12 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "ImGuiComponents/ToggleButton.h"
+#include "FileSystem/FileSystem.h"
 
 #include "Input.h"
 #include "KeyCodes.h"
 
+#include "Core/Geometry/BoxGeometry.h"
 #include "Core/Material/BasicMaterial.h"
 #include "Core/Material/StandardMaterial.h"
 
@@ -20,7 +22,7 @@ namespace test {
     {
         GLCall(glEnable(GL_DEPTH_TEST));
         // --------------------
-        // Scene
+        // Setup
         // --------------------
         m_Scene = Scene::Create();
         // --------------------

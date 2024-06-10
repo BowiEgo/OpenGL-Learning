@@ -37,6 +37,19 @@ void Renderer::Clear() const
     GLCall(glClear(GL_COLOR_BUFFER_BIT));
 }
 
+void Renderer::Draw(const VertexArray &va) const
+{
+    va.Bind();
+    GLCall(glDrawArrays(GL_TRIANGLES, 0, va.GetCount()));
+}
+
+void Renderer::Draw(const VertexArray &va, const IndexBuffer& ib) const
+{
+    va.Bind();
+    ib.Bind();
+    GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
+}
+
 void Renderer::Draw(const Shader &shader, const VertexArray &va) const
 {
     shader.Bind();

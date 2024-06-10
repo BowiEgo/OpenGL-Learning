@@ -1,23 +1,18 @@
 #pragma once
 
+#include "pch.h"
 #include "Test.h"
 
 #include "Core/VertexBuffer.h"
 #include "Core/VertexBufferLayout.h"
 #include "Core/Texture2D.h"
 
-#include "FileSystem/FileSystem.h"
-
-#include "Core/Scene.h"
 #include "Camera.h"
+#include "Core/Scene.h"
 #include "Core/Model.h"
-#include "Core/Geometry/BoxGeometry.h"
 #include "Core/Light/DirectionalLight.h"
 #include "Core/Light/PointLight.h"
 #include "Core/Light/SpotLight.h"
-
-#include <memory>
-#include <vector>
 
 namespace test {
     class TestModel : public Test

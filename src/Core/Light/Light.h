@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 
 #include "Camera.h"
-#include "Core/Shader.h"
+#include "Core/Shader/Shader.h"
 
 class Light
 {

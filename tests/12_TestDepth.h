@@ -1,24 +1,18 @@
 #pragma once
 
+#include "pch.h"
+
 #include "Test.h"
 
 #include "Core/VertexBuffer.h"
 #include "Core/VertexBufferLayout.h"
 #include "Core/Texture2D.h"
 
-#include "FileSystem/FileSystem.h"
-
-#include "Core/Scene.h"
 #include "Camera.h"
+#include "Core/Scene.h"
 #include "Core/Model.h"
-#include "Core/Geometry/PlaneGeometry.h"
-#include "Core/Geometry/BoxGeometry.h"
 #include "Core/Light/DirectionalLight.h"
 #include "Core/Light/PointLight.h"
-#include "Core/Light/SpotLight.h"
-
-#include <memory>
-#include <vector>
 
 namespace test {
     class TestDepth : public Test
@@ -61,7 +55,7 @@ namespace test {
             glm::vec3( 0.0f,  0.0f, -3.0f)
         };
 
-        float m_ZBuffer_Near = 0.1f, m_ZBuffer_Far = 100.0f;
+        float m_ZBuffer_Near = 0.1f, m_ZBuffer_Far = 10.0f;
 
         Ref<Shader> m_DepthShader;
 

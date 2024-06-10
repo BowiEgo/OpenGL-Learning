@@ -37,5 +37,5 @@ private:
     std::string m_Type = "";
     std::string m_FilePath;
     unsigned char* m_LocalBuffer;
-    int m_Width, m_Height, m_Channels; // BPP = Bits Per Pixel
+    int m_Width, m_Height, m_Channels;
 };

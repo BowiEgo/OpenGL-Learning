@@ -24,7 +24,7 @@ namespace test {
         virtual void DisableCameraControll() {};
     protected:
         GLFWwindow* m_Window;
-        std::unique_ptr<Camera> m_Camera;
+        Ref<Camera> m_Camera;
     };
 
     class TestMenu : public Test

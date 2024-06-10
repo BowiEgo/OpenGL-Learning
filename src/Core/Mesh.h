@@ -15,20 +15,23 @@
 
 #include "Texture2D.h"
 
+#define OUTLINE_DRAWTYPE_SCALE 0;
+#define OUTLINE_DRAWTYPE_NORMAL 1;
+
 class Geometry;
 
 class Mesh
 {
 public:
-    Mesh(std::shared_ptr<Geometry> geometry, std::shared_ptr<Material> material);
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::shared_ptr<Texture2D>> textures, std::shared_ptr<Material> material);
+    Mesh(Ref<Geometry> geometry, Ref<Material> material);
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Ref<Texture2D>> textures, Ref<Material> material);
     ~Mesh();
 
-    inline std::shared_ptr<Geometry> GetGeometry() { return m_Geometry; }
-    inline std::shared_ptr<Material> GetMaterial() { return m_Material; }
+    inline Ref<Geometry> GetGeometry() { return m_Geometry; }
+    inline Ref<Material> GetMaterial() { return m_Material; }
     inline float* GetPosition() { return m_Position; }
     inline float* GetScale() { return m_Scale; }
-    inline std::pair<float, glm::vec3> GetRotation() { return m_Rotation; }
+    inline std::pair<float, glm::vec3>* GetRotation() { return &m_Rotation; }
 
     void Setup();
     void SetMaterial(Ref<Material> material);
@@ -37,17 +40,27 @@ public:
     void SetPosition(float x, float y, float z);
     void SetScale(float scaleX, float scaleY, float scaleZ);
     void SetRotation(std::pair<float, glm::vec3>& rotation);
-    void Draw(Shader* shader);
+    void SetOutline(bool enable);
+    void SetOutlineWidth(float& width);
+    void Draw();
+    void DrawOutline();
+public:
+    bool Outline_Enabled = false;
+    bool Outline_DrawType = OUTLINE_DRAWTYPE_SCALE;
 private:
-    std::shared_ptr<Geometry> m_Geometry;
-    std::shared_ptr<Material> m_Material;
-    std::vector<std::shared_ptr<Texture2D>> m_Textures;
-    std::shared_ptr<VertexArray> m_VAO;
-    std::shared_ptr<VertexBuffer> m_VBO;
-    std::shared_ptr<IndexBuffer> m_IBO;
+    Ref<Geometry> m_Geometry;
+    Ref<Material> m_Material;
+    std::vector<Ref<Texture2D>> m_Textures;
+
+    Scope<VertexArray> m_VAO;
+    Scope<VertexBuffer> m_VBO;
+    Scope<IndexBuffer> m_IBO;
     std::vector<Vertex> m_Vertices;
     std::vector<unsigned int> m_Indices;
+
     float m_Position[3] = { 0.0f, 0.0f, 0.0f };
     float m_Scale[3] = { 1.0f, 1.0f, 1.0f };
     std::pair<float, glm::vec3> m_Rotation = { 0.0, glm::vec3(0.0, 0.0, 1.0) };
+
+    float m_Outline_Width = 1.0f;
 };
