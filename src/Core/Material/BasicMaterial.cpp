@@ -24,7 +24,7 @@ void BasicMaterial::BindShader() const
     m_Shader->Bind();
 }
 
-void BasicMaterial::UpdateShader(float* position, float* scale, std::pair<float, glm::vec3>* rotation) const
+void BasicMaterial::UpdateShader(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation) const
 {
     glm::mat4 proj = Scene::GetCurrentCamera()->GetProjMatrix();
     glm::mat4 view = Scene::GetCurrentCamera()->GetViewMatrix();
@@ -32,8 +32,8 @@ void BasicMaterial::UpdateShader(float* position, float* scale, std::pair<float,
     glm::vec3 modelTranslate(0.0f);
     glm::vec3 modelScale(1.0f);
 
-    model = glm::translate(model, glm::vec3(position[0], position[1], position[2]));
-    model = glm::scale(model, glm::vec3(scale[0], scale[1], scale[2]));
+    model = glm::translate(model, position);
+    model = glm::scale(model, scale);
     model = glm::rotate(model, rotation->first, rotation->second);
 
     m_Shader->Bind();

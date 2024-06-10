@@ -22,8 +22,8 @@ public:
     void Scale(float x, float y, float z);
     void Rotate(std::pair<float, glm::vec3>& rotation);
 
-    inline float* GetTranslate() { return m_Translate; }
-    inline float* GetScale() { return m_Scale; }
+    inline glm::vec3& GetTranslate() { return m_Translate; }
+    inline glm::vec3& GetScale() { return m_Scale; }
     inline std::pair<float, glm::vec3>* GetRotation() { return &m_Rotation; }
 
     inline std::vector<Ref<Mesh>>& GetMeshes() { return m_Meshes; }
@@ -54,8 +54,8 @@ private:
     std::vector<Ref<Mesh>> m_Meshes;
     std::string m_Directory;
 
-    float m_Translate[3] = { 0.0f, 0.0f, 0.0f };
-    float m_Scale[3] = { 1.0f, 1.0f, 1.0f };
+    glm::vec3 m_Translate = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 m_Scale = glm::vec3(1.0f, 1.0f, 1.0f);
     std::pair<float, glm::vec3> m_Rotation = { 0.0, glm::vec3(0.0, 0.0, 1.0) };
 
     Ref<aiAABB> m_AABB = std::make_shared<aiAABB>();

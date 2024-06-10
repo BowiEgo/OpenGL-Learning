@@ -6,6 +6,7 @@
 #include "Light/PointLight.h"
 #include "Light/SpotLight.h"
 #include "Mesh.h"
+#include "InstanceMesh.h"
 #include "Model.h"
 #include "Material/MaterialManager.h"
 
@@ -28,9 +29,10 @@ public:
     void Add(Ref<PointLight> light);
     void Add(Ref<SpotLight> light);
     void Add(Ref<Mesh> mesh);
+    void Add(Ref<InstanceMesh> mesh);
     void Add(Ref<Model> model);
 
-    void Update();
+    void Draw();
 private:
     static Scene* s_Instance;
     static MaterialManager* s_MaterialManager;
@@ -40,5 +42,6 @@ private:
     std::vector<Ref<PointLight>> m_PointLights;
     std::vector<Ref<SpotLight>> m_SpotLights;
     std::vector<Ref<Mesh>> m_Meshes;
+    std::vector<Ref<Mesh>> m_Transparent_Meshes;
     std::vector<Ref<Model>> m_Models;
 };

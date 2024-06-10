@@ -16,16 +16,16 @@ Model::~Model()
 
 void Model::Translate(float x, float y, float z)
 {
-    m_Translate[0] = x;
-    m_Translate[1] = y;
-    m_Translate[2] = z;
+    m_Translate.x = x;
+    m_Translate.y = y;
+    m_Translate.z = z;
 }
 
 void Model::Scale(float x, float y, float z)
 {
-    m_Scale[0] = x;
-    m_Scale[1] = y;
-    m_Scale[2] = z;
+    m_Scale.x = x;
+    m_Scale.y = y;
+    m_Scale.z = z;
 }
 
 void Model::SetOutlineWidth(float &width)
@@ -37,25 +37,13 @@ void Model::Draw()
 {
     for (unsigned int i = 0; i < m_Meshes.size(); i++)
     {
-        m_Meshes[i]->GetMaterial()->UpdateShader(
-            GetTranslate(),
-            GetScale(),
-            GetRotation());
 
-        m_Meshes[i]->Draw();
+        m_Meshes[i]->Draw(GetTranslate(), GetScale(), GetRotation());
 
         if (Outline_Enabled && Outline_SingleMesh && m_Meshes[i]->Outline_Enabled)
         {
-            float* translate = GetTranslate();
-            float* scale = GetScale();
-            std::pair<float, glm::vec3>* rotation = GetRotation();
-            Scene::GetMaterialManager()->GetOutlineMaterial()->UpdateShader(
-                GetTranslate(),
-                GetScale(),
-                GetRotation());
-
             m_Meshes[i]->SetOutlineWidth(m_Outline_Width);
-            m_Meshes[i]->DrawOutline();
+            m_Meshes[i]->DrawOutline(GetTranslate(), GetScale(), GetRotation());
         }
     }
 
@@ -69,13 +57,8 @@ void Model::DrawOutline()
 {
     for (unsigned int i = 0; i < m_Meshes.size(); i++)
     {
-        float* translate = GetTranslate();
-        float* scale = GetScale();
-        std::pair<float, glm::vec3>* rotation = GetRotation();
-        Scene::GetMaterialManager()->GetOutlineMaterial()->UpdateShader(GetTranslate(), GetScale(), GetRotation());
-
         m_Meshes[i]->SetOutlineWidth(m_Outline_Width);
-        m_Meshes[i]->DrawOutline();
+        m_Meshes[i]->DrawOutline(GetTranslate(), GetScale(), GetRotation());
     }
 }
 

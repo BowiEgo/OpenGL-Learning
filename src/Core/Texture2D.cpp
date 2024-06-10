@@ -23,7 +23,7 @@ Texture2D::~Texture2D()
 
 void Texture2D::SetupTexture2D(const std::string &type, const std::string &path, const TextureOptions &options)
 {
-    stbi_set_flip_vertically_on_load(true);
+    stbi_set_flip_vertically_on_load(options.flip);
     m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_Channels, 0);
 
     GLCall(glGenTextures(1, &m_RendererID));

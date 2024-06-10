@@ -117,7 +117,7 @@ namespace test {
             m_Scene->GetPointLights()[i]->SetEnabled(m_IsPointLightsEnabled);
         }
 
-        m_Scene->Update();
+        m_Scene->Draw();
 
         // float lightColor[3] = {
         //     (m_Light->GetLightAmbient()[0] + m_Light->GetLightDiffuse()[0] + m_Light->GetLightSpecular()[0]) / 2.0f,
@@ -161,7 +161,7 @@ namespace test {
         }
 
         ImGui::Bullet();ImGui::Text("Model Michelle");
-        ImGui::SliderFloat3("Translate##Michelle", m_ModelMichelle->GetTranslate(), -5.0f, 5.0f);
+        ImGui::SliderFloat3("Translate##Michelle", glm::value_ptr(m_ModelMichelle->GetTranslate()), -5.0f, 5.0f);
     }
 
     void TestModel::ProcessInput(float deltaTime)

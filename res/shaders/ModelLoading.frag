@@ -80,9 +80,12 @@ uniform PointLight u_PointLights[MAX_LIGHTS];
 
 uniform SpotLight u_SpotLight;
 
-vec3 texturedDiffuse = texture(u_Texture_Diffuse1, v_TexCoords).rgb;
+vec4 texColor = texture(u_Texture_Diffuse1, v_TexCoords);
+float alpha = texColor.a;
+vec3 texturedDiffuse = texColor.rgb;
 vec3 texturedSpecular = texture(u_Texture_Specular1, v_TexCoords).rgb;
 vec3 textureNormal = texture(u_Texture_Normal1, v_TexCoords).rgb;
+
 
 vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
@@ -178,5 +181,8 @@ void main()
         pointLights += calcPointLight(u_PointLights[i], v_Normal, v_FragPosition, viewDirection);
 
     final = directionalLight + pointLights + spotight;
-    FragColor = vec4(final, 1.0);
+
+    // if(alpha < 0.1)
+    //     discard;
+    FragColor = vec4(final, alpha);
 }

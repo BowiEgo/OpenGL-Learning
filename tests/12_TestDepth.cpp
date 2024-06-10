@@ -133,7 +133,7 @@ namespace test {
         m_DepthShader->SetUniform1f("u_Near", m_ZBuffer_Near);
         m_DepthShader->SetUniform1f("u_Far", m_ZBuffer_Far);
 
-        m_Scene->Update();
+        m_Scene->Draw();
     }
 
     void TestDepth::OnImGuiRender()

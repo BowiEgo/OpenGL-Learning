@@ -3,6 +3,7 @@
 Scene* Scene::s_Instance = nullptr;
 MaterialManager* Scene::s_MaterialManager = nullptr;
 
+
 Scene::Scene()
 {
 }
@@ -46,7 +47,26 @@ void Scene::Add(std::shared_ptr<SpotLight> light)
 
 void Scene::Add(std::shared_ptr<Mesh> mesh)
 {
-    s_Instance->m_Meshes.push_back(mesh);
+    if (mesh->Is_Transparent)
+    {
+        s_Instance->m_Transparent_Meshes.push_back(mesh);
+    }
+    else
+    {
+        s_Instance->m_Meshes.push_back(mesh);
+    }
+}
+
+void Scene::Add(std::shared_ptr<InstanceMesh> mesh)
+{
+    if (mesh->Is_Transparent)
+    {
+        s_Instance->m_Transparent_Meshes.push_back(mesh);
+    }
+    else
+    {
+        s_Instance->m_Meshes.push_back(mesh);
+    }
 }
 
 void Scene::Add(std::shared_ptr<Model> model)
@@ -54,27 +74,71 @@ void Scene::Add(std::shared_ptr<Model> model)
     s_Instance->m_Models.push_back(model);
 }
 
-void Scene::Update()
+void Scene::Draw()
 {
+    // --------------------
+    // Draw meshes
+    // --------------------
     for (unsigned int i = 0; i < m_Meshes.size(); i++)
     {
-        m_Meshes[i]->GetMaterial()->UpdateShader(
-            m_Meshes[i]->GetPosition(),
-            m_Meshes[i]->GetScale(),
-            m_Meshes[i]->GetRotation());
+        if (dynamic_cast<InstanceMesh*>(m_Meshes[i].get()))
+        {
+            dynamic_cast<InstanceMesh*>(m_Meshes[i].get())->Draw();
+        }
+        else
+        {
+            m_Meshes[i]->Draw(m_Meshes[i]->GetPosition(), m_Meshes[i]->GetScale(), m_Meshes[i]->GetRotation());
+            m_Meshes[i]->DrawOutline(m_Meshes[i]->GetPosition(), m_Meshes[i]->GetScale(), m_Meshes[i]->GetRotation());
+        }
 
-        m_Meshes[i]->Draw();
-
-        Scene::GetMaterialManager()->GetOutlineMaterial()->UpdateShader(
-            m_Meshes[i]->GetPosition(),
-            m_Meshes[i]->GetScale(),
-            m_Meshes[i]->GetRotation());
-
-        m_Meshes[i]->DrawOutline();
     }
 
+    // --------------------
+    // Draw models
+    // --------------------
     for (unsigned int i = 0; i < m_Models.size(); i++)
     {
         m_Models[i]->Draw();
+    }
+
+    // --------------------
+    // Draw transparent meshes
+    // --------------------
+    using VariantType = std::variant<Mesh*, std::pair<InstanceMesh*, MeshCoordinate>>;
+    std::map<float, VariantType> sorted;
+
+    for (unsigned int i = 0; i < m_Transparent_Meshes.size(); i++)
+    {
+        if (dynamic_cast<InstanceMesh*>(m_Transparent_Meshes[i].get()))
+        {
+            InstanceMesh* mesh = dynamic_cast<InstanceMesh*>(m_Transparent_Meshes[i].get());
+            std::vector<MeshCoordinate>* meshcoord = mesh->GetCoordinates();
+            for (const MeshCoordinate coordinate : *meshcoord) {
+                float distance = glm::length(GetCurrentCamera()->GetPosition() - coordinate.Position);
+                sorted[distance] = std::make_pair(mesh, coordinate);
+            }
+        }
+        else
+        {
+            float distance = glm::length(GetCurrentCamera()->GetPosition() - m_Transparent_Meshes[i]->GetPosition());
+                sorted[distance] = m_Transparent_Meshes[i].get();
+        }
+    }
+
+    for(std::map<float, VariantType>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) 
+    {
+        VariantType v = it->second;
+
+        std::visit([](auto&& arg) {
+            using T = std::decay_t<decltype(arg)>;
+            if constexpr (std::is_same_v<T, Mesh*>) {
+                Mesh* mesh = dynamic_cast<Mesh*>(arg);
+                mesh->Draw(mesh->GetPosition(), mesh->GetScale(), mesh->GetRotation());
+            } else if constexpr (std::is_same_v<T, std::pair<InstanceMesh*, MeshCoordinate>>) {
+                InstanceMesh* mesh = dynamic_cast<std::pair<InstanceMesh*, MeshCoordinate>*>(&arg)->first;
+                MeshCoordinate coord = dynamic_cast<std::pair<InstanceMesh*, MeshCoordinate>*>(&arg)->second;
+                mesh->Draw(&coord);
+            }
+        }, v);
     }
 }

@@ -1,4 +1,4 @@
-#include "13_TestStencil.h"
+#include "14_TestBlend.h"
 
 #include "imgui.h"
 
@@ -11,14 +11,19 @@
 #include "Input.h"
 #include "KeyCodes.h"
 
+#include "Core/Geometry/GrassGeometry.h"
 #include "Core/Geometry/PlaneGeometry.h"
 #include "Core/Geometry/BoxGeometry.h"
 #include "Core/Material/StandardMaterial.h"
 
+#include "Core/InstanceMesh.h"
+
 namespace test {
-    TestStencil::TestStencil(GLFWwindow* window)
+    TestBlend::TestBlend(GLFWwindow* window)
       : Test(window)
     {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         // --------------------
         // Setup
         // --------------------
@@ -46,15 +51,6 @@ namespace test {
         // --------------------
         // Import models
         // --------------------
-        m_ModelMichelle = std::make_shared<Model>("../res/models/michelle/michelle.obj");
-        m_ModelMichelle->Translate(0.0f, 0.513f, 0.0f);
-        std::vector<Ref<Mesh>> modelMeshes = m_ModelMichelle->GetMeshes();
-        m_Scene->Add(m_ModelMichelle);
-
-        m_ModelNanosuit = std::make_shared<Model>("../res/models/nanosuit/nanosuit.obj");
-        m_ModelNanosuit->Translate(0.0f, -4.513f, 0.0f);
-        m_ModelNanosuit->Scale(0.2f, 0.2f, 0.2f);
-        m_Scene->Add(m_ModelNanosuit);
 
         // --------------------
         // Plane
@@ -87,23 +83,52 @@ namespace test {
             float angle = 20.0f * i;
             std::pair<float, glm::vec3> rotation = { glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f) };
             mesh_container->SetRotation(rotation);
+            // mesh_container->Is_Transparent = true;
             m_ContainerMeshes.push_back(mesh_container);
             m_Scene->Add(mesh_container);
         }
+
+        // --------------------
+        // Vegetation
+        // --------------------
+        std::vector<glm::vec3> vegetation;
+        vegetation.push_back(glm::vec3(-1.5f,  0.0f, -0.48f));
+        vegetation.push_back(glm::vec3( 1.5f,  0.0f,  0.51f));
+        vegetation.push_back(glm::vec3( 0.0f,  0.0f,  0.7f));
+        vegetation.push_back(glm::vec3(-0.3f,  0.0f, -2.3f));
+        vegetation.push_back(glm::vec3( 0.5f,  0.0f, -0.6f));
+
+        // texture
+        TextureOptions opts = TextureOptions();
+        opts.flip = false;
+        Ref<Texture2D> diffuseTexture_grass = std::make_shared<Texture2D>("Texture_Diffuse", "../res/textures/blending_transparent_window.png", opts);
+        diffuseTexture_grass->SetWrapping(GL_TEXTURE_WRAP_S, GL_REPEAT);
+        diffuseTexture_grass->SetWrapping(GL_TEXTURE_WRAP_T, GL_REPEAT);
+        // material
+        Ref<StandardMaterial> material_grass = std::make_shared<StandardMaterial>();
+        material_grass->SetDiffuseTexture(diffuseTexture_grass);
+        // mesh
+        Ref<InstanceMesh> mesh_grass = std::make_shared<InstanceMesh>(std::make_shared<GrassGeometry>(), material_grass, vegetation.size());
+        for (unsigned int i = 0; i < vegetation.size(); i++)
+        {
+            mesh_grass->SetPosition(i, vegetation[i]);
+        }
+        mesh_grass->Is_Transparent = true;
+        m_Scene->Add(mesh_grass);
     }
 
-    TestStencil::~TestStencil()
+    TestBlend::~TestBlend()
     {
         GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
         delete m_Scene;
     }
 
-    void TestStencil::OnUpdate(float deltaTime)
+    void TestBlend::OnUpdate(float deltaTime)
     {
         ProcessInput(deltaTime);
     }
 
-    void TestStencil::OnRender()
+    void TestBlend::OnRender()
     {
         GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
@@ -112,54 +137,32 @@ namespace test {
 
         float currentTime = glfwGetTime();
 
-        float michelleLineWidth = m_Outline_Width * 0.2;
-        m_ModelMichelle->Outline_Enabled = m_Model_Outline_Enable;
-        m_ModelMichelle->SetOutlineWidth(michelleLineWidth);
-
-        m_ModelNanosuit->Outline_Enabled = m_Model_Outline_Enable;
-        m_ModelNanosuit->SetOutlineWidth(m_Outline_Width);
-
-        for (unsigned int i = 0; i < m_ContainerMeshes.size(); i++)
-        {
-            m_ContainerMeshes[i]->Outline_Enabled = m_Container_Outline_Enable;
-            m_ContainerMeshes[i]->SetOutlineWidth(m_Outline_Width);
-        }
-
         m_Scene->Draw();
     }
 
-    void TestStencil::OnImGuiRender()
+    void TestBlend::OnImGuiRender()
     {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
-        ImGui::Bullet();ImGui::Text("Outline");
-        ImGui::SliderFloat("Width#Outline", &m_Outline_Width, 0.01f, 20.0f);
-
-        ImGui::Bullet();ImGui::Text("Model");
-        ImGui::SameLine();ImGui::ToggleButton("Outline##Model", &m_Model_Outline_Enable);
-
-        ImGui::Bullet();ImGui::Text("Container");
-        ImGui::SameLine();ImGui::ToggleButton("Outline##Container", &m_Container_Outline_Enable);
     }
 
-    void TestStencil::ProcessInput(float deltaTime)
+    void TestBlend::ProcessInput(float deltaTime)
     {
         m_Camera->ProcessKeyboardMovement(deltaTime);
         m_Camera->ProcessMouseMovement();
         m_Camera->ProcessMouseScroll();
     }
 
-    void TestStencil::SetCameraAspectRatio(float aspectRatio)
+    void TestBlend::SetCameraAspectRatio(float aspectRatio)
     {
         m_Camera->SetAspectRatio(aspectRatio);
     }
 
-    void TestStencil::EnableCameraControll()
+    void TestBlend::EnableCameraControll()
     {
         m_Camera->EnableControll();
     }
 
-    void TestStencil::DisableCameraControll()
+    void TestBlend::DisableCameraControll()
     {
         m_Camera->DisableControll();
     }

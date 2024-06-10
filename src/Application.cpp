@@ -25,6 +25,7 @@
 #include "../tests/11_TestModel.h"
 #include "../tests/12_TestDepth.h"
 #include "../tests/13_TestStencil.h"
+#include "../tests/14_TestBlend.h"
 
 void RenderUI()
 {
@@ -130,6 +131,7 @@ int main(void)
     testMenu->RegisterTest<test::TestModel>("Model");
     testMenu->RegisterTest<test::TestDepth>("Depth");
     testMenu->RegisterTest<test::TestStencil>("Stencil");
+    testMenu->RegisterTest<test::TestBlend>("Blend");
 
     // test::TestClearColor test;
 

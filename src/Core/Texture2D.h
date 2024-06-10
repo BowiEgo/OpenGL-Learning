@@ -8,6 +8,7 @@ struct TextureOptions {
     GLint wrapT = GL_CLAMP_TO_EDGE;
     GLint minFilter = GL_NEAREST;
     GLint magFilter = GL_LINEAR;
+    bool flip = true;
 };
 
 class Texture2D
