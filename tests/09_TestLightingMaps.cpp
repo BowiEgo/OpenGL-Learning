@@ -126,7 +126,7 @@ namespace test {
 
     TestLightingMaps::~TestLightingMaps()
     {
-        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
+        GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
     }
 
     void TestLightingMaps::OnUpdate(float deltaTime)
@@ -136,7 +136,7 @@ namespace test {
 
     void TestLightingMaps::OnRender()
     {
-        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
+        GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
         Renderer renderer;

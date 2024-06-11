@@ -65,7 +65,7 @@ namespace test {
 
     TestTexture2DContainer::~TestTexture2DContainer()
     {
-        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
+        GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
     }
 
     void TestTexture2DContainer::OnUpdate(float deltaTime)
@@ -75,7 +75,7 @@ namespace test {
 
     void TestTexture2DContainer::OnRender()
     {
-        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
+        GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
         Renderer renderer;

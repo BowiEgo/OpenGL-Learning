@@ -1,4 +1,4 @@
-#include "14_TestBlend.h"
+#include "15_TestFaceCulling.h"
 
 #include "imgui.h"
 
@@ -19,11 +19,11 @@
 #include "Core/InstanceMesh.h"
 
 namespace test {
-    TestBlend::TestBlend(GLFWwindow* window)
+    TestFaceCulling::TestFaceCulling(GLFWwindow* window)
       : Test(window)
     {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GLCall(glEnable(GL_BLEND));
+        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
         // --------------------
         // Setup
         // --------------------
@@ -69,9 +69,10 @@ namespace test {
         Ref<StandardMaterial> material_plane = std::make_shared<StandardMaterial>();
         material_plane->SetDiffuseTexture(diffuseTexture_plane);
         // mesh
-        Ref<Mesh> mesh_plane = std::make_shared<Mesh>(std::make_shared<PlaneGeometry>(), material_plane);
-        mesh_plane->SetPosition(0.0f, -0.01f, 0.0f);
-        m_Scene->Add(mesh_plane);
+        m_Mesh_Floor = std::make_shared<Mesh>(std::make_shared<PlaneGeometry>(), material_plane);
+        m_Mesh_Floor->SetPosition(0.0f, -0.01f, 0.0f);
+        m_Mesh_Floor->Cull_Face = m_CullFaceOption_Floor;
+        m_Scene->Add(m_Mesh_Floor);
 
         // --------------------
         // Container
@@ -94,18 +95,19 @@ namespace test {
         Ref<StandardMaterial> material_container = std::make_shared<StandardMaterial>();
         material_container->SetDiffuseTexture(diffuseTexture_container);
         // mesh
-        Ref<InstanceMesh> mesh_container = std::make_shared<InstanceMesh>(
+        m_Mesh_Container = std::make_shared<InstanceMesh>(
             std::make_shared<BoxGeometry>(),
             material_container, containerPositions.size());
 
         for (unsigned int i = 0; i < containerPositions.size(); i++)
         {
-            mesh_container->SetPosition(i, containerPositions[i]);
+            m_Mesh_Container->SetPosition(i, containerPositions[i]);
             float angle = 20.0f * i;
             std::pair<float, glm::vec3> rotation = { glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f) };
-            mesh_container->SetRotation(i, rotation);
+            m_Mesh_Container->SetRotation(i, rotation);
         }
-        m_Scene->Add(mesh_container);
+        m_Mesh_Container->Cull_Face = m_CullFaceOption_Container;
+        m_Scene->Add(m_Mesh_Container);
 
         // --------------------
         // Vegetation
@@ -127,92 +129,87 @@ namespace test {
         material_grass->SetDiffuseTexture(diffuseTexture_grass);
         material_grass->Discard_Transparent = true;
         // mesh
-        Ref<InstanceMesh> mesh_grass = std::make_shared<InstanceMesh>(
+        m_Mesh_Grass = std::make_shared<InstanceMesh>(
             std::make_shared<GrassGeometry>(),
             material_grass, vegetation.size());
 
         for (unsigned int i = 0; i < vegetation.size(); i++)
         {
-            mesh_grass->SetPosition(i, vegetation[i]);
+            m_Mesh_Grass->SetPosition(i, vegetation[i]);
         }
-        m_Scene->Add(mesh_grass);
 
-        // --------------------
-        // Windows
-        // --------------------
-        std::vector<glm::vec3> windows;
-        windows.push_back(glm::vec3(-1.5f,  0.0f, -0.48f));
-        windows.push_back(glm::vec3( 1.5f,  0.0f,  0.51f));
-        windows.push_back(glm::vec3( 0.0f,  0.0f,   0.7f));
-        windows.push_back(glm::vec3(-0.3f,  0.0f,  -2.3f));
-        windows.push_back(glm::vec3( 0.5f,  0.0f,  -0.6f));
-
-        // texture
-        TextureOptions windowTexOpts = TextureOptions();
-        windowTexOpts.flip = false;
-        Ref<Texture2D> diffuseTexture_window = std::make_shared<Texture2D>("Texture_Diffuse", "../res/textures/blending_transparent_window.png", windowTexOpts);
-        diffuseTexture_window->SetWrapping(GL_TEXTURE_WRAP_S, GL_REPEAT);
-        diffuseTexture_window->SetWrapping(GL_TEXTURE_WRAP_T, GL_REPEAT);
-        // material
-        Ref<StandardMaterial> material_window = std::make_shared<StandardMaterial>();
-        material_window->SetDiffuseTexture(diffuseTexture_window);
-        // mesh
-        Ref<InstanceMesh> mesh_window = std::make_shared<InstanceMesh>(
-            std::make_shared<GrassGeometry>(),
-            material_window, windows.size());
-
-        for (unsigned int i = 0; i < windows.size(); i++)
-        {
-            mesh_window->SetPosition(i, windows[i]);
-        }
-        mesh_window->Is_Transparent = true;
-        m_Scene->Add(mesh_window);
+        m_Mesh_Grass->Cull_Face = m_CullFaceOption_Grass;
+        m_Scene->Add(m_Mesh_Grass);
     }
 
-    TestBlend::~TestBlend()
+    TestFaceCulling::~TestFaceCulling()
     {
         GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
         delete m_Scene;
     }
 
-    void TestBlend::OnUpdate(float deltaTime)
+    void TestFaceCulling::OnUpdate(float deltaTime)
     {
         ProcessInput(deltaTime);
     }
 
-    void TestBlend::OnRender()
+    void TestFaceCulling::OnRender()
     {
         GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
         float currentTime = glfwGetTime();
 
+        m_Mesh_Floor->Cull_Face = m_CullFaceOption_Floor;
+        m_Mesh_Container->Cull_Face = m_CullFaceOption_Container;
+        m_Mesh_Grass->Cull_Face = m_CullFaceOption_Grass;
+
         m_Scene->Draw();
     }
 
-    void TestBlend::OnImGuiRender()
+    void TestFaceCulling::OnImGuiRender()
     {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+        const char* items[] = { "CULL_FACE_NONE", "CULL_FACE_BACK", "CULL_FACE_FRONT", "CULL_FACE_FRONT_AND_BACK" };
+        ImGui::Bullet();ImGui::Text("glCullFace");
+
+        static int item_current_floor = 2;
+        if (ImGui::Combo("floor", &item_current_floor, items, IM_ARRAYSIZE(items)))
+        {
+            m_CullFaceOption_Floor = static_cast<CullFaceOption>(item_current_floor);
+        }
+
+        static int item_current_container = 1;
+        if (ImGui::Combo("container", &item_current_container, items, IM_ARRAYSIZE(items)))
+        {
+            m_CullFaceOption_Container = static_cast<CullFaceOption>(item_current_container);
+        }
+        static int item_current_grass = 0;
+        if (ImGui::Combo("grass", &item_current_grass, items, IM_ARRAYSIZE(items)))
+        {
+            m_CullFaceOption_Grass = static_cast<CullFaceOption>(item_current_grass);
+        }
     }
 
-    void TestBlend::ProcessInput(float deltaTime)
+    void TestFaceCulling::ProcessInput(float deltaTime)
     {
         m_Camera->ProcessKeyboardMovement(deltaTime);
         m_Camera->ProcessMouseMovement();
         m_Camera->ProcessMouseScroll();
     }
 
-    void TestBlend::SetCameraAspectRatio(float aspectRatio)
+    void TestFaceCulling::SetCameraAspectRatio(float aspectRatio)
     {
         m_Camera->SetAspectRatio(aspectRatio);
     }
 
-    void TestBlend::EnableCameraControll()
+    void TestFaceCulling::EnableCameraControll()
     {
         m_Camera->EnableControll();
     }
 
-    void TestBlend::DisableCameraControll()
+    void TestFaceCulling::DisableCameraControll()
     {
         m_Camera->DisableControll();
     }

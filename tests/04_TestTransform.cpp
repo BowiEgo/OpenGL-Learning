@@ -55,17 +55,17 @@ namespace test {
 
     TestTransform::~TestTransform()
     {
-        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
+        GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
     }
 
     void TestTransform::OnUpdate(float deltaTime)
     {
-        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
+        GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
     }
 
     void TestTransform::OnRender()
     {
-        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
+        GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
         Renderer renderer;

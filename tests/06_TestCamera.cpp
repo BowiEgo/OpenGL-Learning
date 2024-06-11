@@ -112,7 +112,7 @@ namespace test {
 
     TestCamera::~TestCamera()
     {
-        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
+        GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
     }
 
     void TestCamera::OnUpdate(float deltaTime)
@@ -122,7 +122,7 @@ namespace test {
 
     void TestCamera::OnRender()
     {
-        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
+        GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
         Renderer renderer;

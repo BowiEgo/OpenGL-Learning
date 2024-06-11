@@ -29,7 +29,7 @@ void Mesh::Setup()
 
     VertexBufferLayout layout;
 
-    // Vertex Positions
+    // Vertex positions
     layout.Push<Vertex>(3, 0);
     // Vertex normals
     layout.Push<Vertex>(3, (unsigned int)offsetof(Vertex, Normal));
@@ -101,6 +101,25 @@ void Mesh::SetOutlineWidth(float &width)
 void Mesh::Draw(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation)
 {
     GetMaterial()->UpdateShader(position, scale, rotation);
+
+    switch (Cull_Face)
+    {
+    case CULL_FACE_NONE:
+        GLCall(glDisable(GL_CULL_FACE));
+        break;
+    case CULL_FACE_BACK:
+        GLCall(glEnable(GL_CULL_FACE));
+        GLCall(glCullFace(GL_BACK));
+        break;
+    case CULL_FACE_FRONT:
+        GLCall(glEnable(GL_CULL_FACE));
+        GLCall(glCullFace(GL_FRONT));
+        break;
+    case CULL_FACE_FRONT_AND_BACK:
+        GLCall(glEnable(GL_CULL_FACE));
+        GLCall(glCullFace(GL_FRONT_AND_BACK));
+        break;
+    }
 
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;

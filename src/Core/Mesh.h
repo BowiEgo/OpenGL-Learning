@@ -18,6 +18,13 @@
 #define OUTLINE_DRAWTYPE_SCALE 0;
 #define OUTLINE_DRAWTYPE_NORMAL 1;
 
+enum CullFaceOption {
+    CULL_FACE_NONE,
+    CULL_FACE_BACK,
+    CULL_FACE_FRONT,
+    CULL_FACE_FRONT_AND_BACK
+};
+
 class Geometry;
 
 class Mesh
@@ -50,6 +57,7 @@ public:
     bool Is_Transparent = false;
     bool Outline_Enabled = false;
     bool Outline_DrawType = OUTLINE_DRAWTYPE_SCALE;
+    CullFaceOption Cull_Face = CULL_FACE_NONE;
 private:
     std::string m_MeshType = "normal";
 protected:

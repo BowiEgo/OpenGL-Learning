@@ -24,6 +24,8 @@ public:
 
     void AddCoordinate(MeshCoordinate* coordinate);
     void SetPosition(unsigned int index, glm::vec3& position);
+    void SetScale(unsigned int index, glm::vec3& scale);
+    void SetRotation(unsigned int index, std::pair<float, glm::vec3>& rotation);
 
     void Draw();
     void Draw(MeshCoordinate* coordinate);

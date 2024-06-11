@@ -80,6 +80,8 @@ uniform PointLight u_PointLights[MAX_LIGHTS];
 
 uniform SpotLight u_SpotLight;
 
+uniform bool u_Discard_Transparent;
+
 vec4 texColor = texture(u_Texture_Diffuse1, v_TexCoords);
 float alpha = texColor.a;
 vec3 texturedDiffuse = texColor.rgb;
@@ -182,7 +184,9 @@ void main()
 
     final = directionalLight + pointLights + spotight;
 
-    // if(alpha < 0.1)
-    //     discard;
+    if (u_Discard_Transparent)
+        if(alpha < 0.1)
+            discard;
+
     FragColor = vec4(final, alpha);
 }

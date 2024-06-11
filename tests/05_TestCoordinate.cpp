@@ -127,7 +127,7 @@ namespace test {
 
     TestCoordinate::~TestCoordinate()
     {
-        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
+        GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
     }
 
     void TestCoordinate::OnUpdate(float deltaTime)
@@ -136,7 +136,7 @@ namespace test {
 
     void TestCoordinate::OnRender()
     {
-        GLCall(glClearColor(0.2f, 0.2f, 0.2f, 1.0f));
+        GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
         Renderer renderer;
