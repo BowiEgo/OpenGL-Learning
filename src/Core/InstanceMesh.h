@@ -29,6 +29,9 @@ public:
 
     void Draw();
     void Draw(MeshCoordinate* coordinate);
+
+    void DrawOutline();
+    void DrawOutline(MeshCoordinate* coordinate);
 private:
     void Setup();
 private:

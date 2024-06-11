@@ -69,9 +69,9 @@ namespace test {
         Ref<StandardMaterial> material_plane = std::make_shared<StandardMaterial>();
         material_plane->SetDiffuseTexture(diffuseTexture_plane);
         // mesh
-        Ref<Mesh> mesh_plane = std::make_shared<Mesh>(std::make_shared<PlaneGeometry>(), material_plane);
-        mesh_plane->SetPosition(0.0f, -0.01f, 0.0f);
-        m_Scene->Add(mesh_plane);
+        m_Mesh_Floor = std::make_shared<Mesh>(std::make_shared<PlaneGeometry>(), material_plane);
+        m_Mesh_Floor->SetPosition(0.0f, -0.01f, 0.0f);
+        m_Scene->Add(m_Mesh_Floor);
 
         // --------------------
         // Container
@@ -94,18 +94,18 @@ namespace test {
         Ref<StandardMaterial> material_container = std::make_shared<StandardMaterial>();
         material_container->SetDiffuseTexture(diffuseTexture_container);
         // mesh
-        Ref<InstanceMesh> mesh_container = std::make_shared<InstanceMesh>(
+        m_Mesh_Container = std::make_shared<InstanceMesh>(
             std::make_shared<BoxGeometry>(),
             material_container, containerPositions.size());
 
         for (unsigned int i = 0; i < containerPositions.size(); i++)
         {
-            mesh_container->SetPosition(i, containerPositions[i]);
+            m_Mesh_Container->SetPosition(i, containerPositions[i]);
             float angle = 20.0f * i;
             std::pair<float, glm::vec3> rotation = { glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f) };
-            mesh_container->SetRotation(i, rotation);
+            m_Mesh_Container->SetRotation(i, rotation);
         }
-        m_Scene->Add(mesh_container);
+        m_Scene->Add(m_Mesh_Container);
 
         // --------------------
         // Vegetation
@@ -186,6 +186,7 @@ namespace test {
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
         float currentTime = glfwGetTime();
+
 
         m_Scene->Draw();
     }

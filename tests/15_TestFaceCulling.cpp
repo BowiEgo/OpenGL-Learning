@@ -164,6 +164,10 @@ namespace test {
         m_Mesh_Container->Cull_Face = m_CullFaceOption_Container;
         m_Mesh_Grass->Cull_Face = m_CullFaceOption_Grass;
 
+        m_Mesh_Floor->GetMaterial()->Wireframe_Enabled = m_Wireframe_Enabled_Floor;
+        m_Mesh_Container->GetMaterial()->Wireframe_Enabled = m_Wireframe_Enabled_Container;
+        m_Mesh_Grass->GetMaterial()->Wireframe_Enabled = m_Wireframe_Enabled_Grass;
+
         m_Scene->Draw();
     }
 
@@ -172,24 +176,49 @@ namespace test {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
         const char* items[] = { "CULL_FACE_NONE", "CULL_FACE_BACK", "CULL_FACE_FRONT", "CULL_FACE_FRONT_AND_BACK" };
-        ImGui::Bullet();ImGui::Text("glCullFace");
 
         static int item_current_floor = 2;
-        if (ImGui::Combo("floor", &item_current_floor, items, IM_ARRAYSIZE(items)))
+        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+        if (ImGui::CollapsingHeader("Floor", ImGuiTreeNodeFlags_None))
         {
-            m_CullFaceOption_Floor = static_cast<CullFaceOption>(item_current_floor);
+            ImGui::Text("Wireframe");
+            ImGui::SameLine();ImGui::ToggleButton("Wireframe##Floor", &m_Wireframe_Enabled_Floor);
+
+            ImGui::Text("CullFace");ImGui::SameLine();
+            if (ImGui::Combo("##Floor", &item_current_floor, items, IM_ARRAYSIZE(items)))
+            {
+                m_CullFaceOption_Floor = static_cast<CullFaceOption>(item_current_floor);
+            }
         }
 
         static int item_current_container = 1;
-        if (ImGui::Combo("container", &item_current_container, items, IM_ARRAYSIZE(items)))
+        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+        if (ImGui::CollapsingHeader("Container", ImGuiTreeNodeFlags_None))
         {
-            m_CullFaceOption_Container = static_cast<CullFaceOption>(item_current_container);
+            ImGui::Text("Wireframe");
+            ImGui::SameLine();ImGui::ToggleButton("Wireframe##Container", &m_Wireframe_Enabled_Container);
+
+            ImGui::Text("CullFace");ImGui::SameLine();
+            if (ImGui::Combo("##Container", &item_current_container, items, IM_ARRAYSIZE(items)))
+            {
+                m_CullFaceOption_Container = static_cast<CullFaceOption>(item_current_container);
+            }
         }
+
         static int item_current_grass = 0;
-        if (ImGui::Combo("grass", &item_current_grass, items, IM_ARRAYSIZE(items)))
+        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+        if (ImGui::CollapsingHeader("Container", ImGuiTreeNodeFlags_None))
         {
-            m_CullFaceOption_Grass = static_cast<CullFaceOption>(item_current_grass);
+            ImGui::Text("Wireframe");
+            ImGui::SameLine();ImGui::ToggleButton("Wireframe##Grass", &m_Wireframe_Enabled_Grass);
+            
+            ImGui::Text("CullFace");ImGui::SameLine();
+            if (ImGui::Combo("##Grass", &item_current_grass, items, IM_ARRAYSIZE(items)))
+            {
+                m_CullFaceOption_Grass = static_cast<CullFaceOption>(item_current_grass);
+            }
         }
+
     }
 
     void TestFaceCulling::ProcessInput(float deltaTime)

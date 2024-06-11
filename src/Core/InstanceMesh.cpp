@@ -48,3 +48,16 @@ void InstanceMesh::Draw(MeshCoordinate* coordinate)
 {
     Mesh::Draw(coordinate->Position, coordinate->Scale, &coordinate->Rotation);
 }
+
+void InstanceMesh::DrawOutline()
+{
+    for (auto coordinate : m_Coordinates)
+    {
+        Mesh::DrawOutline(coordinate.Position, coordinate.Scale, &coordinate.Rotation);
+    }
+}
+
+void InstanceMesh::DrawOutline(MeshCoordinate *coordinate)
+{
+    Mesh::DrawOutline(coordinate->Position, coordinate->Scale, &coordinate->Rotation);
+}

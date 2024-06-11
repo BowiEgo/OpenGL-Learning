@@ -9,8 +9,6 @@
 #define MATERIAL_TYPE_STANDARD 2
 #define MATERIAL_TYPE_SHADER 3
 
-class Mesh;
-
 class Material
 {
 public:
@@ -21,7 +19,10 @@ public:
     virtual void BindShader() const = 0;
     virtual void UpdateShader(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation) const = 0;
     virtual void UpdateShaderUniform(const std::string& uniformName, const UniformValue& uniformValue) const = 0;
+    void Update(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation);
+public:
+    bool Wireframe_Enabled = false;
 private:
-    std::shared_ptr<Shader> m_Shader;
+    Ref<Shader> m_Shader;
     unsigned int m_Type = MATERIAL_TYPE_NONE;
 };

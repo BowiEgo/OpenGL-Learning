@@ -41,5 +41,9 @@ namespace test {
         CullFaceOption m_CullFaceOption_Floor = CULL_FACE_FRONT;
         CullFaceOption m_CullFaceOption_Container = CULL_FACE_BACK;
         CullFaceOption m_CullFaceOption_Grass = CULL_FACE_NONE;
+
+        bool m_Wireframe_Enabled_Floor = false;
+        bool m_Wireframe_Enabled_Container = false;
+        bool m_Wireframe_Enabled_Grass = false;
     };
 }

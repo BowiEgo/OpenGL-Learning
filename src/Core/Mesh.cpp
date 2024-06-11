@@ -100,7 +100,7 @@ void Mesh::SetOutlineWidth(float &width)
 
 void Mesh::Draw(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation)
 {
-    GetMaterial()->UpdateShader(position, scale, rotation);
+    GetMaterial()->Update(position, scale, rotation);
 
     switch (Cull_Face)
     {
@@ -167,7 +167,7 @@ void Mesh::DrawOutline(glm::vec3& position, glm::vec3& scale, std::pair<float, g
     if (!Outline_Enabled)
         return;
 
-    Scene::GetMaterialManager()->GetOutlineMaterial()->UpdateShader(position, scale, rotation);
+    Scene::GetMaterialManager()->GetOutlineMaterial()->Update(position, scale, rotation);
 
     GLCall(glDisable(GL_DEPTH_TEST));
     GLCall(glEnable(GL_STENCIL_TEST));

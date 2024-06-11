@@ -35,7 +35,7 @@ namespace test {
         Ref<DirectionalLight> m_DirectionalLight;
         std::vector<Ref<PointLight>> m_PointLights;
 
-        std::vector<glm::vec3> m_ObjPositions = {
+        std::vector<glm::vec3> m_ContainerPositions = {
             glm::vec3( 0.0f,  0.0f,   0.0f),
             glm::vec3( 2.0f,  5.0f, -15.0f),
             glm::vec3(-1.5f, -2.2f,  -2.5f),
@@ -54,11 +54,16 @@ namespace test {
             glm::vec3( 0.0f,  0.0f, -3.0f)
         };
 
-        Ref<Model> m_ModelMichelle;
-        Ref<Model> m_ModelNanosuit;
-        std::vector<Ref<Mesh>> m_ContainerMeshes;
+        Ref<Mesh> m_Mesh_Floor;
+        Ref<Model> m_Model_Michelle;
+        Ref<Model> m_Model_Nanosuit;
+        Ref<InstanceMesh> m_Mesh_Container;
 
         bool m_Model_Outline_Enable = true, m_Container_Outline_Enable = true;
         float m_Outline_Width = 0.5f;
+
+        bool m_Wireframe_Enabled_Floor = false;
+        bool m_Wireframe_Enabled_Model = false;
+        bool m_Wireframe_Enabled_Container = false;
     };
 }

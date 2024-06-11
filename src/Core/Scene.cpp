@@ -84,6 +84,7 @@ void Scene::Draw()
         if (dynamic_cast<InstanceMesh*>(m_Meshes[i].get()))
         {
             dynamic_cast<InstanceMesh*>(m_Meshes[i].get())->Draw();
+            dynamic_cast<InstanceMesh*>(m_Meshes[i].get())->DrawOutline();
         }
         else
         {
@@ -134,10 +135,12 @@ void Scene::Draw()
             if constexpr (std::is_same_v<T, Mesh*>) {
                 Mesh* mesh = dynamic_cast<Mesh*>(arg);
                 mesh->Draw(mesh->GetPosition(), mesh->GetScale(), mesh->GetRotation());
+                mesh->DrawOutline(mesh->GetPosition(), mesh->GetScale(), mesh->GetRotation());
             } else if constexpr (std::is_same_v<T, std::pair<InstanceMesh*, MeshCoordinate>>) {
                 InstanceMesh* mesh = dynamic_cast<std::pair<InstanceMesh*, MeshCoordinate>*>(&arg)->first;
                 MeshCoordinate coord = dynamic_cast<std::pair<InstanceMesh*, MeshCoordinate>*>(&arg)->second;
                 mesh->Draw(&coord);
+                mesh->DrawOutline(&coord);
             }
         }, v);
     }

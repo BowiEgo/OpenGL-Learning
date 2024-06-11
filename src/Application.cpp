@@ -132,6 +132,7 @@ int main(void)
     testMenu->RegisterTest<test::TestModel>("Model");
     testMenu->RegisterTest<test::TestDepth>("Depth");
     testMenu->RegisterTest<test::TestStencil>("Stencil");
+    testMenu->RegisterTest<test::TestBlend>("Blend");
     testMenu->RegisterTest<test::TestFaceCulling>("FaceCulling");
 
     // test::TestClearColor test;

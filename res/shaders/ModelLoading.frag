@@ -88,7 +88,6 @@ vec3 texturedDiffuse = texColor.rgb;
 vec3 texturedSpecular = texture(u_Texture_Specular1, v_TexCoords).rgb;
 vec3 textureNormal = texture(u_Texture_Normal1, v_TexCoords).rgb;
 
-
 vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
     if (!light.enable)

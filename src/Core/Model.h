@@ -50,7 +50,6 @@ private:
     ModelOptions m_Options;
 
     std::vector<std::shared_ptr<Texture2D>> m_Textures_Loaded;
-    Ref<Material> m_Material;
     std::vector<Ref<Mesh>> m_Meshes;
     std::string m_Directory;
 

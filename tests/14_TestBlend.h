@@ -54,6 +54,12 @@ namespace test {
             glm::vec3( 0.0f,  0.0f, -3.0f)
         };
 
-        std::vector<Ref<Mesh>> m_ContainerMeshes;
+        Ref<Mesh> m_Mesh_Floor;
+        Ref<Mesh> m_Mesh_Model_Michelle, m_Mesh_Model_Nanosuit;
+        Ref<InstanceMesh> m_Mesh_Container;
+
+        bool m_Wireframe_Enabled_Floor = false;
+        bool m_Wireframe_Enabled_Model = false;
+        bool m_Wireframe_Enabled_Container = false;
     };
 }
