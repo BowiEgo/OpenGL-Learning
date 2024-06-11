@@ -81,6 +81,7 @@ uniform PointLight u_PointLights[MAX_LIGHTS];
 uniform SpotLight u_SpotLight;
 
 uniform bool u_Discard_Transparent;
+uniform bool u_Is_Opaque;
 
 vec4 texColor = texture(u_Texture_Diffuse1, v_TexCoords);
 float alpha = texColor.a;
@@ -186,6 +187,9 @@ void main()
     if (u_Discard_Transparent)
         if(alpha < 0.1)
             discard;
+    
+    if (u_Is_Opaque)
+        alpha = 1.0;
 
     FragColor = vec4(final, alpha);
 }

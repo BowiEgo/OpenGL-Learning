@@ -156,6 +156,7 @@ namespace test {
         // material
         Ref<StandardMaterial> material_window = std::make_shared<StandardMaterial>();
         material_window->SetDiffuseTexture(diffuseTexture_window);
+        material_window->Is_Opaque = false;
         // mesh
         Ref<InstanceMesh> mesh_window = std::make_shared<InstanceMesh>(
             std::make_shared<GrassGeometry>(),

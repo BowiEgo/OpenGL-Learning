@@ -58,6 +58,7 @@ void StandardMaterial::UpdateShader(glm::vec3& position, glm::vec3& scale, std::
 
     m_Shader->SetUniform("u_CameraPosition", Scene::GetCurrentCamera()->GetPosition());
     m_Shader->SetUniform("u_Material.shininess", m_MaterialShininess);
+    m_Shader->SetUniform("u_Is_Opaque", Is_Opaque);
     m_Shader->SetUniform("u_Discard_Transparent", Discard_Transparent);
 
     for (unsigned int i = 0; i < Scene::GetDirectionalLights().size(); i++)

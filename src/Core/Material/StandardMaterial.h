@@ -20,6 +20,7 @@ public:
     virtual void UpdateShader(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation) const override;
     virtual void UpdateShaderUniform(const std::string& uniformName, const UniformValue& uniformValue) const override;
 public:
+    bool Is_Opaque = true;
     bool Discard_Transparent = false;
 private:
     unsigned int m_Type = MATERIAL_TYPE_STANDARD;
