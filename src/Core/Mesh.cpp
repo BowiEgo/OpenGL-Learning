@@ -83,7 +83,7 @@ void Mesh::SetScale(float scaleX, float scaleY, float scaleZ)
     m_Scale.z = scaleZ;
 }
 
-void Mesh::SetRotation(std::pair<float, glm::vec3> &rotation)
+void Mesh::SetRotation(std::pair<float, glm::vec3> rotation)
 {
     m_Rotation = rotation;
 }
@@ -96,6 +96,11 @@ void Mesh::SetOutline(bool enable)
 void Mesh::SetOutlineWidth(float &width)
 {
     m_Outline_Width = width;
+}
+
+void Mesh::SetOutlineColor(glm::vec3 &color)
+{
+    m_Outline_Color = color;
 }
 
 void Mesh::Draw(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation)
@@ -178,6 +183,7 @@ void Mesh::DrawOutline(glm::vec3& position, glm::vec3& scale, std::pair<float, g
 
     Scene::GetMaterialManager()->GetOutlineMaterial()->UpdateShaderUniform("u_OutlineDrawType", Outline_DrawType);
     Scene::GetMaterialManager()->GetOutlineMaterial()->UpdateShaderUniform("u_OutlineWidth", m_Outline_Width);
+    Scene::GetMaterialManager()->GetOutlineMaterial()->UpdateShaderUniform("u_OutlineColor", m_Outline_Color);
 
     Renderer renderer;
     if (m_IBO == nullptr)

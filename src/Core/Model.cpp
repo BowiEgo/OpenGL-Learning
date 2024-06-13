@@ -33,6 +33,11 @@ void Model::SetOutlineWidth(float &width)
     m_Outline_Width = width;
 }
 
+void Model::SetOutlineColor(glm::vec3 &color)
+{
+    m_Outline_Color = color;
+}
+
 void Model::Draw()
 {
     for (unsigned int i = 0; i < m_Meshes.size(); i++)
@@ -43,6 +48,7 @@ void Model::Draw()
         if (Outline_Enabled && Outline_SingleMesh && m_Meshes[i]->Outline_Enabled)
         {
             m_Meshes[i]->SetOutlineWidth(m_Outline_Width);
+            m_Meshes[i]->SetOutlineColor(m_Outline_Color);
             m_Meshes[i]->DrawOutline(GetTranslate(), GetScale(), GetRotation());
         }
     }
@@ -58,6 +64,7 @@ void Model::DrawOutline()
     for (unsigned int i = 0; i < m_Meshes.size(); i++)
     {
         m_Meshes[i]->SetOutlineWidth(m_Outline_Width);
+        m_Meshes[i]->SetOutlineColor(m_Outline_Color);
         m_Meshes[i]->DrawOutline(GetTranslate(), GetScale(), GetRotation());
     }
 }

@@ -65,5 +65,7 @@ namespace test {
         bool m_Wireframe_Enabled_Floor = false;
         bool m_Wireframe_Enabled_Model = false;
         bool m_Wireframe_Enabled_Container = false;
+
+        glm::vec3 m_Outline_Color = glm::vec3(0.7647f, 0.9294f, 0.9137f);
     };
 }

@@ -74,6 +74,11 @@ void Scene::Add(std::shared_ptr<Model> model)
     s_Instance->m_Models.push_back(model);
 }
 
+void Scene::SetCurrentCamera(Ref<Camera> camera)
+{
+    m_CurrentCamera = camera;
+}
+
 void Scene::Draw()
 {
     // --------------------
@@ -91,7 +96,6 @@ void Scene::Draw()
             m_Meshes[i]->Draw(m_Meshes[i]->GetPosition(), m_Meshes[i]->GetScale(), m_Meshes[i]->GetRotation());
             m_Meshes[i]->DrawOutline(m_Meshes[i]->GetPosition(), m_Meshes[i]->GetScale(), m_Meshes[i]->GetRotation());
         }
-
     }
 
     // --------------------
@@ -143,5 +147,19 @@ void Scene::Draw()
                 mesh->DrawOutline(&coord);
             }
         }, v);
+    }
+}
+
+void Scene::Draw(Mesh *mesh)
+{
+    if (dynamic_cast<InstanceMesh*>(mesh))
+    {
+        dynamic_cast<InstanceMesh*>(mesh)->Draw();
+        dynamic_cast<InstanceMesh*>(mesh)->DrawOutline();
+    }
+    else
+    {
+        mesh->Draw(mesh->GetPosition(), mesh->GetScale(), mesh->GetRotation());
+        mesh->DrawOutline(mesh->GetPosition(), mesh->GetScale(), mesh->GetRotation());
     }
 }

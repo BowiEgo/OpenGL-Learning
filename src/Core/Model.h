@@ -35,6 +35,7 @@ public:
     ); }
 
     void SetOutlineWidth(float& width);
+    void SetOutlineColor(glm::vec3& color);
 
     void Draw();
     void DrawOutline();
@@ -60,4 +61,5 @@ private:
     Ref<aiAABB> m_AABB = std::make_shared<aiAABB>();
 
     float m_Outline_Width = 1.0f;
+    glm::vec3 m_Outline_Color = glm::vec3(0.7647f, 0.9294f, 0.9137f);
 };

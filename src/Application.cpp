@@ -27,6 +27,7 @@
 #include "../tests/13_TestStencil.h"
 #include "../tests/14_TestBlend.h"
 #include "../tests/15_TestFaceCulling.h"
+#include "../tests/16_TestFramebuffer.h"
 
 void RenderUI()
 {
@@ -134,6 +135,7 @@ int main(void)
     testMenu->RegisterTest<test::TestStencil>("Stencil");
     testMenu->RegisterTest<test::TestBlend>("Blend");
     testMenu->RegisterTest<test::TestFaceCulling>("FaceCulling");
+    testMenu->RegisterTest<test::TestFramebuffer>("Framebuffer");
 
     // test::TestClearColor test;
 
@@ -151,10 +153,12 @@ int main(void)
     float lastTime = 0.0f;
 
     // Framebuffer
+    FramebufferManager::Create();
+
     FramebufferSpecification fbSpec;
     fbSpec.Width = 1280;
     fbSpec.Height = 720;
-    std::shared_ptr<Framebuffer> m_Framebuffer = Framebuffer::Create(fbSpec);
+    std::shared_ptr<Framebuffer> m_Framebuffer = FramebufferManager::CreateFramebuffer("viewport", fbSpec);
     glm::vec2 m_ViewportSize(0.0f);
 
     /* Loop until the user closes the window */

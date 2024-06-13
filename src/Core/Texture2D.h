@@ -14,6 +14,7 @@ struct TextureOptions {
 class Texture2D
 {
 public:
+    Texture2D(unsigned int rendererID);
     Texture2D(const std::string& path, const TextureOptions& options = TextureOptions());
     Texture2D(const std::string& type, const std::string& path, const TextureOptions& options = TextureOptions());
     ~Texture2D();

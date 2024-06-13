@@ -10,9 +10,9 @@
 class PlaneGeometry : public Geometry
 {
 public:
-    PlaneGeometry();
-    PlaneGeometry(float* position[3]);
-    ~PlaneGeometry();
+    PlaneGeometry() {};
+    PlaneGeometry(float* position[3]) {};
+    ~PlaneGeometry() {};
 
     inline std::array<Vertex, 36>* GetVertex() override { return &m_Vertex; }
 private:

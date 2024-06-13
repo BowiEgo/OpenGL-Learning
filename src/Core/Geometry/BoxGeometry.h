@@ -15,9 +15,9 @@
 class BoxGeometry : public Geometry
 {
 public:
-    BoxGeometry();
-    BoxGeometry(float* position[3]);
-    ~BoxGeometry();
+    BoxGeometry() {};
+    BoxGeometry(float* position[3]) {};
+    ~BoxGeometry() {};
 
     inline std::array<Vertex, 36>* GetVertex() override { return &m_Vertex; }
 private:

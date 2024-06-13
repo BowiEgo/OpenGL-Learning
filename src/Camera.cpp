@@ -28,6 +28,17 @@ Camera::Camera(const float position[3], const float target[3], float fov, float 
         m_CameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
     }
 
+    Init();
+    Input::DisableCursor();
+}
+
+Camera::~Camera()
+{
+    Input::EnableCursor();
+}
+
+void Camera::Init()
+{
     m_CameraFront = glm::normalize(m_CameraTarget - m_CameraPos);
     m_CameraRight = glm::normalize(glm::cross(m_CameraFront, m_CameraUp));
     UpdateProjMatrix();
@@ -37,16 +48,9 @@ Camera::Camera(const float position[3], const float target[3], float fov, float 
     m_Pitch = GetPitchByDirection(m_CameraFront);
 
     UpdatePitchAndYaw();
-
-    Input::DisableCursor();
 }
 
-Camera::~Camera()
-{
-    Input::EnableCursor();
-}
-
-void Camera::SetFOV(const float& fov)
+void Camera::SetFOV(const float &fov)
 {
     m_FOV = fov;
     UpdateProjMatrix();
@@ -59,6 +63,12 @@ void Camera::SetAspectRatio(const float& aspectRatio)
 
     m_AspectRatio = aspectRatio;
     UpdateProjMatrix();
+}
+
+void Camera::SetDirection(const glm::vec3 &direction)
+{
+    m_CameraFront = direction;
+    Init();
 }
 
 void Camera::SetPosition(const float position[3])
@@ -112,13 +122,7 @@ void Camera::SetPositionY(const float& y)
         return;
 
     m_CameraPos.y = y;
-    m_CameraFront = glm::normalize(m_CameraTarget - m_CameraPos);
-    m_CameraRight = glm::normalize(glm::cross(m_CameraFront, m_CameraUp));
-
-    m_Yaw = GetYawByDirection(m_CameraFront);
-    m_Pitch = GetPitchByDirection(m_CameraFront);
-
-    UpdatePitchAndYaw();
+    Init();
 }
 
 void Camera::SetPositionZ(const float& z)
@@ -136,34 +140,33 @@ void Camera::SetPositionZ(const float& z)
     UpdatePitchAndYaw();
 }
 
+void Camera::SetTarget(const float& x, const float& y, const float& z)
+{
+    glm::vec3 target = glm::vec3(x, y, z);
+    SetTarget(target);
+}
+
 void Camera::SetTarget(const float target[3])
 {
-    if (target[0] == m_CameraTarget.x && target[1] == m_CameraTarget.y && target[2] == m_CameraTarget.z)
-        return;
-
-    m_CameraTarget = glm::vec3(target[0], target[1], target[2]);
-    m_CameraFront = glm::normalize(m_CameraTarget - m_CameraPos);
-    m_CameraRight = glm::normalize(glm::cross(m_CameraFront, m_CameraUp));
-
-    m_Yaw = GetYawByDirection(m_CameraFront);
-    m_Pitch = GetPitchByDirection(m_CameraFront);
-
-    UpdatePitchAndYaw();
+    glm::vec3 targetVec = glm::vec3(target[0], target[1], target[2]);
+    SetTarget(targetVec);
 }
 
 void Camera::SetTarget(const glm::vec3& target)
 {
+    CORE_TRACE("{0}, {1}, {2}", target.x, target.y, target.z);
+
     if (target == m_CameraTarget)
         return;
-
     m_CameraTarget = glm::vec3(target[0], target[1], target[2]);
-    m_CameraFront = glm::normalize(m_CameraTarget - m_CameraPos);
-    m_CameraRight = glm::normalize(glm::cross(m_CameraFront, m_CameraUp));
+    // m_CameraFront = glm::normalize(m_CameraTarget - m_CameraPos);
+    // m_CameraRight = glm::normalize(glm::cross(m_CameraFront, m_CameraUp));
 
-    m_Yaw = GetYawByDirection(m_CameraFront);
-    m_Pitch = GetPitchByDirection(m_CameraFront);
+    // m_Yaw = GetYawByDirection(m_CameraFront);
+    // m_Pitch = GetPitchByDirection(m_CameraFront);
 
-    UpdatePitchAndYaw();
+    // UpdatePitchAndYaw();
+    Init();
 }
 
 void Camera::ProcessKeyboardMovement(const float& deltaTime)

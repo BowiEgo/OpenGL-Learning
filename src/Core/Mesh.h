@@ -48,9 +48,10 @@ public:
     void SetPosition(float x, float y, float z);
     void SetScale(glm::vec3& scale);
     void SetScale(float scaleX, float scaleY, float scaleZ);
-    void SetRotation(std::pair<float, glm::vec3>& rotation);
+    void SetRotation(std::pair<float, glm::vec3> rotation);
     void SetOutline(bool enable);
     void SetOutlineWidth(float& width);
+    void SetOutlineColor(glm::vec3& color);
     void Draw(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation);
     void DrawOutline(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation);
 public:
@@ -76,5 +77,5 @@ protected:
     std::pair<float, glm::vec3> m_Rotation = { 0.0, glm::vec3(0.0, 0.0, 1.0) };
 
     float m_Outline_Width = 1.0f;
-
+    glm::vec3 m_Outline_Color = glm::vec3(0.7647f, 0.9294f, 0.9137f);
 };

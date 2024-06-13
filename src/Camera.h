@@ -25,13 +25,16 @@ public:
     inline glm::mat4 GetProjMatrix() const { return m_ProjMatrix; }
     inline glm::mat4 GetViewMatrix() const { return m_ViewMatrix; }
 
+    void Init();
     void SetFOV(const float& fov);
     void SetAspectRatio(const float& aspectRatio);
+    void SetDirection(const glm::vec3& direction);
     void SetPosition(const float position[3]);
     void SetPosition(const glm::vec3& position);
     void SetPositionX(const float& x);
     void SetPositionY(const float& y);
     void SetPositionZ(const float& z);
+    void SetTarget(const float& x, const float& y, const float& z);
     void SetTarget(const float target[3]);
     void SetTarget(const glm::vec3& target);
 

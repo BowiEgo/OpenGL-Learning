@@ -116,6 +116,7 @@ namespace test {
             float michelleLineWidth = m_Outline_Width * 0.2;
             m_Model_Michelle->Outline_Enabled = m_Model_Outline_Enable;
             m_Model_Michelle->SetOutlineWidth(michelleLineWidth);
+            m_Model_Michelle->SetOutlineColor(m_Outline_Color);
 
             for (auto& mesh : m_Model_Michelle->GetMeshes())
             {
@@ -127,6 +128,7 @@ namespace test {
         {
             m_Model_Nanosuit->Outline_Enabled = m_Model_Outline_Enable;
             m_Model_Nanosuit->SetOutlineWidth(m_Outline_Width);
+            m_Model_Nanosuit->SetOutlineColor(m_Outline_Color);
 
             for (auto& mesh : m_Model_Nanosuit->GetMeshes())
             {
@@ -138,6 +140,7 @@ namespace test {
 
         m_Mesh_Container->Outline_Enabled = m_Container_Outline_Enable;
         m_Mesh_Container->SetOutlineWidth(m_Outline_Width);
+        m_Mesh_Container->SetOutlineColor(m_Outline_Color);
         m_Mesh_Container->GetMaterial()->Wireframe_Enabled = m_Wireframe_Enabled_Container;
 
         m_Scene->Draw();
@@ -149,6 +152,7 @@ namespace test {
 
         ImGui::SeparatorText("Outline Parameters");
         ImGui::SliderFloat("Width#Outline", &m_Outline_Width, 0.01f, 20.0f);
+        ImGui::ColorEdit4("Color#Outline", glm::value_ptr(m_Outline_Color));
 
         ImGui::SeparatorText("Objects");
 

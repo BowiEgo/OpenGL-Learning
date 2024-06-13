@@ -20,6 +20,7 @@ public:
 
     inline static MaterialManager* GetMaterialManager() { return s_MaterialManager; }
     inline static Camera* GetCurrentCamera() { return s_Instance->m_CurrentCamera.get(); }
+    inline static std::vector<Ref<Camera>>* GetCameras() { return &(s_Instance->m_Cameras); }
     inline static std::vector<Ref<DirectionalLight>>& GetDirectionalLights() { return s_Instance->m_DirectionalLights; }
     inline static std::vector<Ref<PointLight>>& GetPointLights() { return s_Instance->m_PointLights; }
     inline static std::vector<Ref<SpotLight>>& GetSpotLights() { return s_Instance->m_SpotLights; }
@@ -31,8 +32,10 @@ public:
     void Add(Ref<Mesh> mesh);
     void Add(Ref<InstanceMesh> mesh);
     void Add(Ref<Model> model);
+    void SetCurrentCamera(Ref<Camera> camera);
 
     void Draw();
+    void Draw(Mesh* mesh);
 private:
     static Scene* s_Instance;
     static MaterialManager* s_MaterialManager;

@@ -69,4 +69,39 @@ void Framebuffer::Resize(uint32_t width, uint32_t height)
     Invalidate();
 }
 
+FramebufferManager* FramebufferManager::s_Instance = nullptr;
 
+Ref<Framebuffer> FramebufferManager::CreateFramebuffer(std::string tag, const FramebufferSpecification &spec)
+{
+    Ref<Framebuffer> fb = std::make_shared<Framebuffer>(spec);
+    s_Instance->m_Pools.push_back(std::make_pair(tag, fb));
+    return fb;
+}
+
+Ref<Framebuffer> FramebufferManager::GetByTag(const std::string &tag)
+{
+    for (const auto& pair : s_Instance->m_Pools)
+    {
+        if (pair.first == tag)
+        {
+            return pair.second;
+        }
+    }
+    return nullptr;
+}
+
+bool FramebufferManager::Remove(const std::string &tag)
+{
+    auto it = std::remove_if(s_Instance->m_Pools.begin(), s_Instance->m_Pools.end(),
+        [&tag](const std::pair<std::string, Ref<Framebuffer>>& pair)
+        {
+            return pair.first == tag;
+        });
+
+    if (it != s_Instance->m_Pools.end())
+    {
+        s_Instance->m_Pools.erase(it, s_Instance->m_Pools.end());
+        return true;
+    }
+    return false;
+}

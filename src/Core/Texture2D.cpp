@@ -2,6 +2,11 @@
 
 #include "stb_image/stb_image.h"
 
+Texture2D::Texture2D(unsigned int rendererID)
+{
+    m_RendererID = rendererID;
+}
+
 Texture2D::Texture2D(const std::string &path, const TextureOptions &options)
     : m_Type("texture_default"), m_FilePath(path), m_LocalBuffer(nullptr), m_Options(options),
       m_Width(0), m_Height(0), m_Channels(0)

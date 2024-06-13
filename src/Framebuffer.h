@@ -13,6 +13,7 @@ struct FramebufferSpecification
     bool SwapChainTarget = false;
 };
 
+
 class Framebuffer
 {
 public:
@@ -34,4 +35,19 @@ private:
     uint32_t m_RendererID;
     uint32_t m_ColorAttachment, m_DepthAttachment;
     FramebufferSpecification m_Specification;
+};
+
+class FramebufferManager
+{
+public:
+    FramebufferManager() {};
+    ~FramebufferManager() {};
+
+    inline static void Create() { s_Instance = new FramebufferManager(); }
+    static Ref<Framebuffer> CreateFramebuffer(std::string tag, const FramebufferSpecification& spec);
+    static Ref<Framebuffer> GetByTag(const std::string& tag);
+    static bool Remove(const std::string& tag);
+private:
+    static FramebufferManager* s_Instance;
+    std::vector<std::pair<std::string, Ref<Framebuffer>>> m_Pools = {};
 };
