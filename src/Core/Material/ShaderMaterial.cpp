@@ -8,27 +8,14 @@ ShaderMaterial::ShaderMaterial(Ref<Shader> shader)
     m_Shader = shader;
 }
 
-void ShaderMaterial::SetDiffuseTexture(Ref<Texture2D> texture)
+void ShaderMaterial::AddTexture(Ref<Texture2D> texture)
 {
-    m_DiffuseTexture = texture;
-    m_Shader->Bind();
-    m_Shader->SetUniform1i("u_Material.diffuse", 0);
+    m_Textures.push_back(texture);
 }
 
-void ShaderMaterial::SetSpecularTexture(Ref<Texture2D> texture)
+void ShaderMaterial::SetTextures(std::vector<Ref<Texture2D>> textures)
 {
-    m_SpecularTexture = texture;
-    m_Shader->Bind();
-    m_Shader->SetUniform1i("u_Material.specular", 1);
-}
-
-void ShaderMaterial::BindTexture() const
-{
-    if (m_DiffuseTexture != nullptr)
-        m_DiffuseTexture->Bind();
-        
-    if (m_SpecularTexture != nullptr)
-        m_SpecularTexture->Bind(1);
+    m_Textures = textures;
 }
 
 void ShaderMaterial::BindShader() const
@@ -53,7 +40,19 @@ void ShaderMaterial::UpdateShader(glm::vec3& position, glm::vec3& scale, std::pa
 
     m_Shader->SetUniform("u_CameraPosition", Scene::GetCurrentCamera()->GetPosition());
 
-    BindTexture();
+    unsigned int diffuseNr = 1;
+
+    for (unsigned int i = 0; i < m_Textures.size(); i++)
+    {
+        Ref<Texture2D> texture = m_Textures[i];
+        texture->Bind(i);
+        std::string number;
+        std::string type = texture->GetType();
+        if(type == "Texture_Diffuse")
+            number = std::to_string(diffuseNr++);
+
+        m_Shader->SetUniform(("u_" + type + number).c_str(), i);
+    }
 }
 
 void ShaderMaterial::UpdateShaderUniform(const std::string &uniformName, const UniformValue &uniformValue) const

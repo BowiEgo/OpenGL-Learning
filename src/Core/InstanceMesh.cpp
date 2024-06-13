@@ -6,8 +6,8 @@ InstanceMesh::InstanceMesh(Ref<Geometry> geometry, Ref<Material> material, unsig
     Setup();
 }
 
-InstanceMesh::InstanceMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Ref<Texture2D>> textures, Ref<Material> material, unsigned int capacity)
-    : Mesh(vertices, indices, textures, material), m_Capacity(capacity)
+InstanceMesh::InstanceMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Ref<Material> material, unsigned int capacity)
+    : Mesh(vertices, indices, material), m_Capacity(capacity)
 {
     Setup();
 }

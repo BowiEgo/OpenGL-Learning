@@ -14,8 +14,8 @@ Mesh::Mesh(std::shared_ptr<Geometry> geometry, std::shared_ptr<Material> materia
     Setup();
 }
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::shared_ptr<Texture2D>> textures, std::shared_ptr<Material> material)
-    : m_Vertices(vertices), m_Indices(indices), m_Textures(textures), m_Material(material)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::shared_ptr<Material> material)
+    : m_Vertices(vertices), m_Indices(indices), m_Material(material)
 {
     Setup();
 }
@@ -103,6 +103,11 @@ void Mesh::SetOutlineColor(glm::vec3 &color)
     m_Outline_Color = color;
 }
 
+void Mesh::Draw()
+{
+    Draw(GetPosition(), GetScale(), GetRotation());
+}
+
 void Mesh::Draw(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation)
 {
     GetMaterial()->Update(position, scale, rotation);
@@ -126,29 +131,6 @@ void Mesh::Draw(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec
         break;
     }
 
-    unsigned int diffuseNr = 1;
-    unsigned int specularNr = 1;
-    unsigned int normalNr = 1;
-    unsigned int heightNr = 1;
-
-    for(unsigned int i = 0; i < m_Textures.size(); i++)
-    {
-        std::shared_ptr<Texture2D>& texture = m_Textures[i];
-        texture->Bind(i);
-        std::string number;
-        std::string type = texture->GetType();
-        if(type == "Texture_Diffuse")
-            number = std::to_string(diffuseNr++);
-        else if(type == "Texture_Specular")
-            number = std::to_string(specularNr++);
-        else if(type == "Texture_Normal")
-            number = std::to_string(normalNr++);
-        else if(type == "Texture_Height")
-            number = std::to_string(heightNr++);
-
-        GetMaterial()->UpdateShaderUniform(("u_" + type + number).c_str(), i);
-    }
-
     GLCall(glEnable(GL_DEPTH_TEST));
 
     GLCall(glStencilMask(0x00));
@@ -167,12 +149,18 @@ void Mesh::Draw(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec
         renderer.Draw(*m_VAO, *m_IBO);
 }
 
+void Mesh::DrawOutline()
+{
+    DrawOutline(GetPosition(), GetScale(), GetRotation());
+}
+
 void Mesh::DrawOutline(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation)
 {
     if (!Outline_Enabled)
         return;
 
     Scene::GetMaterialManager()->GetOutlineMaterial()->Update(position, scale, rotation);
+    Scene::GetMaterialManager()->GetOutlineMaterial()->BindShader();
 
     GLCall(glDisable(GL_DEPTH_TEST));
     GLCall(glEnable(GL_STENCIL_TEST));

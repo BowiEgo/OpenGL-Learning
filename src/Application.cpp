@@ -28,6 +28,7 @@
 #include "../tests/14_TestBlend.h"
 #include "../tests/15_TestFaceCulling.h"
 #include "../tests/16_TestFramebuffer.h"
+#include "../tests/17_TestCubemap.h"
 
 void RenderUI()
 {
@@ -136,6 +137,7 @@ int main(void)
     testMenu->RegisterTest<test::TestBlend>("Blend");
     testMenu->RegisterTest<test::TestFaceCulling>("FaceCulling");
     testMenu->RegisterTest<test::TestFramebuffer>("Framebuffer");
+    testMenu->RegisterTest<test::TestCubemap>("Cubemap");
 
     // test::TestClearColor test;
 

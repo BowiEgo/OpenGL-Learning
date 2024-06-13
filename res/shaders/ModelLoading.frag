@@ -14,6 +14,10 @@ uniform sampler2D u_Texture_Diffuse3;
 uniform sampler2D u_Texture_Specular1;
 uniform sampler2D u_Texture_Specular2;
 uniform sampler2D u_Texture_Normal1;
+uniform samplerCube u_Texture_Environment;
+uniform float u_Texture_Env_Mix_Rate;
+
+uniform bool u_Is_EnvironmentTexture_Valid;
 
 struct Material {
     vec3 ambient;
@@ -72,22 +76,13 @@ uniform vec3 u_CameraPosition;
 uniform float u_Time;
 
 uniform TexturedMaterial u_Material;
-
 uniform DirLight u_DirectionalLight;
-
 uniform int u_NR_PointLights;
 uniform PointLight u_PointLights[MAX_LIGHTS];
-
 uniform SpotLight u_SpotLight;
 
 uniform bool u_Discard_Transparent;
 uniform bool u_Is_Opaque;
-
-vec4 texColor = texture(u_Texture_Diffuse1, v_TexCoords);
-float alpha = texColor.a;
-vec3 texturedDiffuse = texColor.rgb;
-vec3 texturedSpecular = texture(u_Texture_Specular1, v_TexCoords).rgb;
-vec3 textureNormal = texture(u_Texture_Normal1, v_TexCoords).rgb;
 
 vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
@@ -103,10 +98,10 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Material.shininess);
 
-    // Final result
-    vec3 ambient  = light.ambient  * texturedDiffuse;
-    vec3 diffuse  = light.diffuse  * diff * texturedDiffuse;
-    vec3 specular = light.specular * spec * texturedSpecular;
+
+    vec3 ambient  = light.ambient  * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
+    vec3 diffuse  = light.diffuse  * diff * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
+    vec3 specular = light.specular * spec * texture(u_Texture_Specular1, v_TexCoords).rgb;
     return (ambient + diffuse + specular);
 }
 
@@ -127,10 +122,10 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float distance    = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + 
                  light.quadratic * (distance * distance));
-    // Final result
-    vec3 ambient  = light.ambient  * texturedDiffuse;
-    vec3 diffuse  = light.diffuse  * diff * texturedDiffuse;
-    vec3 specular = light.specular * spec * texturedSpecular;
+
+    vec3 ambient  = light.ambient  * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
+    vec3 diffuse  = light.diffuse  * diff * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
+    vec3 specular = light.specular * spec * texture(u_Texture_Specular1, v_TexCoords).rgb;
     ambient  *= attenuation;
     diffuse  *= attenuation;
     specular *= attenuation;
@@ -159,10 +154,10 @@ vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float distance    = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + 
                  light.quadratic * (distance * distance));
-    // Final result
-    vec3 ambient  = light.ambient  * texturedDiffuse;
-    vec3 diffuse  = light.diffuse  * diff * texturedDiffuse;
-    vec3 specular = light.specular * spec * texturedSpecular;
+
+    vec3 ambient  = light.ambient  * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
+    vec3 diffuse  = light.diffuse  * diff * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
+    vec3 specular = light.specular * spec * texture(u_Texture_Specular1, v_TexCoords).rgb;
     ambient  *= (attenuation * intensity);
     diffuse  *= (attenuation * intensity);
     specular *= (attenuation * intensity);
@@ -176,6 +171,7 @@ void main()
 
     vec3 viewDirection = normalize(u_CameraPosition - v_FragPosition);
 
+    // Lighting
     vec3 directionalLight = calcDirLight(u_DirectionalLight, v_Normal, viewDirection);
     vec3 spotight =         calcSpotLight(u_SpotLight, v_Normal, v_FragPosition, viewDirection);
 
@@ -184,12 +180,24 @@ void main()
 
     final = directionalLight + pointLights + spotight;
 
-    if (u_Discard_Transparent)
-        if(alpha < 0.1)
-            discard;
+    // Alpha
+    float alpha = texture(u_Texture_Diffuse1, v_TexCoords).a;
+    if (u_Discard_Transparent && alpha < 0.1)
+        discard;
     
     if (u_Is_Opaque)
         alpha = 1.0;
+
+    // Environment mapping
+    if (u_Is_EnvironmentTexture_Valid)
+    {
+        float ratio = 1.00 / 1.52;
+        vec3 I = -viewDirection;
+        // vec3 R = reflect(I, normalize(v_Normal));
+        vec3 R = refract(I, normalize(v_Normal), ratio);
+        vec4 environment = vec4(texture(u_Texture_Environment, R).rgb, 1.0);
+        final = mix(final, environment.rgb, u_Texture_Env_Mix_Rate);
+    }
 
     FragColor = vec4(final, alpha);
 }

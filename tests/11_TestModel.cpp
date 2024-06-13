@@ -39,7 +39,7 @@ namespace test {
         
         for (unsigned int i = 0; i < m_PointLightPositions.size(); i++)
         {
-            std::shared_ptr<PointLight> pointLight = std::make_shared<PointLight>(m_PointLightPositions[i]);
+            Ref<PointLight> pointLight = std::make_shared<PointLight>(m_PointLightPositions[i]);
             m_PointLights.push_back(pointLight);
             m_Scene->Add(pointLight);
         }
@@ -57,16 +57,16 @@ namespace test {
         // Container
         // --------------------
         // texture
-        std::shared_ptr<Texture2D> diffuseTexture = std::make_shared<Texture2D>("Texture_Diffuse", "../res/textures/container2.png");
-        std::shared_ptr<Texture2D> specularTexture = std::make_shared<Texture2D>("Texture_Specular", "../res/textures/container2_specular.png");
+        Ref<Texture2D> diffuseTexture = std::make_shared<Texture2D>("Texture_Diffuse", "../res/textures/container2.png");
+        Ref<Texture2D> specularTexture = std::make_shared<Texture2D>("Texture_Specular", "../res/textures/container2_specular.png");
         // material
-        std::shared_ptr<StandardMaterial> containerMaterial = std::make_shared<StandardMaterial>();
-        containerMaterial->SetDiffuseTexture(diffuseTexture);
-        containerMaterial->SetSpecularTexture(specularTexture);
+        Ref<StandardMaterial> containerMaterial = std::make_shared<StandardMaterial>();
+        containerMaterial->AddTexture(diffuseTexture);
+        containerMaterial->AddTexture(specularTexture);
         // mesh
         for (unsigned int i = 0; i < m_ObjPositions.size(); i++)
         {
-            std::shared_ptr<Mesh> containerMesh = std::make_shared<Mesh>(std::make_shared<BoxGeometry>(), containerMaterial);
+            Ref<Mesh> containerMesh = std::make_shared<Mesh>(std::make_shared<BoxGeometry>(), containerMaterial);
             containerMesh->SetPosition(m_ObjPositions[i]);
             float angle = 20.0f * i;
             std::pair<float, glm::vec3> rotation = { glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f) };
@@ -78,12 +78,12 @@ namespace test {
         // LightCube
         // --------------------
         // material
-        std::shared_ptr<BasicMaterial> lightCubeMaterial = std::make_shared<BasicMaterial>();
+        Ref<BasicMaterial> lightCubeMaterial = std::make_shared<BasicMaterial>();
         lightCubeMaterial->SetColor({ 1.0f, 1.0f, 1.0f });
         // mesh
         for (unsigned int i = 0; i < m_PointLightPositions.size(); i++)
         {
-            std::shared_ptr<Mesh> m_LightCubeGeometryMesh = std::make_shared<Mesh>(std::make_shared<BoxGeometry>(), lightCubeMaterial);
+            Ref<Mesh> m_LightCubeGeometryMesh = std::make_shared<Mesh>(std::make_shared<BoxGeometry>(), lightCubeMaterial);
             m_LightCubeGeometryMesh->SetPosition(m_PointLightPositions[i]);
             m_LightCubeGeometryMesh->SetScale(0.2f, 0.2f, 0.2f);
 

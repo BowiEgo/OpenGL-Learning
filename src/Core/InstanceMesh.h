@@ -16,7 +16,7 @@ class InstanceMesh : public Mesh
 {
 public:
     InstanceMesh(Ref<Geometry> geometry, Ref<Material> material, unsigned int capacity);
-    InstanceMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Ref<Texture2D>> textures, Ref<Material> material, unsigned int capacity);
+    InstanceMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Ref<Material> material, unsigned int capacity);
     ~InstanceMesh() {};
 
     inline std::string* GetMeshType() { return &m_MeshType; }

@@ -3,7 +3,6 @@
 Scene* Scene::s_Instance = nullptr;
 MaterialManager* Scene::s_MaterialManager = nullptr;
 
-
 Scene::Scene()
 {
 }
@@ -19,6 +18,12 @@ Scene *Scene::Create()
     s_MaterialManager = MaterialManager::Create();
 
     return s_Instance;
+}
+
+
+void Scene::SetSkybox(Ref<Mesh> skybox)
+{
+    m_Skybox = skybox;
 }
 
 void Scene::Add(std::shared_ptr<Camera> camera)
@@ -93,8 +98,8 @@ void Scene::Draw()
         }
         else
         {
-            m_Meshes[i]->Draw(m_Meshes[i]->GetPosition(), m_Meshes[i]->GetScale(), m_Meshes[i]->GetRotation());
-            m_Meshes[i]->DrawOutline(m_Meshes[i]->GetPosition(), m_Meshes[i]->GetScale(), m_Meshes[i]->GetRotation());
+            m_Meshes[i]->Draw();
+            m_Meshes[i]->DrawOutline();
         }
     }
 
@@ -147,6 +152,16 @@ void Scene::Draw()
                 mesh->DrawOutline(&coord);
             }
         }, v);
+    }
+
+    // --------------------
+    // Draw skybox
+    // --------------------
+    if (m_Skybox != nullptr)
+    {
+        GLCall(glDepthFunc(GL_LEQUAL));
+        m_Skybox->Draw();
+        GLCall(glDepthFunc(GL_LESS));
     }
 }
 

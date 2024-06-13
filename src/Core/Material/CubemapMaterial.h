@@ -2,24 +2,25 @@
 
 #include "Material.h"
 
-#include "Core/Texture2D.h"
+#include "Core/TextureCubemap.h"
 
-class ShaderMaterial : public Material
+class CubemapMaterial : public Material
 {
 public:
-    ShaderMaterial(Ref<Shader> shader);
-    ~ShaderMaterial() {};
+    CubemapMaterial();
+    ~CubemapMaterial() {};
 
     inline unsigned int GetType() const override { return m_Type; }
+    inline Ref<TextureCubemap> GetCubemapTexture() const { return m_CubemapTexture; }
 
-    void AddTexture(Ref<Texture2D> texture);
-    void SetTextures(std::vector<Ref<Texture2D>> textures);
+    void SetCubemapTexture(Ref<TextureCubemap> texture);
 
+    void BindTexture() const;
     virtual void BindShader() const override;
     virtual void UpdateShader(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation) const override;
     virtual void UpdateShaderUniform(const std::string& uniformName, const UniformValue& uniformValue) const override;
 private:
-    unsigned int m_Type = MATERIAL_TYPE_SHADER;
+    unsigned int m_Type = MATERIAL_TYPE_CUBEMAP;
     Ref<Shader> m_Shader;
-    std::vector<Ref<Texture2D>> m_Textures;
+    Ref<TextureCubemap> m_CubemapTexture;
 };

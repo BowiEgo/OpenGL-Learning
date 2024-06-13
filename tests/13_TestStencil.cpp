@@ -56,7 +56,7 @@ namespace test {
         m_Scene->Add(m_Model_Nanosuit);
 
         // --------------------
-        // Floow
+        // Floor
         // --------------------
         // texture
         Ref<Texture2D> diffuseTexture_floor = std::make_shared<Texture2D>("Texture_Diffuse", "../res/textures/metal.png");
@@ -64,7 +64,7 @@ namespace test {
         diffuseTexture_floor->SetWrapping(GL_TEXTURE_WRAP_T, GL_REPEAT);
         // material
         Ref<StandardMaterial> material_floor = std::make_shared<StandardMaterial>();
-        material_floor->SetDiffuseTexture(diffuseTexture_floor);
+        material_floor->AddTexture(diffuseTexture_floor);
         // mesh
         m_Mesh_Floor = std::make_shared<Mesh>(std::make_shared<PlaneGeometry>(), material_floor);
         m_Mesh_Floor->SetPosition(0.0f, -0.01f, 0.0f);
@@ -77,7 +77,7 @@ namespace test {
         Ref<Texture2D> diffuseTexture_container = std::make_shared<Texture2D>("Texture_Diffuse", "../res/textures/marble.jpg");
         // material
         Ref<StandardMaterial> material_container = std::make_shared<StandardMaterial>();
-        material_container->SetDiffuseTexture(diffuseTexture_container);
+        material_container->AddTexture(diffuseTexture_container);
         // mesh
         m_Mesh_Container = std::make_shared<InstanceMesh>(
             std::make_shared<BoxGeometry>(),

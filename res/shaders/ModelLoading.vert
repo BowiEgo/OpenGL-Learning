@@ -19,6 +19,6 @@ void main()
 
     gl_Position = projectionPosition;
     v_FragPosition = vec3(modelPosition);
-    v_Normal = a_Normal;
+    v_Normal = mat3(transpose(inverse(modelMatrix))) * a_Normal;
     v_TexCoords = a_TexCoords;
 }

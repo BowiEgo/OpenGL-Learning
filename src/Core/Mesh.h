@@ -31,7 +31,7 @@ class Mesh
 {
 public:
     Mesh(Ref<Geometry> geometry, Ref<Material> material);
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Ref<Texture2D>> textures, Ref<Material> material);
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Ref<Material> material);
     virtual ~Mesh() = default;
 
     inline std::string* GetMeshType() { return &m_MeshType; }
@@ -52,7 +52,9 @@ public:
     void SetOutline(bool enable);
     void SetOutlineWidth(float& width);
     void SetOutlineColor(glm::vec3& color);
+    void Draw();
     void Draw(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation);
+    void DrawOutline();
     void DrawOutline(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation);
 public:
     bool Is_Transparent = false;
@@ -64,7 +66,6 @@ private:
 protected:
     Ref<Geometry> m_Geometry;
     Ref<Material> m_Material;
-    std::vector<Ref<Texture2D>> m_Textures;
 
     Scope<VertexArray> m_VAO;
     Scope<VertexBuffer> m_VBO;

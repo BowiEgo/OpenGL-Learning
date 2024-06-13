@@ -1,12 +1,11 @@
 #include "Model.h"
 
 #include "Scene.h"
-#include "Material/StandardMaterial.h"
-#include "Material/MaterialManager.h"
 
 Model::Model(const std::string &path, const ModelOptions &options)
     : m_Options(options)
 {
+    m_Material = std::make_shared<StandardMaterial>();
     LoadModel(path);
 }
 
@@ -109,7 +108,7 @@ Ref<Mesh> Model::ProcessMesh(aiMesh *aimesh, const aiScene *scene)
 {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<std::shared_ptr<Texture2D>> textures;
+    std::vector<Ref<Texture2D>> textures;
 
     const aiAABB &aabb = aimesh->mAABB;
     if (aabb.mMin.x < m_AABB->mMin.x)
@@ -185,15 +184,17 @@ Ref<Mesh> Model::ProcessMesh(aiMesh *aimesh, const aiScene *scene)
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
     }
 
-    Ref<Mesh> mesh = std::make_shared<Mesh>(vertices, indices, textures, std::make_shared<StandardMaterial>());
+    m_Material->SetTextures(textures);
+
+    Ref<Mesh> mesh = std::make_shared<Mesh>(vertices, indices, m_Material);
     mesh->Outline_Enabled = true;
     mesh->Outline_DrawType = OUTLINE_DRAWTYPE_NORMAL;
     return mesh;
 }
 
-std::vector<std::shared_ptr<Texture2D>> Model::loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName)
+std::vector<Ref<Texture2D>> Model::loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName)
 {
-    std::vector<std::shared_ptr<Texture2D>> textures;
+    std::vector<Ref<Texture2D>> textures;
     TextureOptions texOpts;
     texOpts.wrapS = GL_REPEAT;
     texOpts.wrapT = GL_REPEAT;
@@ -218,7 +219,7 @@ std::vector<std::shared_ptr<Texture2D>> Model::loadMaterialTextures(aiMaterial *
         }
         if(!skip)
         {
-            std::shared_ptr<Texture2D> texture = std::make_unique<Texture2D>(typeName, filePath, texOpts);
+            Ref<Texture2D> texture = std::make_unique<Texture2D>(typeName, filePath, texOpts);
 
             textures.push_back(texture);
             m_Textures_Loaded.push_back(texture); // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.

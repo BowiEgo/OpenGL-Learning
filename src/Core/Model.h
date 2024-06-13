@@ -2,6 +2,7 @@
 
 #include "pch.h"
 
+#include "Material/StandardMaterial.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -26,6 +27,7 @@ public:
     inline glm::vec3& GetScale() { return m_Scale; }
     inline std::pair<float, glm::vec3>* GetRotation() { return &m_Rotation; }
 
+    inline Ref<StandardMaterial> GetMaterial() { return m_Material; }
     inline std::vector<Ref<Mesh>>& GetMeshes() { return m_Meshes; }
     inline Ref<aiAABB> GetAABB() { return m_AABB; }
     inline glm::vec3 GetCenter() { return glm::vec3(
@@ -43,14 +45,15 @@ private:
     void LoadModel(const std::string& path);
     void ProcessNode(aiNode *node, const aiScene *scene);
     Ref<Mesh> ProcessMesh(aiMesh *mesh, const aiScene *scene);
-    std::vector<std::shared_ptr<Texture2D>> loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName);
+    std::vector<Ref<Texture2D>> loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName);
 public:
     bool Outline_Enabled = false;
     bool Outline_SingleMesh = false;
 private:
     ModelOptions m_Options;
 
-    std::vector<std::shared_ptr<Texture2D>> m_Textures_Loaded;
+    std::vector<Ref<Texture2D>> m_Textures_Loaded;
+    Ref<StandardMaterial> m_Material;
     std::vector<Ref<Mesh>> m_Meshes;
     std::string m_Directory;
 

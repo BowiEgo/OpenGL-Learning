@@ -24,7 +24,9 @@ public:
     inline static std::vector<Ref<DirectionalLight>>& GetDirectionalLights() { return s_Instance->m_DirectionalLights; }
     inline static std::vector<Ref<PointLight>>& GetPointLights() { return s_Instance->m_PointLights; }
     inline static std::vector<Ref<SpotLight>>& GetSpotLights() { return s_Instance->m_SpotLights; }
+    inline static Ref<Mesh>& GetSkybox() { return s_Instance->m_Skybox; }
 
+    void SetSkybox(Ref<Mesh> skybox);
     void Add(Ref<Camera> camera);
     void Add(Ref<DirectionalLight> light);
     void Add(Ref<PointLight> light);
@@ -40,6 +42,7 @@ private:
     static Scene* s_Instance;
     static MaterialManager* s_MaterialManager;
     Ref<Camera> m_CurrentCamera;
+    Ref<Mesh> m_Skybox;
     std::vector<Ref<Camera>> m_Cameras;
     std::vector<Ref<DirectionalLight>> m_DirectionalLights;
     std::vector<Ref<PointLight>> m_PointLights;

@@ -2,7 +2,8 @@
 
 #include "stb_image/stb_image.h"
 
-Texture2D::Texture2D(unsigned int rendererID)
+Texture2D::Texture2D(const std::string& type, const unsigned int rendererID)
+    : m_Type(type), m_RendererID(rendererID)
 {
     m_RendererID = rendererID;
 }
@@ -11,14 +12,14 @@ Texture2D::Texture2D(const std::string &path, const TextureOptions &options)
     : m_Type("texture_default"), m_FilePath(path), m_LocalBuffer(nullptr), m_Options(options),
       m_Width(0), m_Height(0), m_Channels(0)
 {
-    SetupTexture2D(m_Type, path, options);
+    SetupTexture2D(path, options);
 }
 
 Texture2D::Texture2D(const std::string &type, const std::string &path, const TextureOptions &options)
     : m_Type(type), m_FilePath(path), m_LocalBuffer(nullptr), m_Options(options),
       m_Width(0), m_Height(0), m_Channels(0)
 {
-    SetupTexture2D(m_Type, path, options);
+    SetupTexture2D(path, options);
 }
 
 Texture2D::~Texture2D()
@@ -26,7 +27,7 @@ Texture2D::~Texture2D()
     GLCall(glDeleteTextures(1, &m_RendererID));
 }
 
-void Texture2D::SetupTexture2D(const std::string &type, const std::string &path, const TextureOptions &options)
+void Texture2D::SetupTexture2D(const std::string &path, const TextureOptions &options)
 {
     stbi_set_flip_vertically_on_load(options.flip);
     m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_Channels, 0);

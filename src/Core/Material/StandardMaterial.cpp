@@ -1,4 +1,5 @@
 #include "StandardMaterial.h"
+#include "CubemapMaterial.h"
 
 #include "Core/Scene.h"
 #include "FileSystem/FileSystem.h"
@@ -10,30 +11,37 @@ StandardMaterial::StandardMaterial()
     m_Shader = std::make_shared<Shader>(standardVertSrc, standardFragSrc);
 
     m_Shader->Bind();
-    m_Shader->SetUniform1f("u_Material.shininess", m_MaterialShininess);
+    m_Shader->SetUniform("u_Material.shininess", m_MaterialShininess);
+
+    SetEnvironmentTexture(TextureCubemap::CreateEmptyTexture("Texture_Environment"));
+    m_Is_Environment_Valid = false;
+
+    // if (Scene::GetSkybox() != nullptr)
+    // {
+        // dynamic_cast<CubemapMaterial*>(Scene::GetSkybox()->GetMaterial().get())->BindTexture();
+    // m_Shader->SetUniform("u_EnvironmentTexture", 2);
+    // }
 }
 
-void StandardMaterial::SetDiffuseTexture(Ref<Texture2D> texture)
+void StandardMaterial::AddTexture(Ref<Texture2D> texture)
 {
-    m_DiffuseTexture = texture;
-    m_Shader->Bind();
-    m_Shader->SetUniform1i("u_Material.diffuse", 0);
+    m_Textures.push_back(texture);
 }
 
-void StandardMaterial::SetSpecularTexture(Ref<Texture2D> texture)
+void StandardMaterial::SetTextures(std::vector<Ref<Texture2D>> textures)
 {
-    m_SpecularTexture = texture;
-    m_Shader->Bind();
-    m_Shader->SetUniform1i("u_Material.specular", 1);
+    m_Textures = textures;
 }
 
-void StandardMaterial::BindTexture() const
+void StandardMaterial::SetEnvironmentTexture(Ref<TextureCubemap> texture)
 {
-    if (m_DiffuseTexture != nullptr)
-        m_DiffuseTexture->Bind();
-        
-    if (m_SpecularTexture != nullptr)
-        m_SpecularTexture->Bind(1);
+    m_Env_Texture = texture;
+    m_Is_Environment_Valid = true;
+}
+
+void StandardMaterial::SetEnvironmentMixRate(const float &rate)
+{
+    m_Environment_Mix_Rate = rate;
 }
 
 void StandardMaterial::BindShader() const
@@ -61,6 +69,9 @@ void StandardMaterial::UpdateShader(glm::vec3& position, glm::vec3& scale, std::
     m_Shader->SetUniform("u_Is_Opaque", Is_Opaque);
     m_Shader->SetUniform("u_Discard_Transparent", Discard_Transparent);
 
+    m_Shader->SetUniform("u_Is_EnvironmentTexture_Valid", m_Is_Environment_Valid);
+    m_Shader->SetUniform("u_Texture_Env_Mix_Rate", m_Environment_Mix_Rate);
+
     for (unsigned int i = 0; i < Scene::GetDirectionalLights().size(); i++)
     {
         Scene::GetDirectionalLights()[i]->Update(m_Shader.get());
@@ -77,11 +88,44 @@ void StandardMaterial::UpdateShader(glm::vec3& position, glm::vec3& scale, std::
         Scene::GetSpotLights()[i]->Update(m_Shader.get());
     }
 
-    BindTexture();
+    BindTextures();
 }
 
 void StandardMaterial::UpdateShaderUniform(const std::string &uniformName, const UniformValue &uniformValue) const
 {
     m_Shader->Bind();
     m_Shader->SetUniform(uniformName, uniformValue);
+}
+
+void StandardMaterial::BindTextures() const
+{
+    unsigned int size = m_Textures.size();
+    
+    unsigned int diffuseNr = 1;
+    unsigned int specularNr = 1;
+    unsigned int normalNr = 1;
+    unsigned int heightNr = 1;
+
+    for (unsigned int i = 0; i < size; i++)
+    {
+        Ref<Texture2D> texture = m_Textures[i];
+        texture->Bind(i);
+
+        std::string number;
+        std::string type = texture->GetType();
+
+        if(type == "Texture_Diffuse")
+            number = std::to_string(diffuseNr++);
+        else if(type == "Texture_Specular")
+            number = std::to_string(specularNr++);
+        else if(type == "Texture_Normal")
+            number = std::to_string(normalNr++);
+        else if(type == "Texture_Height")
+            number = std::to_string(heightNr++);
+
+        m_Shader->SetUniform(("u_" + type + number).c_str(), i);
+    }
+
+    m_Env_Texture->Bind(size);
+    m_Shader->SetUniform("u_Texture_Environment", size);
 }

@@ -67,7 +67,7 @@ namespace test {
         diffuseTexture_plane->SetWrapping(GL_TEXTURE_WRAP_T, GL_REPEAT);
         // material
         Ref<StandardMaterial> material_plane = std::make_shared<StandardMaterial>();
-        material_plane->SetDiffuseTexture(diffuseTexture_plane);
+        material_plane->AddTexture(diffuseTexture_plane);
         // mesh
         m_Mesh_Floor = std::make_shared<Mesh>(std::make_shared<PlaneGeometry>(), material_plane);
         m_Mesh_Floor->SetPosition(0.0f, -0.01f, 0.0f);
@@ -92,7 +92,7 @@ namespace test {
         Ref<Texture2D> diffuseTexture_container = std::make_shared<Texture2D>("Texture_Diffuse", "../res/textures/marble.jpg");
         // material
         Ref<StandardMaterial> material_container = std::make_shared<StandardMaterial>();
-        material_container->SetDiffuseTexture(diffuseTexture_container);
+        material_container->AddTexture(diffuseTexture_container);
         // mesh
         m_Mesh_Container = std::make_shared<InstanceMesh>(
             std::make_shared<BoxGeometry>(),
@@ -124,7 +124,7 @@ namespace test {
         diffuseTexture_grass->SetWrapping(GL_TEXTURE_WRAP_T, GL_REPEAT);
         // material
         Ref<StandardMaterial> material_grass = std::make_shared<StandardMaterial>();
-        material_grass->SetDiffuseTexture(diffuseTexture_grass);
+        material_grass->AddTexture(diffuseTexture_grass);
         material_grass->Discard_Transparent = true;
         // mesh
         Ref<InstanceMesh> mesh_grass = std::make_shared<InstanceMesh>(
@@ -155,7 +155,7 @@ namespace test {
         diffuseTexture_window->SetWrapping(GL_TEXTURE_WRAP_T, GL_REPEAT);
         // material
         Ref<StandardMaterial> material_window = std::make_shared<StandardMaterial>();
-        material_window->SetDiffuseTexture(diffuseTexture_window);
+        material_window->AddTexture(diffuseTexture_window);
         material_window->Is_Opaque = false;
         // mesh
         Ref<InstanceMesh> mesh_window = std::make_shared<InstanceMesh>(

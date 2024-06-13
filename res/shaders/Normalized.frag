@@ -3,26 +3,13 @@ out vec4 FragColor;
   
 in vec2 v_TexCoords;
 
-struct Material {
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-    float shininess;
-};
-
-struct TexturedMaterial {
-    sampler2D diffuse;
-    sampler2D specular;
-    sampler2D emmision;
-    float shininess;
-};
+uniform sampler2D u_Texture_Diffuse1;
 
 #define NORMALIZED_TYPE_INVERSION 0
 #define NORMALIZED_TYPE_GREYSCALE 1
 #define NORMALIZED_TYPE_SHARPEN 2
 #define NORMALIZED_TYPE_BLUR 3
 
-uniform TexturedMaterial u_Material;
 uniform int u_Normalized_Type;
 
 const float offset = 1.0 / 300.0;
@@ -50,7 +37,7 @@ vec3 sampleTex[9];
 void main()
 {
     vec3 final = vec3(0.0);
-    vec3 screenTexture = vec3(texture(u_Material.diffuse, v_TexCoords));
+    vec3 screenTexture = vec3(texture(u_Texture_Diffuse1, v_TexCoords));
 
     if (u_Normalized_Type == NORMALIZED_TYPE_INVERSION)
     {
@@ -66,7 +53,7 @@ void main()
     {
         for (int i = 0; i < 9; i++)
         {
-            sampleTex[i] = vec3(texture(u_Material.diffuse, v_TexCoords.st + offsets[i]));
+            sampleTex[i] = vec3(texture(u_Texture_Diffuse1, v_TexCoords.st + offsets[i]));
         }
         vec3 col = vec3(0.0);
         for (int i = 0; i < 9; i++)
@@ -78,7 +65,7 @@ void main()
     {
         for (int i = 0; i < 9; i++)
         {
-            sampleTex[i] = vec3(texture(u_Material.diffuse, v_TexCoords.st + offsets[i]));
+            sampleTex[i] = vec3(texture(u_Texture_Diffuse1, v_TexCoords.st + offsets[i]));
         }
         vec3 col = vec3(0.0);
         for (int i = 0; i < 9; i++)

@@ -1,4 +1,4 @@
-#include "16_TestFramebuffer.h"
+#include "17_TestCubemap.h"
 
 #include "imgui.h"
 
@@ -16,13 +16,15 @@
 #include "Core/Geometry/QuadGeometry.h"
 #include "Core/Geometry/PlaneGeometry.h"
 #include "Core/Geometry/BoxGeometry.h"
+#include "Core/Geometry/SkyboxGeometry.h"
 #include "Core/Material/StandardMaterial.h"
 #include "Core/Material/BasicMaterial.h"
+#include "Core/Material/CubemapMaterial.h"
 
 #include "Core/InstanceMesh.h"
 
 namespace test {
-    TestFramebuffer::TestFramebuffer(GLFWwindow* window)
+    TestCubemap::TestCubemap(GLFWwindow* window)
       : Test(window)
     {
         GLCall(glEnable(GL_BLEND));
@@ -67,10 +69,32 @@ namespace test {
         }
 
         // --------------------
+        // Skybox
+        // --------------------
+        std::vector<std::string> skybox_filePaths = {
+            "../res/textures/cubemaps/skybox/right.jpg",
+            "../res/textures/cubemaps/skybox/left.jpg",
+            "../res/textures/cubemaps/skybox/top.jpg",
+            "../res/textures/cubemaps/skybox/bottom.jpg",
+            "../res/textures/cubemaps/skybox/front.jpg",
+            "../res/textures/cubemaps/skybox/back.jpg"
+        };
+        Ref<TextureCubemap> skybox_texture = std::make_shared<TextureCubemap>("Texture_Environment", skybox_filePaths);
+        // geometry
+        Ref<BoxGeometry> skybox_geometry = std::make_shared<BoxGeometry>();
+        // material
+        Ref<CubemapMaterial> skybox_material = std::make_shared<CubemapMaterial>();
+        skybox_material->SetCubemapTexture(skybox_texture);
+        // mesh
+        Ref<Mesh> skybox_mesh = std::make_shared<Mesh>(skybox_geometry, skybox_material);
+        m_Scene->SetSkybox(skybox_mesh);
+
+        // --------------------
         // Import models
         // --------------------
         m_Model_Michelle = std::make_shared<Model>("../res/models/michelle/michelle.obj");
         m_Model_Michelle->Translate(0.0f, 0.513f, 0.0f);
+        m_Model_Michelle->GetMaterial()->SetEnvironmentTexture(skybox_material->GetCubemapTexture());
         m_Scene->Add(m_Model_Michelle);
 
         // --------------------
@@ -109,6 +133,7 @@ namespace test {
         // material
         Ref<StandardMaterial> material_container = std::make_shared<StandardMaterial>();
         material_container->AddTexture(diffuseTexture_container);
+        material_container->SetEnvironmentTexture(skybox_material->GetCubemapTexture());
         // mesh
         m_Mesh_Container = std::make_shared<InstanceMesh>(
             std::make_shared<BoxGeometry>(),
@@ -142,6 +167,7 @@ namespace test {
         // material
         Ref<StandardMaterial> material_grass = std::make_shared<StandardMaterial>();
         material_grass->AddTexture(diffuseTexture_grass);
+        material_grass->SetEnvironmentTexture(skybox_material->GetCubemapTexture());
         material_grass->Discard_Transparent = true;
         // mesh
         m_Mesh_Grass = std::make_shared<InstanceMesh>(
@@ -191,18 +217,18 @@ namespace test {
         // m_Mesh_Mirror->GetMaterial()->Wireframe_Enabled = true;
     }
 
-    TestFramebuffer::~TestFramebuffer()
+    TestCubemap::~TestCubemap()
     {
         GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
         delete m_Scene;
     }
 
-    void TestFramebuffer::OnUpdate(float deltaTime)
+    void TestCubemap::OnUpdate(float deltaTime)
     {
         ProcessInput(deltaTime);
     }
 
-    void TestFramebuffer::OnRender()
+    void TestCubemap::OnRender()
     {
         float currentTime = glfwGetTime();
         // --------------------
@@ -214,14 +240,6 @@ namespace test {
         GLCall(glClearColor(0.5f, 0.5f, 0.5f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
         GLCall(glEnable(GL_DEPTH_TEST));
-
-        m_Mesh_Floor->Cull_Face = m_CullFaceOption_Floor;
-        m_Mesh_Container->Cull_Face = m_CullFaceOption_Container;
-        m_Mesh_Grass->Cull_Face = m_CullFaceOption_Grass;
-
-        m_Mesh_Floor->GetMaterial()->Wireframe_Enabled = m_Wireframe_Enabled_Floor;
-        m_Mesh_Container->GetMaterial()->Wireframe_Enabled = m_Wireframe_Enabled_Container;
-        m_Mesh_Grass->GetMaterial()->Wireframe_Enabled = m_Wireframe_Enabled_Grass;
 
         m_Scene->Draw();
         m_Framebuffer->Unbind();
@@ -235,13 +253,8 @@ namespace test {
 
         m_Scene->SetCurrentCamera(m_Camera);
 
-        m_Mesh_Floor->Cull_Face = m_CullFaceOption_Floor;
-        m_Mesh_Container->Cull_Face = m_CullFaceOption_Container;
-        m_Mesh_Grass->Cull_Face = m_CullFaceOption_Grass;
-
-        m_Mesh_Floor->GetMaterial()->Wireframe_Enabled = m_Wireframe_Enabled_Floor;
-        m_Mesh_Container->GetMaterial()->Wireframe_Enabled = m_Wireframe_Enabled_Container;
-        m_Mesh_Grass->GetMaterial()->Wireframe_Enabled = m_Wireframe_Enabled_Grass;
+        m_Model_Michelle->GetMaterial()->SetEnvironmentMixRate(m_Env_Reflection_Rate_Model);
+        dynamic_cast<StandardMaterial*>(m_Mesh_Container->GetMaterial().get())->SetEnvironmentMixRate(m_Env_Reflection_Rate_Container);
 
         m_Scene->Draw();
         m_Scene->Draw(m_Mesh_Inversion.get());
@@ -251,57 +264,29 @@ namespace test {
         FramebufferManager::GetByTag("viewport")->Unbind();
     }
 
-    void TestFramebuffer::OnImGuiRender()
+    void TestCubemap::OnImGuiRender()
     {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
         const char* items[] = { "CULL_FACE_NONE", "CULL_FACE_BACK", "CULL_FACE_FRONT", "CULL_FACE_FRONT_AND_BACK" };
 
-        static int item_current_floor = 2;
-        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-        if (ImGui::CollapsingHeader("Floor", ImGuiTreeNodeFlags_None))
-        {
-            ImGui::Text("Wireframe");
-            ImGui::SameLine();ImGui::ToggleButton("Wireframe##Floor", &m_Wireframe_Enabled_Floor);
 
-            ImGui::Text("CullFace");ImGui::SameLine();
-            if (ImGui::Combo("##Floor", &item_current_floor, items, IM_ARRAYSIZE(items)))
-            {
-                m_CullFaceOption_Floor = static_cast<CullFaceOption>(item_current_floor);
-            }
+        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+        if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_None))
+        {
+            ImGui::Text("EnvReflection");ImGui::SameLine();
+            ImGui::SliderFloat("Rate##Model", &m_Env_Reflection_Rate_Model, 0.0f, 1.0f);
         }
 
-        static int item_current_container = 1;
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         if (ImGui::CollapsingHeader("Container", ImGuiTreeNodeFlags_None))
         {
-            ImGui::Text("Wireframe");
-            ImGui::SameLine();ImGui::ToggleButton("Wireframe##Container", &m_Wireframe_Enabled_Container);
-
-            ImGui::Text("CullFace");ImGui::SameLine();
-            if (ImGui::Combo("##Container", &item_current_container, items, IM_ARRAYSIZE(items)))
-            {
-                m_CullFaceOption_Container = static_cast<CullFaceOption>(item_current_container);
-            }
+            ImGui::Text("EnvReflection");ImGui::SameLine();
+            ImGui::SliderFloat("Rate##Container", &m_Env_Reflection_Rate_Container, 0.0f, 1.0f);
         }
-
-        static int item_current_grass = 0;
-        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-        if (ImGui::CollapsingHeader("Container", ImGuiTreeNodeFlags_None))
-        {
-            ImGui::Text("Wireframe");
-            ImGui::SameLine();ImGui::ToggleButton("Wireframe##Grass", &m_Wireframe_Enabled_Grass);
-            
-            ImGui::Text("CullFace");ImGui::SameLine();
-            if (ImGui::Combo("##Grass", &item_current_grass, items, IM_ARRAYSIZE(items)))
-            {
-                m_CullFaceOption_Grass = static_cast<CullFaceOption>(item_current_grass);
-            }
-        }
-
     }
 
-    void TestFramebuffer::ProcessInput(float deltaTime)
+    void TestCubemap::ProcessInput(float deltaTime)
     {
         m_Camera->ProcessKeyboardMovement(deltaTime);
         m_Camera->ProcessMouseMovement();
@@ -312,17 +297,17 @@ namespace test {
         m_Camera_Mirror->ProcessMouseScroll();
     }
 
-    void TestFramebuffer::SetCameraAspectRatio(float aspectRatio)
+    void TestCubemap::SetCameraAspectRatio(float aspectRatio)
     {
         m_Camera->SetAspectRatio(aspectRatio);
     }
 
-    void TestFramebuffer::EnableCameraControll()
+    void TestCubemap::EnableCameraControll()
     {
         m_Camera->EnableControll();
     }
 
-    void TestFramebuffer::DisableCameraControll()
+    void TestCubemap::DisableCameraControll()
     {
         m_Camera->DisableControll();
     }
