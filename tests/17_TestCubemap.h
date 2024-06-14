@@ -59,10 +59,12 @@ namespace test {
         bool m_Environment_Enabled_Model = true;
         bool m_Environment_Enabled_Container = true;
 
-        float m_Env_Reflection_Rate_Model = 1.0;
-        float m_Env_Reflection_Rate_Container = 0.5;
+        float m_Env_Reflective_Rate_Model = 1.0;
+        float m_Env_Refractive_Rate_Model = 0.1;
+        float m_Env_Refractive_Index_Model = 1.52;
 
-        float m_Env_Refraction_Index_Model = 1.52;
-        float m_Env_Refraction_Index_Container = 1.52;
+        float m_Env_Reflective_Rate_Container = 1.0;
+        float m_Env_Refractive_Rate_Container = 0.1;
+        float m_Env_Refractive_Index_Container = 1.52;
     };
 }

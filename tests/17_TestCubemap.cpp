@@ -258,20 +258,23 @@ namespace test {
         for (auto mesh : m_Model_Michelle->GetMeshes())
         {
             dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->Environment_Enabled = m_Environment_Enabled_Model;
-            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->SetEnvironmentMixRate(m_Env_Reflection_Rate_Model);
-            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->SetEnvironmentRefractIndex(m_Env_Refraction_Index_Model);
+            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->SetEnvironmentReflectiveRate(m_Env_Reflective_Rate_Model);
+            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->SetEnvironmentRefractiveRate(m_Env_Refractive_Rate_Model);
+            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->SetEnvironmentRefractiveIndex(m_Env_Refractive_Index_Model);
         }
 
-        // for (auto mesh : m_Model_Nanosuit->GetMeshes())
-        // {
-        //     dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->Environment_Enabled = m_Environment_Enabled_Model;
-        //     dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->SetEnvironmentMixRate(m_Env_Reflection_Rate_Model);
-        //     dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->SetEnvironmentRefractIndex(m_Env_Refraction_Index_Model);
-        // }
+        for (auto mesh : m_Model_Nanosuit->GetMeshes())
+        {
+            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->Environment_Enabled = m_Environment_Enabled_Model;
+            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->SetEnvironmentReflectiveRate(m_Env_Reflective_Rate_Model);
+            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->SetEnvironmentRefractiveRate(m_Env_Refractive_Rate_Model);
+            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->SetEnvironmentRefractiveIndex(m_Env_Refractive_Index_Model);
+        }
 
         dynamic_cast<StandardMaterial*>(m_Mesh_Container->GetMaterial().get())->Environment_Enabled = m_Environment_Enabled_Container;
-        dynamic_cast<StandardMaterial*>(m_Mesh_Container->GetMaterial().get())->SetEnvironmentMixRate(m_Env_Reflection_Rate_Container);
-        dynamic_cast<StandardMaterial*>(m_Mesh_Container->GetMaterial().get())->SetEnvironmentRefractIndex(m_Env_Refraction_Index_Container);
+        dynamic_cast<StandardMaterial*>(m_Mesh_Container->GetMaterial().get())->SetEnvironmentReflectiveRate(m_Env_Reflective_Rate_Container);
+        dynamic_cast<StandardMaterial*>(m_Mesh_Container->GetMaterial().get())->SetEnvironmentRefractiveRate(m_Env_Refractive_Rate_Container);
+        dynamic_cast<StandardMaterial*>(m_Mesh_Container->GetMaterial().get())->SetEnvironmentRefractiveIndex(m_Env_Refractive_Index_Container);
 
         m_Scene->Draw();
         m_Scene->Draw(m_Mesh_Inversion.get());
@@ -293,8 +296,9 @@ namespace test {
         {
             ImGui::Text("EnvironmentMapping");ImGui::SameLine();
             ImGui::ToggleButton("EnvironmentMapping##Model", &m_Environment_Enabled_Model);
-            ImGui::SliderFloat("EnvReflectionRate##Model", &m_Env_Reflection_Rate_Model, 0.0f, 1.0f);
-            ImGui::SliderFloat("EnvRefractionIndex##Model", &m_Env_Refraction_Index_Model, 0.0f, 5.0f);
+            ImGui::SliderFloat("EnvReflectiveRate##Model", &m_Env_Reflective_Rate_Model, 0.0f, 1.0f);
+            ImGui::SliderFloat("EnvRefractiveRate##Model", &m_Env_Refractive_Rate_Model, 0.0f, 1.0f);
+            ImGui::SliderFloat("EnvRefractiveIndex##Model", &m_Env_Refractive_Index_Model, 0.0f, 5.0f);
         }
 
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
@@ -302,8 +306,9 @@ namespace test {
         {
             ImGui::Text("EnvironmentMapping");ImGui::SameLine();
             ImGui::ToggleButton("EnvironmentMapping##Container", &m_Environment_Enabled_Container);
-            ImGui::SliderFloat("EnvReflectionRate##Container", &m_Env_Reflection_Rate_Container, 0.0f, 1.0f);
-            ImGui::SliderFloat("EnvRefractionIndex##Container", &m_Env_Refraction_Index_Container, 0.0f, 5.0f);
+            ImGui::SliderFloat("EnvReflectiveRate##Container", &m_Env_Reflective_Rate_Container, 0.0f, 1.0f);
+            ImGui::SliderFloat("EnvRefractiveRate##Container", &m_Env_Refractive_Rate_Container, 0.0f, 1.0f);
+            ImGui::SliderFloat("EnvRefractiveIndex##Container", &m_Env_Refractive_Index_Container, 0.0f, 5.0f);
         }
     }
 

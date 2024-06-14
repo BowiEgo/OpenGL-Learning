@@ -17,8 +17,9 @@ public:
     void AddTexture(Ref<Texture2D> texture);
     void SetTextures(std::vector<Ref<Texture2D>> textures);
     // void SetEnvironmentTexture(Ref<TextureCubemap> texture);
-    void SetEnvironmentMixRate(const float& rate);
-    void SetEnvironmentRefractIndex(const float& index);
+    void SetEnvironmentReflectiveRate(const float& rate);
+    void SetEnvironmentRefractiveRate(const float& rate);
+    void SetEnvironmentRefractiveIndex(const float& index);
 
     virtual void BindShader() const override;
     virtual void UpdateShader(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation) const override;
@@ -38,6 +39,7 @@ private:
     Ref<TextureCubemap> m_Env_Texture;
 
     float m_MaterialShininess = 32.0f, m_MaterialEmmisionStength = 1.0f;
-    float m_Environment_Mix_Rate = 0.2f;
+    float m_Environment_Reflective_Rate = 0.2f;
+    float m_Environment_Refractive_Rate = 0.2f;
     float m_Environment_Refractive_Index = 1.52f;
 };

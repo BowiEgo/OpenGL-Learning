@@ -42,12 +42,17 @@ void StandardMaterial::SetTextures(std::vector<Ref<Texture2D>> textures)
     }
 }
 
-void StandardMaterial::SetEnvironmentMixRate(const float &rate)
+void StandardMaterial::SetEnvironmentReflectiveRate(const float &rate)
 {
-    m_Environment_Mix_Rate = rate;
+    m_Environment_Reflective_Rate = rate;
 }
 
-void StandardMaterial::SetEnvironmentRefractIndex(const float &index)
+void StandardMaterial::SetEnvironmentRefractiveRate(const float &rate)
+{
+    m_Environment_Refractive_Rate = rate;
+}
+
+void StandardMaterial::SetEnvironmentRefractiveIndex(const float &index)
 {
     m_Environment_Refractive_Index = index;
 }
@@ -78,8 +83,9 @@ void StandardMaterial::UpdateShader(glm::vec3& position, glm::vec3& scale, std::
     m_Shader->SetUniform("u_Discard_Transparent", Discard_Transparent);
 
     m_Shader->SetUniform("u_Is_EnvironmentTexture_Valid", Environment_Enabled);
-    m_Shader->SetUniform("u_Texture_Env_Mix_Rate", m_Environment_Mix_Rate);
-    m_Shader->SetUniform("u_Texture_Env_Refractive_Index", m_Environment_Refractive_Index);
+    m_Shader->SetUniform("u_Env_Reflective_Rate", m_Environment_Reflective_Rate);
+    m_Shader->SetUniform("u_Env_Refractive_Rate", m_Environment_Refractive_Rate);
+    m_Shader->SetUniform("u_Env_Refractive_Index", m_Environment_Refractive_Index);
 
     for (unsigned int i = 0; i < Scene::GetDirectionalLights().size(); i++)
     {
