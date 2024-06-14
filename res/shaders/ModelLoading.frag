@@ -14,10 +14,12 @@ uniform sampler2D u_Texture_Diffuse3;
 uniform sampler2D u_Texture_Specular1;
 uniform sampler2D u_Texture_Specular2;
 uniform sampler2D u_Texture_Normal1;
-uniform samplerCube u_Texture_Environment;
-uniform float u_Texture_Env_Mix_Rate;
+uniform sampler2D u_Texture_Height1;
 
+uniform samplerCube u_Texture_Environment;
 uniform bool u_Is_EnvironmentTexture_Valid;
+uniform float u_Texture_Env_Mix_Rate;
+uniform float u_Texture_Env_Refractive_Index;
 
 struct Material {
     vec3 ambient;
@@ -191,7 +193,7 @@ void main()
     // Environment mapping
     if (u_Is_EnvironmentTexture_Valid)
     {
-        float ratio = 1.00 / 1.52;
+        float ratio = 1.00 / u_Texture_Env_Refractive_Index;
         vec3 I = -viewDirection;
         // vec3 R = reflect(I, normalize(v_Normal));
         vec3 R = refract(I, normalize(v_Normal), ratio);

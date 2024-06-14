@@ -12,12 +12,13 @@ public:
     ~StandardMaterial() {};
 
     inline unsigned int GetType() const override { return m_Type; }
-    inline std::vector<Ref<Texture2D>> GetTextures() const override { return m_Textures; }
+    // inline std::vector<Ref<Texture2D>> GetTextures() const override { return m_Textures; }
 
     void AddTexture(Ref<Texture2D> texture);
     void SetTextures(std::vector<Ref<Texture2D>> textures);
-    void SetEnvironmentTexture(Ref<TextureCubemap> texture);
+    // void SetEnvironmentTexture(Ref<TextureCubemap> texture);
     void SetEnvironmentMixRate(const float& rate);
+    void SetEnvironmentRefractIndex(const float& index);
 
     virtual void BindShader() const override;
     virtual void UpdateShader(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation) const override;
@@ -26,13 +27,17 @@ public:
 public:
     bool Is_Opaque = true;
     bool Discard_Transparent = false;
+    bool Environment_Enabled = false;
 private:
     unsigned int m_Type = MATERIAL_TYPE_STANDARD;
     Ref<Shader> m_Shader;
-    std::vector<Ref<Texture2D>> m_Textures;
+    std::vector<Ref<Texture2D>> m_Diffuse_Textures;
+    std::vector<Ref<Texture2D>> m_Specular_Textures;
+    std::vector<Ref<Texture2D>> m_Normal_Textures;
+    std::vector<Ref<Texture2D>> m_Height_Textures;
     Ref<TextureCubemap> m_Env_Texture;
 
     float m_MaterialShininess = 32.0f, m_MaterialEmmisionStength = 1.0f;
-    int m_Is_Environment_Valid = GL_FALSE;
-    float m_Environment_Mix_Rate = 0.2;
+    float m_Environment_Mix_Rate = 0.2f;
+    float m_Environment_Refractive_Index = 1.52f;
 };

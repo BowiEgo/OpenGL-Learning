@@ -3,14 +3,16 @@ out vec4 FragColor;
   
 in vec2 v_TexCoords;
 
+uniform vec3 u_CameraPosition;
+
 uniform sampler2D u_Texture_Diffuse1;
+uniform int u_Normalized_Type;
 
 #define NORMALIZED_TYPE_INVERSION 0
 #define NORMALIZED_TYPE_GREYSCALE 1
 #define NORMALIZED_TYPE_SHARPEN 2
 #define NORMALIZED_TYPE_BLUR 3
 
-uniform int u_Normalized_Type;
 
 const float offset = 1.0 / 300.0;
 

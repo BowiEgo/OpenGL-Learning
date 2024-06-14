@@ -2,6 +2,8 @@
 
 Scene* Scene::s_Instance = nullptr;
 MaterialManager* Scene::s_MaterialManager = nullptr;
+TextureCubemap* Scene::s_VoidTextureCubemap = nullptr;
+Texture2D* Scene::s_VoidTexture2D = nullptr;
 
 Scene::Scene()
 {
@@ -10,12 +12,16 @@ Scene::Scene()
 Scene::~Scene()
 {
     delete s_MaterialManager;
+    delete s_VoidTextureCubemap;
+    delete s_VoidTexture2D;
 }
 
 Scene *Scene::Create()
 {
     s_Instance = new Scene();
     s_MaterialManager = MaterialManager::Create();
+    s_VoidTextureCubemap = TextureCubemap::CreateVoidTexture("Texture_Environment");
+    s_VoidTexture2D = Texture2D::CreateVoidTexture("Texture_Void");
 
     return s_Instance;
 }

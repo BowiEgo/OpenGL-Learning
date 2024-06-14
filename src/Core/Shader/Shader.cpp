@@ -13,6 +13,12 @@ Shader::Shader(const std::string& vertexSrc, const std::string& fragmentSrc)
     m_RendererID = CreateShader(vertexSrc, fragmentSrc);
 }
 
+Shader::Shader(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& filepath)
+    : m_FilePath(filepath)
+{
+    m_RendererID = CreateShader(vertexSrc, fragmentSrc);
+}
+
 Shader::~Shader()
 {
     GLCall(glDeleteProgram(m_RendererID));
@@ -134,7 +140,7 @@ int Shader::GetUniformLoaction(const std::string& name) const
 
     GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));
     if (location == -1)
-        std::cout << "Warning: uniform '" << name << "' doesn't exist!" << std::endl;
+        // std::cout << "Warning: uniform '" << name << "' doesn't exist! " << m_FilePath << std::endl;
 
     m_UniformLocationCache[name] = location;
     return location;

@@ -7,7 +7,7 @@ BasicMaterial::BasicMaterial()
 {
     std::string basicVertSrc = FileSystem::ReadFile("../res/shaders/LightCube.vert");
     std::string basicFragSrc = FileSystem::ReadFile("../res/shaders/LightCube.frag");
-    m_Shader = std::make_shared<Shader>(basicVertSrc, basicFragSrc);
+    m_Shader = std::make_shared<Shader>(basicVertSrc, basicFragSrc, "../res/shaders/LightCube");
     m_Shader->Bind();
     m_Shader->SetUniformVec3("u_Color", { 1.0f, 0.0f, 0.0f });
 }

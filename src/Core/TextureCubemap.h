@@ -15,15 +15,13 @@ struct TextureCubemapOptions {
 class TextureCubemap
 {
 public:
-    TextureCubemap(const std::string& type);
     TextureCubemap(const std::string& type, const unsigned int rendererID);
     TextureCubemap(const std::string& type, const std::vector<std::string> facePaths, const TextureCubemapOptions& options = TextureCubemapOptions());
     ~TextureCubemap();
 
     void SetupTextureCubemap(const std::vector<std::string> facePaths, const TextureCubemapOptions& options = TextureCubemapOptions());
-    void SetupEmptyTextureCubemap();
 
-    static Ref<TextureCubemap> CreateEmptyTexture(const std::string& type, const TextureCubemapOptions& options = TextureCubemapOptions());
+    static TextureCubemap* CreateVoidTexture(const std::string& type);
 
     void Bind(unsigned int slot = 0) const;
     void Unbind() const;

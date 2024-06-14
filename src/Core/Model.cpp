@@ -174,17 +174,11 @@ Ref<Mesh> Model::ProcessMesh(aiMesh *aimesh, const aiScene *scene)
     if(aimesh->mMaterialIndex >= 0)
     {
         aiMaterial *material = scene->mMaterials[aimesh->mMaterialIndex];
-        auto diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "Texture_Diffuse");
-        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-        auto specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "Texture_Specular");
-        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-        auto normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "Texture_Normal");
-        textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-        auto heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "Texture_Height");
-        textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+        loadMaterialTextures(material, aiTextureType_DIFFUSE, "Texture_Diffuse", m_Material);
+        loadMaterialTextures(material, aiTextureType_SPECULAR, "Texture_Specular", m_Material);
+        loadMaterialTextures(material, aiTextureType_HEIGHT, "Texture_Normal", m_Material);
+        loadMaterialTextures(material, aiTextureType_AMBIENT, "Texture_Height", m_Material);
     }
-
-    m_Material->SetTextures(textures);
 
     Ref<Mesh> mesh = std::make_shared<Mesh>(vertices, indices, m_Material);
     mesh->Outline_Enabled = true;
@@ -192,7 +186,7 @@ Ref<Mesh> Model::ProcessMesh(aiMesh *aimesh, const aiScene *scene)
     return mesh;
 }
 
-std::vector<Ref<Texture2D>> Model::loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName)
+void Model::loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName, Ref<StandardMaterial> targetMaterial)
 {
     std::vector<Ref<Texture2D>> textures;
     TextureOptions texOpts;
@@ -212,7 +206,7 @@ std::vector<Ref<Texture2D>> Model::loadMaterialTextures(aiMaterial *material, ai
         {
             if(std::strcmp(m_Textures_Loaded[j]->GetFilePath().data(), filePath.c_str()) == 0)
             {
-                textures.push_back(m_Textures_Loaded[j]);
+                targetMaterial->AddTexture(m_Textures_Loaded[j]);
                 skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
                 break;
             }
@@ -221,9 +215,8 @@ std::vector<Ref<Texture2D>> Model::loadMaterialTextures(aiMaterial *material, ai
         {
             Ref<Texture2D> texture = std::make_unique<Texture2D>(typeName, filePath, texOpts);
 
-            textures.push_back(texture);
+            targetMaterial->AddTexture(texture);
             m_Textures_Loaded.push_back(texture); // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.
         }
     }
-    return textures;
 }

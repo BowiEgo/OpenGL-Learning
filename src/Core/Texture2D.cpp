@@ -2,7 +2,7 @@
 
 #include "stb_image/stb_image.h"
 
-Texture2D::Texture2D(const std::string& type, const unsigned int rendererID)
+Texture2D::Texture2D(const std::string &type, const unsigned int rendererID)
     : m_Type(type), m_RendererID(rendererID)
 {
     m_RendererID = rendererID;
@@ -61,9 +61,24 @@ void Texture2D::SetupTexture2D(const std::string &path, const TextureOptions &op
         stbi_image_free(m_LocalBuffer);
 }
 
-unsigned int Texture2D::Create(const std::string &type, const std::string &path, const TextureOptions &options)
+void Texture2D::SetupVoidTexture2D()
 {
-    return std::make_shared<Texture2D>(type, path, options)->GetID();
+    GLCall(glGenTextures(1, &m_RendererID));
+    GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+
+    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 0, 0, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr));
+    GLCall(glGenerateMipmap(GL_TEXTURE_2D));
+    GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+}
+
+Texture2D* Texture2D::CreateVoidTexture(const std::string &type)
+{
+    return new Texture2D(type, "../res/textures/error.jpg");
 }
 
 void Texture2D::Bind(unsigned int slot) const

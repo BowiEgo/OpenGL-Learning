@@ -19,7 +19,7 @@ public:
     virtual ~Material() {};
 
     virtual inline unsigned int GetType() const = 0;
-    virtual inline std::vector<Ref<Texture2D>> GetTextures() const { return m_Textures; }
+    // virtual inline std::vector<Ref<Texture2D>> GetTextures() const { return m_Textures; }
 
     virtual void BindShader() const = 0;
     virtual void UpdateShader(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation) const = 0;

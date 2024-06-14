@@ -30,6 +30,7 @@ class Shader
 public:
     Shader(const std::string& filepath);
     Shader(const std::string& vertexSrc, const std::string& fragmentSrc);
+    Shader(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& filepath);
     ~Shader();
 
     void Bind() const;

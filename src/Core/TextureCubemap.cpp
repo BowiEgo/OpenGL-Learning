@@ -2,12 +2,6 @@
 
 #include "stb_image/stb_image.h"
 
-TextureCubemap::TextureCubemap(const std::string &type)
-    : m_Type(type)
-{
-    SetupEmptyTextureCubemap();
-}
-
 TextureCubemap::TextureCubemap(const std::string &type, const unsigned int rendererID)
     : m_Type(type), m_RendererID(rendererID)
 {
@@ -65,28 +59,17 @@ void TextureCubemap::SetupTextureCubemap(const std::vector<std::string> facePath
     GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
 }
 
-void TextureCubemap::SetupEmptyTextureCubemap()
+TextureCubemap* TextureCubemap::CreateVoidTexture(const std::string &type)
 {
-    GLCall(glGenTextures(1, &m_RendererID));
-    GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID));
-
-    GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-    GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-    GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-    GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-    GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
-
-    for (unsigned int i = 0; i < 6; i++)
-    {
-        GLCall(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB8, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr));
-    }
-
-    GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
-}
-
-Ref<TextureCubemap> TextureCubemap::CreateEmptyTexture(const std::string &type, const TextureCubemapOptions &options)
-{
-    return std::make_shared<TextureCubemap>(type);
+    std::vector<std::string> filePaths = {
+        "../res/textures/cubemaps/white/px.jpg",
+        "../res/textures/cubemaps/white/nx.jpg",
+        "../res/textures/cubemaps/white/py.jpg",
+        "../res/textures/cubemaps/white/ny.jpg",
+        "../res/textures/cubemaps/white/pz.jpg",
+        "../res/textures/cubemaps/white/nz.jpg"
+    };
+    return new TextureCubemap(type, filePaths);
 }
 
 void TextureCubemap::Bind(unsigned int slot) const

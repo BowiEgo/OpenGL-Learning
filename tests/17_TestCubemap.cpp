@@ -72,12 +72,12 @@ namespace test {
         // Skybox
         // --------------------
         std::vector<std::string> skybox_filePaths = {
-            "../res/textures/cubemaps/skybox/right.jpg",
-            "../res/textures/cubemaps/skybox/left.jpg",
-            "../res/textures/cubemaps/skybox/top.jpg",
-            "../res/textures/cubemaps/skybox/bottom.jpg",
-            "../res/textures/cubemaps/skybox/front.jpg",
-            "../res/textures/cubemaps/skybox/back.jpg"
+            "../res/textures/cubemaps/skybox/px.jpg",
+            "../res/textures/cubemaps/skybox/nx.jpg",
+            "../res/textures/cubemaps/skybox/py.jpg",
+            "../res/textures/cubemaps/skybox/ny.jpg",
+            "../res/textures/cubemaps/skybox/pz.jpg",
+            "../res/textures/cubemaps/skybox/nz.jpg"
         };
         Ref<TextureCubemap> skybox_texture = std::make_shared<TextureCubemap>("Texture_Environment", skybox_filePaths);
         // geometry
@@ -94,7 +94,6 @@ namespace test {
         // --------------------
         m_Model_Michelle = std::make_shared<Model>("../res/models/michelle/michelle.obj");
         m_Model_Michelle->Translate(0.0f, 0.513f, 0.0f);
-        m_Model_Michelle->GetMaterial()->SetEnvironmentTexture(skybox_material->GetCubemapTexture());
         m_Scene->Add(m_Model_Michelle);
 
         // --------------------
@@ -133,7 +132,6 @@ namespace test {
         // material
         Ref<StandardMaterial> material_container = std::make_shared<StandardMaterial>();
         material_container->AddTexture(diffuseTexture_container);
-        material_container->SetEnvironmentTexture(skybox_material->GetCubemapTexture());
         // mesh
         m_Mesh_Container = std::make_shared<InstanceMesh>(
             std::make_shared<BoxGeometry>(),
@@ -167,7 +165,6 @@ namespace test {
         // material
         Ref<StandardMaterial> material_grass = std::make_shared<StandardMaterial>();
         material_grass->AddTexture(diffuseTexture_grass);
-        material_grass->SetEnvironmentTexture(skybox_material->GetCubemapTexture());
         material_grass->Discard_Transparent = true;
         // mesh
         m_Mesh_Grass = std::make_shared<InstanceMesh>(
@@ -191,10 +188,10 @@ namespace test {
         // shader
         std::string normalizedVertSrc = FileSystem::ReadFile("../res/shaders/Normalized.vert");
         std::string normalizedFragSrc = FileSystem::ReadFile("../res/shaders/Normalized.frag");
-        Ref<Shader> screenShader_inversion = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc);
-        Ref<Shader> screenShader_grayscale = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc);
-        Ref<Shader> screenShader_sharpe = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc);
-        Ref<Shader> screenShader_blur = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc);
+        Ref<Shader> screenShader_inversion = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc, "../res/shader/Normalized");
+        Ref<Shader> screenShader_grayscale = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc, "../res/shader/Normalized");
+        Ref<Shader> screenShader_sharpe = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc, "../res/shader/Normalized");
+        Ref<Shader> screenShader_blur = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc, "../res/shader/Normalized");
         // material
         Ref<ShaderMaterial> material_inversion = std::make_shared<ShaderMaterial>(screenShader_inversion);
         Ref<ShaderMaterial> material_grayscale = std::make_shared<ShaderMaterial>(screenShader_grayscale);
@@ -253,8 +250,13 @@ namespace test {
 
         m_Scene->SetCurrentCamera(m_Camera);
 
+        m_Model_Michelle->GetMaterial()->Environment_Enabled = m_Environment_Enabled_Model;
         m_Model_Michelle->GetMaterial()->SetEnvironmentMixRate(m_Env_Reflection_Rate_Model);
+        m_Model_Michelle->GetMaterial()->SetEnvironmentRefractIndex(m_Env_Refraction_Index_Model);
+
+        dynamic_cast<StandardMaterial*>(m_Mesh_Container->GetMaterial().get())->Environment_Enabled = m_Environment_Enabled_Container;
         dynamic_cast<StandardMaterial*>(m_Mesh_Container->GetMaterial().get())->SetEnvironmentMixRate(m_Env_Reflection_Rate_Container);
+        dynamic_cast<StandardMaterial*>(m_Mesh_Container->GetMaterial().get())->SetEnvironmentRefractIndex(m_Env_Refraction_Index_Container);
 
         m_Scene->Draw();
         m_Scene->Draw(m_Mesh_Inversion.get());
@@ -274,15 +276,19 @@ namespace test {
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_None))
         {
-            ImGui::Text("EnvReflection");ImGui::SameLine();
-            ImGui::SliderFloat("Rate##Model", &m_Env_Reflection_Rate_Model, 0.0f, 1.0f);
+            ImGui::Text("EnvironmentMapping");ImGui::SameLine();
+            ImGui::ToggleButton("EnvironmentMapping##Model", &m_Environment_Enabled_Model);
+            ImGui::SliderFloat("EnvReflectionRate##Model", &m_Env_Reflection_Rate_Model, 0.0f, 1.0f);
+            ImGui::SliderFloat("EnvRefractionIndex##Model", &m_Env_Refraction_Index_Model, 0.0f, 5.0f);
         }
 
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         if (ImGui::CollapsingHeader("Container", ImGuiTreeNodeFlags_None))
         {
-            ImGui::Text("EnvReflection");ImGui::SameLine();
-            ImGui::SliderFloat("Rate##Container", &m_Env_Reflection_Rate_Container, 0.0f, 1.0f);
+            ImGui::Text("EnvironmentMapping");ImGui::SameLine();
+            ImGui::ToggleButton("EnvironmentMapping##Container", &m_Environment_Enabled_Container);
+            ImGui::SliderFloat("EnvReflectionRate##Container", &m_Env_Reflection_Rate_Container, 0.0f, 1.0f);
+            ImGui::SliderFloat("EnvRefractionIndex##Container", &m_Env_Refraction_Index_Container, 0.0f, 5.0f);
         }
     }
 

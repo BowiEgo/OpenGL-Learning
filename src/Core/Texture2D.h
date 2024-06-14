@@ -4,10 +4,10 @@
 #include "Core/Renderer.h"
 
 struct TextureOptions {
-    GLint wrapS = GL_CLAMP_TO_EDGE;
-    GLint wrapT = GL_CLAMP_TO_EDGE;
     GLint minFilter = GL_NEAREST;
     GLint magFilter = GL_LINEAR;
+    GLint wrapS = GL_CLAMP_TO_EDGE;
+    GLint wrapT = GL_CLAMP_TO_EDGE;
     bool flip = true;
 };
 
@@ -20,8 +20,10 @@ public:
     ~Texture2D();
 
     void SetupTexture2D(const std::string& path, const TextureOptions& options = TextureOptions());
+    void SetupVoidTexture2D();
 
-    static unsigned int Create(const std::string& type, const std::string& path, const TextureOptions& options = TextureOptions());
+    // static unsigned int Create(const std::string& type, const std::string& path, const TextureOptions& options = TextureOptions());
+    static Texture2D* CreateVoidTexture(const std::string& type);
 
     void Bind(unsigned int slot = 0) const;
     void Unbind() const;

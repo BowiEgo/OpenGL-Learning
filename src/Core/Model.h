@@ -45,7 +45,7 @@ private:
     void LoadModel(const std::string& path);
     void ProcessNode(aiNode *node, const aiScene *scene);
     Ref<Mesh> ProcessMesh(aiMesh *mesh, const aiScene *scene);
-    std::vector<Ref<Texture2D>> loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName);
+    void loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName, Ref<StandardMaterial> targetMaterial);
 public:
     bool Outline_Enabled = false;
     bool Outline_SingleMesh = false;

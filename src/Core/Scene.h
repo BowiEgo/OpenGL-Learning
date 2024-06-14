@@ -19,6 +19,8 @@ public:
     static Scene* Create();
 
     inline static MaterialManager* GetMaterialManager() { return s_MaterialManager; }
+    inline static Texture2D* GetVoidTexture2D() { return s_VoidTexture2D; }
+    inline static TextureCubemap* GetVoidTextureCubemap() { return s_VoidTextureCubemap; }
     inline static Camera* GetCurrentCamera() { return s_Instance->m_CurrentCamera.get(); }
     inline static std::vector<Ref<Camera>>* GetCameras() { return &(s_Instance->m_Cameras); }
     inline static std::vector<Ref<DirectionalLight>>& GetDirectionalLights() { return s_Instance->m_DirectionalLights; }
@@ -41,6 +43,8 @@ public:
 private:
     static Scene* s_Instance;
     static MaterialManager* s_MaterialManager;
+    static Texture2D* s_VoidTexture2D;
+    static TextureCubemap* s_VoidTextureCubemap;
     Ref<Camera> m_CurrentCamera;
     Ref<Mesh> m_Skybox;
     std::vector<Ref<Camera>> m_Cameras;

@@ -7,7 +7,7 @@ CubemapMaterial::CubemapMaterial()
 {
     std::string standardVertSrc = FileSystem::ReadFile("../res/shaders/Cubemap.vert");
     std::string standardFragSrc = FileSystem::ReadFile("../res/shaders/Cubemap.frag");
-    m_Shader = std::make_shared<Shader>(standardVertSrc, standardFragSrc);
+    m_Shader = std::make_shared<Shader>(standardVertSrc, standardFragSrc, "../res/shaders/Cubemap");
 
     m_Shader->Bind();
 }
@@ -19,10 +19,10 @@ void CubemapMaterial::SetCubemapTexture(Ref<TextureCubemap> texture)
     m_Shader->SetUniform1i("u_CubemapTexture", 0);
 }
 
-void CubemapMaterial::BindTexture() const
+void CubemapMaterial::BindTexture(const unsigned int& slot) const
 {
     if (m_CubemapTexture != nullptr)
-        m_CubemapTexture->Bind();
+        m_CubemapTexture->Bind(slot);
 }
 
 void CubemapMaterial::BindShader() const
