@@ -27,7 +27,6 @@ public:
     inline glm::vec3& GetScale() { return m_Scale; }
     inline std::pair<float, glm::vec3>* GetRotation() { return &m_Rotation; }
 
-    inline Ref<StandardMaterial> GetMaterial() { return m_Material; }
     inline std::vector<Ref<Mesh>>& GetMeshes() { return m_Meshes; }
     inline Ref<aiAABB> GetAABB() { return m_AABB; }
     inline glm::vec3 GetCenter() { return glm::vec3(
@@ -53,7 +52,6 @@ private:
     ModelOptions m_Options;
 
     std::vector<Ref<Texture2D>> m_Textures_Loaded;
-    Ref<StandardMaterial> m_Material;
     std::vector<Ref<Mesh>> m_Meshes;
     std::string m_Directory;
 

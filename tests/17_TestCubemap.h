@@ -42,6 +42,7 @@ namespace test {
         glm::vec3 m_Mirror_Position = glm::vec3(1.0f, 2.0f, -0.5f);
 
         Ref<Model> m_Model_Michelle;
+        Ref<Model> m_Model_Nanosuit;
         Ref<Mesh> m_Mesh_Floor;
         Ref<InstanceMesh> m_Mesh_Container;
         Ref<InstanceMesh> m_Mesh_Grass;

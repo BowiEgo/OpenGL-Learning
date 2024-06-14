@@ -5,7 +5,6 @@
 Model::Model(const std::string &path, const ModelOptions &options)
     : m_Options(options)
 {
-    m_Material = std::make_shared<StandardMaterial>();
     LoadModel(path);
 }
 
@@ -171,16 +170,17 @@ Ref<Mesh> Model::ProcessMesh(aiMesh *aimesh, const aiScene *scene)
             indices.push_back(face.mIndices[j]);
     }
     // Handle materials
+    Ref<StandardMaterial> mMaterial = std::make_shared<StandardMaterial>();
     if(aimesh->mMaterialIndex >= 0)
     {
         aiMaterial *material = scene->mMaterials[aimesh->mMaterialIndex];
-        loadMaterialTextures(material, aiTextureType_DIFFUSE, "Texture_Diffuse", m_Material);
-        loadMaterialTextures(material, aiTextureType_SPECULAR, "Texture_Specular", m_Material);
-        loadMaterialTextures(material, aiTextureType_HEIGHT, "Texture_Normal", m_Material);
-        loadMaterialTextures(material, aiTextureType_AMBIENT, "Texture_Height", m_Material);
+        loadMaterialTextures(material, aiTextureType_DIFFUSE, "Texture_Diffuse", mMaterial);
+        loadMaterialTextures(material, aiTextureType_SPECULAR, "Texture_Specular", mMaterial);
+        loadMaterialTextures(material, aiTextureType_HEIGHT, "Texture_Normal", mMaterial);
+        loadMaterialTextures(material, aiTextureType_AMBIENT, "Texture_Height", mMaterial);
     }
 
-    Ref<Mesh> mesh = std::make_shared<Mesh>(vertices, indices, m_Material);
+    Ref<Mesh> mesh = std::make_shared<Mesh>(vertices, indices, mMaterial);
     mesh->Outline_Enabled = true;
     mesh->Outline_DrawType = OUTLINE_DRAWTYPE_NORMAL;
     return mesh;

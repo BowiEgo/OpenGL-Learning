@@ -96,6 +96,11 @@ namespace test {
         m_Model_Michelle->Translate(0.0f, 0.513f, 0.0f);
         m_Scene->Add(m_Model_Michelle);
 
+        m_Model_Nanosuit = std::make_shared<Model>("../res/models/nanosuit/nanosuit.obj");
+        m_Model_Nanosuit->Scale(0.16f, 0.16f, 0.16f);
+        m_Model_Nanosuit->Translate(2.0f, 0.513f, 0.0f);
+        m_Scene->Add(m_Model_Nanosuit);
+
         // --------------------
         // Floor
         // --------------------
@@ -250,9 +255,19 @@ namespace test {
 
         m_Scene->SetCurrentCamera(m_Camera);
 
-        m_Model_Michelle->GetMaterial()->Environment_Enabled = m_Environment_Enabled_Model;
-        m_Model_Michelle->GetMaterial()->SetEnvironmentMixRate(m_Env_Reflection_Rate_Model);
-        m_Model_Michelle->GetMaterial()->SetEnvironmentRefractIndex(m_Env_Refraction_Index_Model);
+        for (auto mesh : m_Model_Michelle->GetMeshes())
+        {
+            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->Environment_Enabled = m_Environment_Enabled_Model;
+            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->SetEnvironmentMixRate(m_Env_Reflection_Rate_Model);
+            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->SetEnvironmentRefractIndex(m_Env_Refraction_Index_Model);
+        }
+
+        // for (auto mesh : m_Model_Nanosuit->GetMeshes())
+        // {
+        //     dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->Environment_Enabled = m_Environment_Enabled_Model;
+        //     dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->SetEnvironmentMixRate(m_Env_Reflection_Rate_Model);
+        //     dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->SetEnvironmentRefractIndex(m_Env_Refraction_Index_Model);
+        // }
 
         dynamic_cast<StandardMaterial*>(m_Mesh_Container->GetMaterial().get())->Environment_Enabled = m_Environment_Enabled_Container;
         dynamic_cast<StandardMaterial*>(m_Mesh_Container->GetMaterial().get())->SetEnvironmentMixRate(m_Env_Reflection_Rate_Container);
