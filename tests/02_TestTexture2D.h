@@ -16,7 +16,7 @@ namespace test {
         void OnUpdate(float deltaTime) override;
         void OnRender() override;
         void OnImGuiRender() override;
-        void SetCameraAspectRatio(const float aspectRatio) override {};
+        
      private:
         Ref<VertexArray> m_VAO;
         Ref<VertexBuffer> m_VertexBuffer;

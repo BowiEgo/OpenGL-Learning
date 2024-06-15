@@ -24,7 +24,7 @@ namespace test {
         void OnRender() override;
         void OnImGuiRender() override;
         void ProcessInput(float deltaTime);
-        void SetCameraAspectRatio(const float aspectRatio) override;
+        
         void EnableCameraControll() override;
         void DisableCameraControll() override;
     private:
@@ -45,8 +45,6 @@ namespace test {
             glm::vec3( 1.5f,  0.2f,  -1.5f),
             glm::vec3(-1.3f,  1.0f,  -1.5f)  
         };
-
-        Ref<Camera> m_Camera;
 
         glm::vec3 m_LightPosition = glm::vec3(1.2f, 1.0f, 2.0f);
         float m_MaterialShininess = 32.0f;

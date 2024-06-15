@@ -189,11 +189,6 @@ namespace test {
         m_Camera->ProcessMouseScroll();
     }
 
-    void TestStencil::SetCameraAspectRatio(float aspectRatio)
-    {
-        m_Camera->SetAspectRatio(aspectRatio);
-    }
-
     void TestStencil::EnableCameraControll()
     {
         m_Camera->EnableControll();

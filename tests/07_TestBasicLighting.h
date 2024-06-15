@@ -23,7 +23,7 @@ namespace test {
         void OnRender() override;
         void OnImGuiRender() override;
         void ProcessInput(float deltaTime);
-        void SetCameraAspectRatio(const float aspectRatio) override;
+        
         void EnableCameraControll() override;
         void DisableCameraControll() override;
     private:
@@ -35,8 +35,6 @@ namespace test {
 
         glm::mat4 m_Proj, m_View;
         float m_Mix = 0.2;
-
-        Ref<Camera> m_Camera;
 
         float m_AmbientStrength = 0.1f, m_SpecularStrength = 0.5f;
         unsigned int m_Shininess = 32;

@@ -1,27 +1,43 @@
 #include "Shader.h"
 #include "../Renderer.h"
+#include <glm/gtc/type_ptr.hpp>
+
+Ref<UniformBuffer> Shader::s_UBO_Matrices = nullptr;
 
 Shader::Shader(const std::string& filepath)
     : m_FilePath(filepath), m_RendererID(0)
 {
     ShaderProgramSource source = ParseShader(filepath);
     m_RendererID = CreateShader(source.VertexSource, source.FragmentSource);
+    Setup();
 }
 
 Shader::Shader(const std::string& vertexSrc, const std::string& fragmentSrc)
 {
     m_RendererID = CreateShader(vertexSrc, fragmentSrc);
+    Setup();
 }
 
 Shader::Shader(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& filepath)
     : m_FilePath(filepath)
 {
     m_RendererID = CreateShader(vertexSrc, fragmentSrc);
+    Setup();
 }
 
 Shader::~Shader()
 {
     GLCall(glDeleteProgram(m_RendererID));
+}
+
+void Shader::Setup() const
+{
+    if (s_UBO_Matrices == nullptr)
+        Shader::InitializeUniformBuffer();
+
+    // Bind matrices uniform block
+    unsigned int uniformBlockIndex = glGetUniformBlockIndex(m_RendererID, "Matrices");
+    glUniformBlockBinding(m_RendererID, uniformBlockIndex, s_UBO_Matrices->GetBindingPoint());
 }
 
 void Shader::Bind() const
@@ -32,6 +48,21 @@ void Shader::Bind() const
 void Shader::Unbind() const
 {
     GLCall(glUseProgram(0));
+}
+
+void Shader::InitializeUniformBuffer()
+{
+    s_UBO_Matrices = std::make_shared<UniformBuffer>(sizeof(glm::mat4) * 2);
+}
+
+void Shader::UpdateMatricesProj(const glm::mat4 &projection)
+{
+    s_UBO_Matrices->UpdateMat4(s_UBO_Matrices->GetBindingPoint(), 0, sizeof(glm::mat4), projection);
+}
+
+void Shader::UpdateMatricesView(const glm::mat4 &view)
+{
+    s_UBO_Matrices->UpdateMat4(s_UBO_Matrices->GetBindingPoint(), sizeof(glm::mat4), sizeof(glm::mat4), view);
 }
 
 void Shader::SetUniformBool(const std::string &name, bool value)

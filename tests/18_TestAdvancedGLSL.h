@@ -6,8 +6,10 @@
 #include "Core/VertexBuffer.h"
 #include "Core/VertexBufferLayout.h"
 #include "Core/Texture2D.h"
+#include "Core/TextureCubemap.h"
 
 #include "Camera.h"
+#include "Framebuffer.h"
 #include "Core/Scene.h"
 #include "Core/Model.h"
 
@@ -15,17 +17,17 @@
 #include "Core/Light/PointLight.h"
 
 namespace test {
-    class TestFaceCulling : public Test
+    class TestAdvancedGLSL : public Test
     {
     public:
-        TestFaceCulling(GLFWwindow* window);
-        ~TestFaceCulling();
+        TestAdvancedGLSL(GLFWwindow* window);
+        ~TestAdvancedGLSL();
 
         void OnUpdate(float deltaTime) override;
         void OnRender() override;
         void OnImGuiRender() override;
         void ProcessInput(float deltaTime);
-        
+        // 
         void EnableCameraControll() override;
         void DisableCameraControll() override;
     private:
@@ -34,16 +36,8 @@ namespace test {
         Ref<DirectionalLight> m_DirectionalLight;
         std::vector<Ref<PointLight>> m_PointLights;
 
-        Ref<Mesh> m_Mesh_Floor;
-        Ref<InstanceMesh> m_Mesh_Container;
-        Ref<InstanceMesh> m_Mesh_Grass;
+        std::vector<Ref<Mesh>> m_Mesh_Container;
 
-        CullFaceOption m_CullFaceOption_Floor = CULL_FACE_FRONT;
-        CullFaceOption m_CullFaceOption_Container = CULL_FACE_BACK;
-        CullFaceOption m_CullFaceOption_Grass = CULL_FACE_NONE;
-
-        bool m_Wireframe_Enabled_Floor = false;
-        bool m_Wireframe_Enabled_Container = false;
-        bool m_Wireframe_Enabled_Grass = false;
+        float m_ScreenSplit_X = 0.5f;
     };
 }

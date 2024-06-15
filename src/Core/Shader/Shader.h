@@ -4,6 +4,8 @@
 
 #include "glm/glm.hpp"
 
+#include "UniformBuffer.h"
+
 struct ShaderProgramSource
 {
     std::string VertexSource;
@@ -33,8 +35,13 @@ public:
     Shader(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& filepath);
     ~Shader();
 
+    void Setup() const;
+
     void Bind() const;
     void Unbind() const;
+
+    static void UpdateMatricesProj(const glm::mat4& projection);
+    static void UpdateMatricesView(const glm::mat4& view);
 
     // Set uniforms
     void SetUniformBool(const std::string& name, bool value);
@@ -52,10 +59,13 @@ public:
     void SetUniformMat4(const std::string& name, const glm::mat4& matrix);
     void SetUniform(const std::string& name, const UniformValue& value);
 private:
+    static void InitializeUniformBuffer();
     int GetUniformLoaction(const std::string& name) const;
     ShaderProgramSource ParseShader(const std::string& filepath);
     unsigned int CompileShader(unsigned int type, const std::string& source);
     unsigned int CreateShader(const std::string& vertextShader, const std::string& fragmentShader);
+private:
+    static Ref<UniformBuffer> s_UBO_Matrices;
 private:
     std::string m_FilePath;
     std::string m_Name;

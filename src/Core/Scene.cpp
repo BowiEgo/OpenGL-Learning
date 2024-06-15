@@ -93,6 +93,11 @@ void Scene::SetCurrentCamera(Ref<Camera> camera)
 void Scene::Draw()
 {
     // --------------------
+    // Update shader uniform blocks
+    // --------------------
+    Shader::UpdateMatricesView(m_CurrentCamera->GetViewMatrix());
+
+    // --------------------
     // Draw meshes
     // --------------------
     for (unsigned int i = 0; i < m_Meshes.size(); i++)

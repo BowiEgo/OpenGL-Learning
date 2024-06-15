@@ -23,7 +23,7 @@ namespace test {
         void OnRender() override;
         void OnImGuiRender() override;
         void ProcessInput(float deltaTime);
-        void SetCameraAspectRatio(const float aspectRatio) override;
+        
         void EnableCameraControll() override;
         void DisableCameraControll() override;
     private:
@@ -32,8 +32,6 @@ namespace test {
         Ref<IndexBuffer> m_IBO;
         Ref<Shader> m_ObjShader, m_LightCubeShader;
         glm::vec3 m_ObjPositions, m_LightPosition;
-
-        Ref<Camera> m_Camera;
 
         float m_MaterialAmbient[3] = { 1.0f, 0.5f, 0.31f },
               m_MaterialDiffuse[3] = { 1.0f, 0.5f, 0.31f },

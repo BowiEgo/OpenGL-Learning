@@ -25,13 +25,12 @@ namespace test {
         void OnRender() override;
         void OnImGuiRender() override;
         void ProcessInput(float deltaTime);
-        void SetCameraAspectRatio(const float aspectRatio) override;
+        
         void EnableCameraControll() override;
         void DisableCameraControll() override;
     private:
         Scene* m_Scene;
 
-        std::shared_ptr<Camera> m_Camera;
         std::shared_ptr<DirectionalLight> m_DirectionalLight;
         std::vector<std::shared_ptr<PointLight>> m_PointLights;
         std::shared_ptr<SpotLight> m_SpotLight;

@@ -233,11 +233,6 @@ namespace test {
         m_Camera->ProcessMouseMovement();
         m_Camera->ProcessMouseScroll();
     }
-    
-    void TestLightingMaps::SetCameraAspectRatio(const float aspectRatio)
-    {
-        m_Camera->SetAspectRatio(aspectRatio);
-    }
 
     void TestLightingMaps::EnableCameraControll()
     {

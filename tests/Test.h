@@ -1,7 +1,6 @@
 #pragma once
 
-#include <functional>
-#include <iostream>
+#include "pch.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -9,6 +8,10 @@
 #include "Camera.h"
 
 namespace test {
+    static glm::vec2 s_ViewportSize(0.0f);
+    glm::vec2 GetViewportSize();
+    void UpdateViewportSize(float& width, float& height);
+
     class Test
     {
     public:
@@ -19,9 +22,10 @@ namespace test {
         virtual void OnUpdate(const float deltaTime) {}
         virtual void OnRender() {}
         virtual void OnImGuiRender() {}
-        virtual void SetCameraAspectRatio(const float aspectRatio) {};
-        virtual void EnableCameraControll() {};
-        virtual void DisableCameraControll() {};
+        virtual void EnableCameraControll() {}
+        virtual void DisableCameraControll() {}
+
+        void OnViewPortResize(const float width, const float height);
     protected:
         GLFWwindow* m_Window;
         Ref<Camera> m_Camera;

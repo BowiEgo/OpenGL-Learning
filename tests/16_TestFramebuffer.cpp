@@ -312,11 +312,6 @@ namespace test {
         m_Camera_Mirror->ProcessMouseScroll();
     }
 
-    void TestFramebuffer::SetCameraAspectRatio(float aspectRatio)
-    {
-        m_Camera->SetAspectRatio(aspectRatio);
-    }
-
     void TestFramebuffer::EnableCameraControll()
     {
         m_Camera->EnableControll();

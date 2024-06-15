@@ -56,6 +56,12 @@ void Camera::SetFOV(const float &fov)
     UpdateProjMatrix();
 }
 
+void Camera::SetZoomLevel(const float &zoomlv)
+{
+    m_ZoomLevel = zoomlv;
+    UpdateProjMatrix();
+}
+
 void Camera::SetAspectRatio(const float& aspectRatio)
 {
     if (aspectRatio == m_AspectRatio)
@@ -252,7 +258,7 @@ void Camera::DisableControll()
 
 void Camera::UpdateProjMatrix()
 {
-    m_ProjMatrix = glm::perspective(glm::radians(m_FOV) * m_ZoomLevel, m_AspectRatio, 0.1f, 100.f);
+    m_ProjMatrix = glm::perspective(glm::radians(m_FOV * m_ZoomLevel), m_AspectRatio, 0.1f, 100.f);
 }
 
 void Camera::UpdateCameraFront(const glm::vec3 &direction)

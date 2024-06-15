@@ -29,6 +29,7 @@
 #include "../tests/15_TestFaceCulling.h"
 #include "../tests/16_TestFramebuffer.h"
 #include "../tests/17_TestCubemap.h"
+#include "../tests/18_TestAdvancedGLSL.h"
 
 void RenderUI()
 {
@@ -138,18 +139,9 @@ int main(void)
     testMenu->RegisterTest<test::TestFaceCulling>("FaceCulling");
     testMenu->RegisterTest<test::TestFramebuffer>("Framebuffer");
     testMenu->RegisterTest<test::TestCubemap>("Cubemap");
+    testMenu->RegisterTest<test::TestAdvancedGLSL>("AdvancedGLSL");
 
     // test::TestClearColor test;
-
-    auto backTestMenu = [&]()
-    {
-        if (currentTest != testMenu)
-        {
-            GLCall(glDisable(GL_DEPTH_TEST));
-            delete currentTest;
-            currentTest = testMenu;
-        }
-    };
 
     float deltaTime = 0.0f;
     float lastTime = 0.0f;
@@ -161,7 +153,16 @@ int main(void)
     fbSpec.Width = 1280;
     fbSpec.Height = 720;
     std::shared_ptr<Framebuffer> m_Framebuffer = FramebufferManager::CreateFramebuffer("viewport", fbSpec);
-    glm::vec2 m_ViewportSize(0.0f);
+
+    auto backTestMenu = [&]()
+    {
+        if (currentTest != testMenu)
+        {
+            GLCall(glDisable(GL_DEPTH_TEST));
+            delete currentTest;
+            currentTest = testMenu;
+        }
+    };
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -196,7 +197,6 @@ int main(void)
 
         if (currentTest)
         {
-            currentTest->SetCameraAspectRatio(m_ViewportSize.x / m_ViewportSize.y);
             currentTest->OnUpdate(deltaTime);
             m_Framebuffer->Bind();
             currentTest->OnRender();
@@ -211,14 +211,14 @@ int main(void)
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
         ImGui::Begin("Viewport");
         ImVec2 viewportPanelSize =  ImGui::GetContentRegionAvail();
-        if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize))
+        if (test::GetViewportSize() != *((glm::vec2*)&viewportPanelSize))
         {
             m_Framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
-            m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-            currentTest->SetCameraAspectRatio(viewportPanelSize.x / viewportPanelSize.y);
+            test::UpdateViewportSize(viewportPanelSize.x, viewportPanelSize.y);
+            currentTest->OnViewPortResize(viewportPanelSize.x, viewportPanelSize.y);
         }
         uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-        ImGui::Image((void*)(uintptr_t)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+        ImGui::Image((void*)(uintptr_t)textureID, ImVec2{ test::GetViewportSize().x, test::GetViewportSize().y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
         ImGui::End();
         ImGui::PopStyleVar();
 

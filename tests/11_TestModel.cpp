@@ -168,11 +168,6 @@ namespace test {
         m_Camera->ProcessMouseScroll();
     }
 
-    void TestModel::SetCameraAspectRatio(float aspectRatio)
-    {
-        m_Camera->SetAspectRatio(aspectRatio);
-    }
-
     void TestModel::EnableCameraControll()
     {
         m_Camera->EnableControll();

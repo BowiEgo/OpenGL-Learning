@@ -1,5 +1,3 @@
-
-
 #pragma once
 
 #include "pch.h"
@@ -29,12 +27,12 @@ namespace test {
         void OnRender() override;
         void OnImGuiRender() override;
         void ProcessInput(float deltaTime);
-        void SetCameraAspectRatio(const float aspectRatio) override;
+        
         void EnableCameraControll() override;
         void DisableCameraControll() override;
     private:
         Scene* m_Scene;
-        Ref<Camera> m_Camera, m_Camera_Mirror;
+        Ref<Camera> m_Camera_Mirror;
         Ref<Framebuffer> m_Framebuffer;
         Ref<DirectionalLight> m_DirectionalLight;
         std::vector<Ref<PointLight>> m_PointLights;

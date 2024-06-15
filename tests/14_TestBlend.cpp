@@ -204,11 +204,6 @@ namespace test {
         m_Camera->ProcessMouseScroll();
     }
 
-    void TestBlend::SetCameraAspectRatio(float aspectRatio)
-    {
-        m_Camera->SetAspectRatio(aspectRatio);
-    }
-
     void TestBlend::EnableCameraControll()
     {
         m_Camera->EnableControll();

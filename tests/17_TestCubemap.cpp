@@ -288,9 +288,6 @@ namespace test {
     {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-        const char* items[] = { "CULL_FACE_NONE", "CULL_FACE_BACK", "CULL_FACE_FRONT", "CULL_FACE_FRONT_AND_BACK" };
-
-
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_None))
         {
@@ -321,11 +318,6 @@ namespace test {
         m_Camera_Mirror->ProcessKeyboardMovement(deltaTime);
         m_Camera_Mirror->ProcessMouseMovement();
         m_Camera_Mirror->ProcessMouseScroll();
-    }
-
-    void TestCubemap::SetCameraAspectRatio(float aspectRatio)
-    {
-        m_Camera->SetAspectRatio(aspectRatio);
     }
 
     void TestCubemap::EnableCameraControll()

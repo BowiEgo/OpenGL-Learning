@@ -228,11 +228,6 @@ namespace test {
         m_Camera->ProcessMouseScroll();
     }
 
-    void TestFaceCulling::SetCameraAspectRatio(float aspectRatio)
-    {
-        m_Camera->SetAspectRatio(aspectRatio);
-    }
-
     void TestFaceCulling::EnableCameraControll()
     {
         m_Camera->EnableControll();

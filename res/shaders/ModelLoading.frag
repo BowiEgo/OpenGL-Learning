@@ -198,7 +198,10 @@ void main()
     for(int i = 0; i < u_NR_PointLights; i++)
         pointLights += calcPointLight(u_PointLights[i], v_Normal, v_FragPosition, viewDirection);
 
+
     final += directionalLight + pointLights + spotight;
+    // if (gl_FragCoord.x < u_Split_CoordX)
+        // final += directionalLight + pointLights + spotight;
 
     // Alpha
     float alpha = texture(u_Texture_Diffuse1, v_TexCoords).a;

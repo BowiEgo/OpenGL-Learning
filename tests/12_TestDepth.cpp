@@ -121,7 +121,6 @@ namespace test {
 
         float currentTime = glfwGetTime();
 
-
         for (unsigned int i = 0; i < m_Scene->GetPointLights().size(); i++)
         {
             m_Scene->GetPointLights()[i]->SetEnabled(m_IsPointLightsEnabled);
@@ -147,11 +146,6 @@ namespace test {
         m_Camera->ProcessKeyboardMovement(deltaTime);
         m_Camera->ProcessMouseMovement();
         m_Camera->ProcessMouseScroll();
-    }
-
-    void TestDepth::SetCameraAspectRatio(float aspectRatio)
-    {
-        m_Camera->SetAspectRatio(aspectRatio);
     }
 
     void TestDepth::EnableCameraControll()

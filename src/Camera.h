@@ -27,6 +27,7 @@ public:
 
     void Init();
     void SetFOV(const float& fov);
+    void SetZoomLevel(const float& zoomlv);
     void SetAspectRatio(const float& aspectRatio);
     void SetDirection(const glm::vec3& direction);
     void SetPosition(const float position[3]);
