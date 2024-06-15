@@ -62,10 +62,8 @@ void StandardMaterial::BindShader() const
     m_Shader->Bind();
 }
 
-void StandardMaterial::UpdateShader(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation) const
+void StandardMaterial::UpdateShader(const glm::vec3& position, const glm::vec3& scale, std::pair<float, const glm::vec3>* rotation) const
 {
-    glm::mat4 proj = Scene::GetCurrentCamera()->GetProjMatrix();
-    glm::mat4 view = Scene::GetCurrentCamera()->GetViewMatrix();
     glm::mat4 model(1.0f);
 
     model = glm::translate(model, position);
@@ -73,8 +71,6 @@ void StandardMaterial::UpdateShader(glm::vec3& position, glm::vec3& scale, std::
     model = glm::rotate(model, rotation->first, rotation->second);
 
     m_Shader->Bind();
-    m_Shader->SetUniform("projectionMatrix", proj);
-    m_Shader->SetUniform("viewMatrix", view);
     m_Shader->SetUniform("modelMatrix", model);
 
     m_Shader->SetUniform("u_CameraPosition", Scene::GetCurrentCamera()->GetPosition());

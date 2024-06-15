@@ -3,7 +3,6 @@ layout (location = 0) in vec3 a_Position;
 
 out vec3 v_TexCoords;
 
-uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 

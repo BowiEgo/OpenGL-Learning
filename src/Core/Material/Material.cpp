@@ -3,7 +3,7 @@
 #include "Log.h"
 #include <glad/glad.h>
 
-void Material::Update(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation)
+void Material::Update(const glm::vec3& position, const glm::vec3& scale, std::pair<float, const glm::vec3>* rotation)
 {
     if (Wireframe_Enabled)
     {

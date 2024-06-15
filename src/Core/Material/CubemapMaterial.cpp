@@ -30,7 +30,7 @@ void CubemapMaterial::BindShader() const
     m_Shader->Bind();
 }
 
-void CubemapMaterial::UpdateShader(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation) const
+void CubemapMaterial::UpdateShader(const glm::vec3& position, const glm::vec3& scale, std::pair<float, const glm::vec3>* rotation) const
 {
     glm::mat4 proj = Scene::GetCurrentCamera()->GetProjMatrix();
     glm::mat4 view = glm::mat3(Scene::GetCurrentCamera()->GetViewMatrix());
