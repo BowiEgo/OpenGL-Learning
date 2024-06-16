@@ -14,9 +14,9 @@ public:
     PlaneGeometry(float* position[3]) {};
     ~PlaneGeometry() {};
 
-    inline std::array<Vertex, 36>* GetVertex() override { return &m_Vertex; }
+    virtual inline std::vector<Vertex>* GetVertex() override { return &m_Vertex; }
 private:
-    std::array<Vertex, 36> m_Vertex = {{
+    std::vector<Vertex> m_Vertex = {
         // Front face
         {{  5.0f, -0.5f,  5.0f }, {}, { 2.0f, 0.0f }, {}, {}, {}, {}},
         {{ -5.0f, -0.5f,  5.0f }, {}, { 0.0f, 0.0f }, {}, {}, {}, {}},
@@ -25,5 +25,5 @@ private:
         {{  5.0f, -0.5f,  5.0f }, {}, { 2.0f, 0.0f }, {}, {}, {}, {}},
         {{ -5.0f, -0.5f, -5.0f }, {}, { 0.0f, 2.0f }, {}, {}, {}, {}},
         {{  5.0f, -0.5f, -5.0f }, {}, { 2.0f, 2.0f }, {}, {}, {}, {}},
-    }};
+    };
 };

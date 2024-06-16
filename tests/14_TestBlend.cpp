@@ -196,21 +196,4 @@ namespace test {
     {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     }
-
-    void TestBlend::ProcessInput(float deltaTime)
-    {
-        m_Camera->ProcessKeyboardMovement(deltaTime);
-        m_Camera->ProcessMouseMovement();
-        m_Camera->ProcessMouseScroll();
-    }
-
-    void TestBlend::EnableCameraControll()
-    {
-        m_Camera->EnableControll();
-    }
-
-    void TestBlend::DisableCameraControll()
-    {
-        m_Camera->DisableControll();
-    }
 }

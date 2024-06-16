@@ -140,21 +140,4 @@ namespace test {
         ImGui::SliderFloat("ZBuffer_Near##ZBuffer", &m_ZBuffer_Near, 0.1f, 1.0f);
         ImGui::SliderFloat("ZBuffer_Far##ZBuffer", &m_ZBuffer_Far, 0.1f, 100.0f);
     }
-
-    void TestDepth::ProcessInput(float deltaTime)
-    {
-        m_Camera->ProcessKeyboardMovement(deltaTime);
-        m_Camera->ProcessMouseMovement();
-        m_Camera->ProcessMouseScroll();
-    }
-
-    void TestDepth::EnableCameraControll()
-    {
-        m_Camera->EnableControll();
-    }
-
-    void TestDepth::DisableCameraControll()
-    {
-        m_Camera->DisableControll();
-    }
 }

@@ -23,7 +23,7 @@ void ShaderMaterial::BindShader() const
     m_Shader->Bind();
 }
 
-void ShaderMaterial::UpdateShader(const glm::vec3& position, const glm::vec3& scale, std::pair<float, const glm::vec3>* rotation) const
+void ShaderMaterial::UpdateShader(const glm::vec3& position, const glm::vec3& scale, const std::pair<float, glm::vec3>* rotation) const
 {
     glm::mat4 model(1.0f);
 

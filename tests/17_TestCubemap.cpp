@@ -193,10 +193,10 @@ namespace test {
         // shader
         std::string normalizedVertSrc = FileSystem::ReadFile("../res/shaders/Normalized.vert");
         std::string normalizedFragSrc = FileSystem::ReadFile("../res/shaders/Normalized.frag");
-        Ref<Shader> screenShader_inversion = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc, "../res/shader/Normalized");
-        Ref<Shader> screenShader_grayscale = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc, "../res/shader/Normalized");
-        Ref<Shader> screenShader_sharpe = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc, "../res/shader/Normalized");
-        Ref<Shader> screenShader_blur = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc, "../res/shader/Normalized");
+        Ref<Shader> screenShader_inversion = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc);
+        Ref<Shader> screenShader_grayscale = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc);
+        Ref<Shader> screenShader_sharpe = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc);
+        Ref<Shader> screenShader_blur = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc);
         // material
         Ref<ShaderMaterial> material_inversion = std::make_shared<ShaderMaterial>(screenShader_inversion);
         Ref<ShaderMaterial> material_grayscale = std::make_shared<ShaderMaterial>(screenShader_grayscale);
@@ -227,7 +227,9 @@ namespace test {
 
     void TestCubemap::OnUpdate(float deltaTime)
     {
-        ProcessInput(deltaTime);
+        m_Camera_Mirror->ProcessKeyboardMovement(deltaTime);
+        m_Camera_Mirror->ProcessMouseMovement();
+        m_Camera_Mirror->ProcessMouseScroll();
     }
 
     void TestCubemap::OnRender()
@@ -307,26 +309,5 @@ namespace test {
             ImGui::SliderFloat("EnvRefractiveRate##Container", &m_Env_Refractive_Rate_Container, 0.0f, 1.0f);
             ImGui::SliderFloat("EnvRefractiveIndex##Container", &m_Env_Refractive_Index_Container, 0.0f, 5.0f);
         }
-    }
-
-    void TestCubemap::ProcessInput(float deltaTime)
-    {
-        m_Camera->ProcessKeyboardMovement(deltaTime);
-        m_Camera->ProcessMouseMovement();
-        m_Camera->ProcessMouseScroll();
-
-        m_Camera_Mirror->ProcessKeyboardMovement(deltaTime);
-        m_Camera_Mirror->ProcessMouseMovement();
-        m_Camera_Mirror->ProcessMouseScroll();
-    }
-
-    void TestCubemap::EnableCameraControll()
-    {
-        m_Camera->EnableControll();
-    }
-
-    void TestCubemap::DisableCameraControll()
-    {
-        m_Camera->DisableControll();
     }
 }

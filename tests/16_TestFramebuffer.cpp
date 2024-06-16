@@ -200,6 +200,9 @@ namespace test {
     void TestFramebuffer::OnUpdate(float deltaTime)
     {
         ProcessInput(deltaTime);
+        m_Camera_Mirror->ProcessKeyboardMovement(deltaTime);
+        m_Camera_Mirror->ProcessMouseMovement();
+        m_Camera_Mirror->ProcessMouseScroll();
     }
 
     void TestFramebuffer::OnRender()
@@ -299,26 +302,5 @@ namespace test {
             }
         }
 
-    }
-
-    void TestFramebuffer::ProcessInput(float deltaTime)
-    {
-        m_Camera->ProcessKeyboardMovement(deltaTime);
-        m_Camera->ProcessMouseMovement();
-        m_Camera->ProcessMouseScroll();
-
-        m_Camera_Mirror->ProcessKeyboardMovement(deltaTime);
-        m_Camera_Mirror->ProcessMouseMovement();
-        m_Camera_Mirror->ProcessMouseScroll();
-    }
-
-    void TestFramebuffer::EnableCameraControll()
-    {
-        m_Camera->EnableControll();
-    }
-
-    void TestFramebuffer::DisableCameraControll()
-    {
-        m_Camera->DisableControll();
     }
 }

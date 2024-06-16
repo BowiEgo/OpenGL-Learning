@@ -33,6 +33,28 @@ namespace test
         }
     }
 
+    void Test::ProcessInput(float deltaTime)
+    {
+        if (m_Camera != nullptr)
+        {
+            m_Camera->ProcessKeyboardMovement(deltaTime);
+            m_Camera->ProcessMouseMovement();
+            m_Camera->ProcessMouseScroll();
+        }
+    }
+
+    void Test::EnableCameraControll()
+    {
+        if (m_Camera != nullptr)
+            m_Camera->EnableControll();
+    }
+
+    void Test::DisableCameraControll()
+    {
+        if (m_Camera != nullptr)
+            m_Camera->DisableControll();
+    }
+
     void Test::OnViewPortResize(const float width, const float height)
     {
         if (m_Camera != nullptr)

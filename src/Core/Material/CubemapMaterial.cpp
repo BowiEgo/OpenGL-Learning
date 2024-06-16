@@ -7,7 +7,7 @@ CubemapMaterial::CubemapMaterial()
 {
     std::string standardVertSrc = FileSystem::ReadFile("../res/shaders/Cubemap.vert");
     std::string standardFragSrc = FileSystem::ReadFile("../res/shaders/Cubemap.frag");
-    m_Shader = std::make_shared<Shader>(standardVertSrc, standardFragSrc, "../res/shaders/Cubemap");
+    m_Shader = std::make_shared<Shader>(standardVertSrc, standardFragSrc);
 
     m_Shader->Bind();
 }
@@ -30,7 +30,7 @@ void CubemapMaterial::BindShader() const
     m_Shader->Bind();
 }
 
-void CubemapMaterial::UpdateShader(const glm::vec3& position, const glm::vec3& scale, std::pair<float, const glm::vec3>* rotation) const
+void CubemapMaterial::UpdateShader(const glm::vec3& position, const glm::vec3& scale, const std::pair<float, glm::vec3>* rotation) const
 {
     glm::mat4 proj = Scene::GetCurrentCamera()->GetProjMatrix();
     glm::mat4 view = glm::mat3(Scene::GetCurrentCamera()->GetViewMatrix());

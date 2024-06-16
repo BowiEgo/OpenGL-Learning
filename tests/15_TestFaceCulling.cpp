@@ -218,23 +218,5 @@ namespace test {
                 m_CullFaceOption_Grass = static_cast<CullFaceOption>(item_current_grass);
             }
         }
-
-    }
-
-    void TestFaceCulling::ProcessInput(float deltaTime)
-    {
-        m_Camera->ProcessKeyboardMovement(deltaTime);
-        m_Camera->ProcessMouseMovement();
-        m_Camera->ProcessMouseScroll();
-    }
-
-    void TestFaceCulling::EnableCameraControll()
-    {
-        m_Camera->EnableControll();
-    }
-
-    void TestFaceCulling::DisableCameraControll()
-    {
-        m_Camera->DisableControll();
     }
 }

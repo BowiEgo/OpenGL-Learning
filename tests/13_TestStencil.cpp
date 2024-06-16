@@ -181,21 +181,4 @@ namespace test {
             ImGui::SameLine();ImGui::ToggleButton("Wireframe##Container", &m_Wireframe_Enabled_Container);
         }
     }
-
-    void TestStencil::ProcessInput(float deltaTime)
-    {
-        m_Camera->ProcessKeyboardMovement(deltaTime);
-        m_Camera->ProcessMouseMovement();
-        m_Camera->ProcessMouseScroll();
-    }
-
-    void TestStencil::EnableCameraControll()
-    {
-        m_Camera->EnableControll();
-    }
-
-    void TestStencil::DisableCameraControll()
-    {
-        m_Camera->DisableControll();
-    }
 }

@@ -19,9 +19,9 @@ public:
     SkyboxGeometry(float* position[3]) {};
     ~SkyboxGeometry() {};
 
-    inline std::array<Vertex, 36>* GetVertex() override { return &m_Vertex; }
+    virtual inline std::vector<Vertex>* GetVertex() override { return &m_Vertex; }
 private:
-    std::array<Vertex, 36> m_Vertex = {{
+    std::vector<Vertex> m_Vertex = {
         // Back face
         {{-1.0f,  1.0f, -1.0f}, {}, {}, {}, {}, {}, {}},
         {{-1.0f, -1.0f, -1.0f}, {}, {}, {}, {}, {}, {}},
@@ -69,6 +69,6 @@ private:
         {{ 1.0f, -1.0f, -1.0f}, {}, {}, {}, {}, {}, {}},
         {{-1.0f, -1.0f,  1.0f}, {}, {}, {}, {}, {}, {}},
         {{ 1.0f, -1.0f,  1.0f}, {}, {}, {}, {}, {}, {}}
-    }};
+    };
 };
     

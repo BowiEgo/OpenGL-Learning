@@ -41,8 +41,6 @@ namespace test {
         m_Camera = std::make_shared<Camera>();
         m_Scene->Add(m_Camera);
 
-        Shader::UpdateMatricesProj(m_Camera->GetProjMatrix());
-
         // --------------------
         // Light
         // --------------------
@@ -127,28 +125,5 @@ namespace test {
 
         ImGui::Bullet();ImGui::Text("ScreenSplit");
         ImGui::SliderFloat("##", &m_ScreenSplit_X, 0.0f, 1.0f);
-    }
-
-    void TestAdvancedGLSL::ProcessInput(float deltaTime)
-    {
-        m_Camera->ProcessKeyboardMovement(deltaTime);
-        m_Camera->ProcessMouseMovement();
-        m_Camera->ProcessMouseScroll();
-    }
-
-    // void TestAdvancedGLSL::OnViewPortResize(const float width, const float height)
-    // {
-    //     m_Camera->SetAspectRatio(width / height);
-    //     Shader::UpdateMatricesProj(m_Camera->GetProjMatrix());
-    // }
-
-    void TestAdvancedGLSL::EnableCameraControll()
-    {
-        m_Camera->EnableControll();
-    }
-
-    void TestAdvancedGLSL::DisableCameraControll()
-    {
-        m_Camera->DisableControll();
     }
 }

@@ -22,10 +22,6 @@ namespace test {
         void OnUpdate(float deltaTime) override;
         void OnRender() override;
         void OnImGuiRender() override;
-        void ProcessInput(float deltaTime);
-        
-        void EnableCameraControll() override;
-        void DisableCameraControll() override;
     private:
         Ref<VertexArray> m_VAO;
         Ref<VertexBuffer> m_VBO;

@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "Core/Scene.h"
 #include "Camera.h"
 
 namespace test {
@@ -22,12 +23,14 @@ namespace test {
         virtual void OnUpdate(const float deltaTime) {}
         virtual void OnRender() {}
         virtual void OnImGuiRender() {}
-        virtual void EnableCameraControll() {}
-        virtual void DisableCameraControll() {}
+        virtual void ProcessInput(const float deltaTime);
+        virtual void EnableCameraControll();
+        virtual void DisableCameraControll();
 
         void OnViewPortResize(const float width, const float height);
     protected:
         GLFWwindow* m_Window;
+        Scene* m_Scene;
         Ref<Camera> m_Camera;
     };
 

@@ -19,9 +19,9 @@ public:
     BoxGeometry(float* position[3]) {};
     ~BoxGeometry() {};
 
-    inline std::array<Vertex, 36>* GetVertex() override { return &m_Vertex; }
+    virtual inline std::vector<Vertex>* GetVertex() override { return &m_Vertex; }
 private:
-    std::array<Vertex, 36> m_Vertex = {{
+    std::vector<Vertex> m_Vertex = {
         // Back face
         {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f}, {}, {}, {}, {}},
         {{ 0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f}, {}, {}, {}, {}},
@@ -69,5 +69,5 @@ private:
         {{ 0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}, {}, {}, {}, {}},
         {{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}, {}, {}, {}, {}},
         {{-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}, {}, {}, {}, {}}
-    }};
+    };
 };

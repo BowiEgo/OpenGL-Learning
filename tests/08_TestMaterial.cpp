@@ -151,19 +151,16 @@ namespace test {
         };
 
         {
+            Shader::UpdateMatricesView(m_Camera->GetViewMatrix());
             // --------------------
             // Model View Projection
             // --------------------
-            glm::mat4 proj = m_Camera->GetProjMatrix();
-            glm::mat4 view = m_Camera->GetViewMatrix();
             glm::mat4 model(1.0f);
 
             // --------------------
             // Draw object
             // --------------------
             m_ObjShader->Bind();
-            m_ObjShader->SetUniformMat4("projectionMatrix",     proj);
-            m_ObjShader->SetUniformMat4("viewMatrix",           view);
             m_ObjShader->SetUniformMat4("modelMatrix",          model);
             m_ObjShader->SetUniformVec3("u_CameraPosition",     m_Camera->GetPosition());
 
@@ -185,8 +182,6 @@ namespace test {
             model = glm::translate(model, m_LightPosition);
             model = glm::scale(model, glm::vec3(0.2f));
             m_LightCubeShader->Bind();
-            m_LightCubeShader->SetUniformMat4("projectionMatrix", proj);
-            m_LightCubeShader->SetUniformMat4("viewMatrix", view);
             m_LightCubeShader->SetUniformMat4("modelMatrix", model);
             m_LightCubeShader->SetUniformVec3("u_Color", lightColor);
 
@@ -213,22 +208,5 @@ namespace test {
         ImGui::SliderFloat3("Specular##Light", m_LightSpecular, 0.0f, 1.0f);
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-    }
-
-    void TestMaterial::ProcessInput(float deltaTime)
-    {
-        m_Camera->ProcessKeyboardMovement(deltaTime);
-        m_Camera->ProcessMouseMovement();
-        m_Camera->ProcessMouseScroll();
-    }
-
-    void TestMaterial::EnableCameraControll()
-    {
-        m_Camera->EnableControll();
-    }
-
-    void TestMaterial::DisableCameraControll()
-    {
-        m_Camera->DisableControll();
     }
 }

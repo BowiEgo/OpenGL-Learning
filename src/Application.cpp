@@ -30,6 +30,7 @@
 #include "../tests/16_TestFramebuffer.h"
 #include "../tests/17_TestCubemap.h"
 #include "../tests/18_TestAdvancedGLSL.h"
+#include "../tests/19_TestGeometryShader.h"
 
 void RenderUI()
 {
@@ -140,6 +141,7 @@ int main(void)
     testMenu->RegisterTest<test::TestFramebuffer>("Framebuffer");
     testMenu->RegisterTest<test::TestCubemap>("Cubemap");
     testMenu->RegisterTest<test::TestAdvancedGLSL>("AdvancedGLSL");
+    testMenu->RegisterTest<test::TestGeometryShader>("GeometryShader");
 
     // test::TestClearColor test;
 
@@ -198,6 +200,7 @@ int main(void)
         if (currentTest)
         {
             currentTest->OnUpdate(deltaTime);
+            currentTest->ProcessInput(deltaTime);
             m_Framebuffer->Bind();
             currentTest->OnRender();
             m_Framebuffer->Unbind();

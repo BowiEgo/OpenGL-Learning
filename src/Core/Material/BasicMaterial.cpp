@@ -7,7 +7,7 @@ BasicMaterial::BasicMaterial()
 {
     std::string basicVertSrc = FileSystem::ReadFile("../res/shaders/LightCube.vert");
     std::string basicFragSrc = FileSystem::ReadFile("../res/shaders/LightCube.frag");
-    m_Shader = std::make_shared<Shader>(basicVertSrc, basicFragSrc, "../res/shaders/LightCube");
+    m_Shader = std::make_shared<Shader>(basicVertSrc, basicFragSrc);
     m_Shader->Bind();
     m_Shader->SetUniformVec3("u_Color", { 1.0f, 0.0f, 0.0f });
 }
@@ -24,7 +24,7 @@ void BasicMaterial::BindShader() const
     m_Shader->Bind();
 }
 
-void BasicMaterial::UpdateShader(const glm::vec3& position, const glm::vec3& scale, std::pair<float, const glm::vec3>* rotation) const
+void BasicMaterial::UpdateShader(const glm::vec3& position, const glm::vec3& scale, const std::pair<float, glm::vec3>* rotation) const
 {
     glm::mat4 model(1.0f);
     glm::vec3 modelTranslate(0.0f);

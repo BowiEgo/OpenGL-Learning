@@ -37,17 +37,45 @@ void Renderer::Clear() const
     GLCall(glClear(GL_COLOR_BUFFER_BIT));
 }
 
-void Renderer::Draw(const VertexArray &va) const
+void Renderer::Draw(const VertexArray& va, const DrawType& drawType) const
 {
+    unsigned int glType;
+    switch (drawType)
+    {
+    case DrawType::Traingles:
+        glType = GL_TRIANGLES;
+        break;
+    case DrawType::Points:
+        glType = GL_POINTS;
+        break;
+    case DrawType::Lines:
+        glType = GL_LINES;
+        break;
+    }
+
     va.Bind();
-    GLCall(glDrawArrays(GL_TRIANGLES, 0, va.GetCount()));
+    GLCall(glDrawArrays(glType, 0, va.GetCount()));
 }
 
-void Renderer::Draw(const VertexArray &va, const IndexBuffer& ib) const
+void Renderer::Draw(const VertexArray &va, const IndexBuffer& ib, const DrawType& drawType) const
 {
+    unsigned int glType;
+    switch (drawType)
+    {
+    case DrawType::Traingles:
+        glType = GL_TRIANGLES;
+        break;
+    case DrawType::Points:
+        glType = GL_POINTS;
+        break;
+    case DrawType::Lines:
+        glType = GL_LINES;
+        break;
+    }
+
     va.Bind();
     ib.Bind();
-    GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
+    GLCall(glDrawElements(glType, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
 }
 
 void Renderer::Draw(const Shader &shader, const VertexArray &va) const

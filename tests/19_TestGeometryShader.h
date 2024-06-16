@@ -17,11 +17,11 @@
 #include "Core/Light/PointLight.h"
 
 namespace test {
-    class TestAdvancedGLSL : public Test
+    class TestGeometryShader : public Test
     {
     public:
-        TestAdvancedGLSL(GLFWwindow* window);
-        ~TestAdvancedGLSL();
+        TestGeometryShader(GLFWwindow* window);
+        ~TestGeometryShader();
 
         void OnUpdate(float deltaTime) override;
         void OnRender() override;
@@ -29,11 +29,9 @@ namespace test {
     private:
         Scene* m_Scene;
 
-        Ref<DirectionalLight> m_DirectionalLight;
-        std::vector<Ref<PointLight>> m_PointLights;
+        Ref<Model> m_Model_Nanosuit, m_Normal_Visualize_Nanosuit;
 
-        std::vector<Ref<Mesh>> m_Mesh_Container;
-
-        float m_ScreenSplit_X = 0.5f;
+        float m_ScreenSplit_X = 1.0f;
+        float m_ExplodeProgress = 0.02f;
     };
 }

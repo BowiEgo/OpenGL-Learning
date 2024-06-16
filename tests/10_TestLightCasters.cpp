@@ -20,12 +20,10 @@ namespace test {
       : Test(window)
     {
         GLCall(glEnable(GL_DEPTH_TEST));
-
         // --------------------
         // Camera
         // --------------------
         m_Camera = std::make_unique<Camera>();
-
         // --------------------
         // Model datas
         // --------------------
@@ -152,18 +150,15 @@ namespace test {
         m_SpecularTexture->Bind(1);
 
         {
+            Shader::UpdateMatricesView(m_Camera->GetViewMatrix());
             // --------------------
             // Model View Projection
             // --------------------
-            glm::mat4 proj = m_Camera->GetProjMatrix();
-            glm::mat4 view = m_Camera->GetViewMatrix();
             glm::mat4 model(1.0f);
             // --------------------
             // Draw object
             // --------------------
             m_ObjShader->Bind();
-            m_ObjShader->SetUniformMat4("projectionMatrix", proj);
-            m_ObjShader->SetUniformMat4("viewMatrix",       view);
             m_ObjShader->SetUniformVec3("u_CameraPosition", m_Camera->GetPosition());
 
             m_ObjShader->  SetUniform1f("u_Material.shininess",        m_MaterialShininess);
@@ -218,8 +213,6 @@ namespace test {
             if (m_IsEnabled_PointLight)
             {
                 m_PointLightCubeShader->Bind();
-                m_PointLightCubeShader->SetUniformMat4("projectionMatrix", m_Camera->GetProjMatrix());
-                m_PointLightCubeShader->SetUniformMat4("viewMatrix", m_Camera->GetViewMatrix());
                 m_PointLightCubeShader->SetUniformVec3("u_Color", lightColor);
                 
                 for (int i = 0; i < m_PointLightPositions.size(); i++)
@@ -276,22 +269,5 @@ namespace test {
                 m_SpotLightOuterCutOff = glm::cos(glm::radians(m_SpotLightPhi + m_SpotLight_SoftEdge));
             }
         }
-    }
-
-    void TestLightCasters::ProcessInput(float deltaTime)
-    {
-        m_Camera->ProcessKeyboardMovement(deltaTime);
-        m_Camera->ProcessMouseMovement();
-        m_Camera->ProcessMouseScroll();
-    }
-
-    void TestLightCasters::EnableCameraControll()
-    {
-        m_Camera->EnableControll();
-    }
-
-    void TestLightCasters::DisableCameraControll()
-    {
-        m_Camera->DisableControll();
     }
 }

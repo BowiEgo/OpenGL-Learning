@@ -160,21 +160,4 @@ namespace test {
         ImGui::Bullet();ImGui::Text("Model Michelle");
         ImGui::SliderFloat3("Translate##Michelle", glm::value_ptr(m_ModelMichelle->GetTranslate()), -5.0f, 5.0f);
     }
-
-    void TestModel::ProcessInput(float deltaTime)
-    {
-        m_Camera->ProcessKeyboardMovement(deltaTime);
-        m_Camera->ProcessMouseMovement();
-        m_Camera->ProcessMouseScroll();
-    }
-
-    void TestModel::EnableCameraControll()
-    {
-        m_Camera->EnableControll();
-    }
-
-    void TestModel::DisableCameraControll()
-    {
-        m_Camera->DisableControll();
-    }
 }

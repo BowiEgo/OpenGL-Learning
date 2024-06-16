@@ -9,8 +9,14 @@
 Mesh::Mesh(std::shared_ptr<Geometry> geometry, std::shared_ptr<Material> material)
     : m_Geometry(geometry), m_Material(material)
 {
-    std::array<Vertex, 36>* vr = geometry->GetVertex();
+    std::vector<Vertex>* vr = geometry->GetVertex();
     m_Vertices = std::vector<Vertex>(vr->begin(), vr->end());
+    Setup();
+}
+
+Mesh::Mesh(std::vector<Vertex> vertices, Ref<Material> material)
+    : m_Vertices(vertices), m_Material(material)
+{
     Setup();
 }
 
@@ -19,6 +25,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 {
     Setup();
 }
+
 
 void Mesh::Setup()
 {
@@ -47,58 +54,63 @@ void Mesh::Setup()
     m_VAO->AddBuffer(*m_VBO, layout);
 }
 
+void Mesh::SetDrawType(const DrawType &drawType)
+{
+    m_DrawType = drawType;
+}
+
 void Mesh::SetMaterial(Ref<Material> material)
 {
     m_Material = material;
 }
 
-void Mesh::SetPosition(float position[3])
+void Mesh::SetPosition(const float position[3])
 {
     m_Position.x = position[0];
     m_Position.y = position[1];
     m_Position.z = position[2];
 }
 
-void Mesh::SetPosition(glm::vec3 &position)
+void Mesh::SetPosition(const glm::vec3 &position)
 {
     m_Position = position;
 }
 
-void Mesh::SetPosition(float x, float y, float z)
+void Mesh::SetPosition(const float x, const float y, const float z)
 {
     m_Position.x = x;
     m_Position.y = y;
     m_Position.z = z;
 }
 
-void Mesh::SetScale(glm::vec3 &scale)
+void Mesh::SetScale(const glm::vec3 &scale)
 {
     m_Scale = scale;
 }
 
-void Mesh::SetScale(float scaleX, float scaleY, float scaleZ)
+void Mesh::SetScale(const float scaleX, const float scaleY, const float scaleZ)
 {
     m_Scale.x = scaleX;
     m_Scale.y = scaleY;
     m_Scale.z = scaleZ;
 }
 
-void Mesh::SetRotation(std::pair<float, glm::vec3> rotation)
+void Mesh::SetRotation(const std::pair<float, glm::vec3> rotation)
 {
     m_Rotation = rotation;
 }
 
-void Mesh::SetOutline(bool enable)
+void Mesh::SetOutline(const bool enable)
 {
     Outline_Enabled = enable;
 }
 
-void Mesh::SetOutlineWidth(float &width)
+void Mesh::SetOutlineWidth(const float &width)
 {
     m_Outline_Width = width;
 }
 
-void Mesh::SetOutlineColor(glm::vec3 &color)
+void Mesh::SetOutlineColor(const glm::vec3 &color)
 {
     m_Outline_Color = color;
 }
@@ -108,7 +120,7 @@ void Mesh::Draw()
     Draw(GetPosition(), GetScale(), GetRotation());
 }
 
-void Mesh::Draw(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation)
+void Mesh::Draw(const glm::vec3& position, const glm::vec3& scale, const std::pair<float, glm::vec3>* rotation)
 {
     GetMaterial()->Update(position, scale, rotation);
 
@@ -144,9 +156,9 @@ void Mesh::Draw(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec
 
     Renderer renderer;
     if (m_IBO == nullptr)
-        renderer.Draw(*m_VAO);
+        renderer.Draw(*m_VAO, m_DrawType);
     else
-        renderer.Draw(*m_VAO, *m_IBO);
+        renderer.Draw(*m_VAO, *m_IBO, m_DrawType);
 }
 
 void Mesh::DrawOutline()
@@ -154,7 +166,7 @@ void Mesh::DrawOutline()
     DrawOutline(GetPosition(), GetScale(), GetRotation());
 }
 
-void Mesh::DrawOutline(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation)
+void Mesh::DrawOutline(const glm::vec3& position, const glm::vec3& scale, const std::pair<float, glm::vec3>* rotation)
 {
     if (!Outline_Enabled)
         return;
@@ -175,9 +187,9 @@ void Mesh::DrawOutline(glm::vec3& position, glm::vec3& scale, std::pair<float, g
 
     Renderer renderer;
     if (m_IBO == nullptr)
-        renderer.Draw(*m_VAO);
+        renderer.Draw(*m_VAO, m_DrawType);
     else
-        renderer.Draw(*m_VAO, *m_IBO);
+        renderer.Draw(*m_VAO, *m_IBO, m_DrawType);
 
     GLCall(glStencilFunc(GL_ALWAYS, 1, 0xFF));
     GLCall(glStencilMask(0xFF));

@@ -36,6 +36,7 @@ void Scene::Add(std::shared_ptr<Camera> camera)
 {
     s_Instance->m_Cameras.push_back(camera);
     s_Instance->m_CurrentCamera = camera;
+    Shader::UpdateMatricesProj(m_CurrentCamera->GetProjMatrix());
 }
 
 void Scene::Add(std::shared_ptr<DirectionalLight> light)

@@ -4,14 +4,56 @@
 #include "Core/Scene.h"
 #include "FileSystem/FileSystem.h"
 
+std::string StandardMaterial::s_VertSrc = FileSystem::ReadFile("../res/shaders/ModelLoading.vert");
+std::string StandardMaterial::s_FragSrc = FileSystem::ReadFile("../res/shaders/ModelLoading.frag");
+
 StandardMaterial::StandardMaterial()
 {
-    std::string standardVertSrc = FileSystem::ReadFile("../res/shaders/ModelLoading.vert");
-    std::string standardFragSrc = FileSystem::ReadFile("../res/shaders/ModelLoading.frag");
-    m_Shader = std::make_shared<Shader>(standardVertSrc, standardFragSrc, "../res/shaders/ModelLoading");
+    m_VertSrc = s_VertSrc;
+    m_FragSrc = s_FragSrc;
+    Setup();
+}
+
+void StandardMaterial::Setup()
+{
+    if (m_GeomSrc.empty()) {
+        m_Shader = std::make_shared<Shader>(m_VertSrc, m_FragSrc);
+    } else {
+        m_Shader = std::make_shared<Shader>(m_VertSrc, m_GeomSrc, m_FragSrc);
+    }
 
     m_Shader->Bind();
     m_Shader->SetUniform("u_Material.shininess", m_MaterialShininess);
+}
+
+void StandardMaterial::BindVertexShader(const std::string &filepath)
+{
+    std::string vertSrc = FileSystem::ReadFile(filepath);
+    if (vertSrc.empty()) {
+        throw std::runtime_error("Failed to load vertex shader source.");
+    } else {
+        m_VertSrc = vertSrc;
+    }
+}
+
+void StandardMaterial::BindFragmentShader(const std::string &filepath)
+{
+    std::string fragSrc = FileSystem::ReadFile(filepath);
+    if (fragSrc.empty()) {
+        throw std::runtime_error("Failed to load fragment shader source.");
+    } else {
+        m_FragSrc = fragSrc;
+    }
+}
+
+void StandardMaterial::BindGeometryShader(const std::string& filepath)
+{
+    std::string geomSrc = FileSystem::ReadFile(filepath);
+    if (geomSrc.empty()) {
+        throw std::runtime_error("Failed to load geometry shader source.");
+    } else {
+        m_GeomSrc = geomSrc;
+    }
 }
 
 void StandardMaterial::AddTexture(Ref<Texture2D> texture)
@@ -62,7 +104,7 @@ void StandardMaterial::BindShader() const
     m_Shader->Bind();
 }
 
-void StandardMaterial::UpdateShader(const glm::vec3& position, const glm::vec3& scale, std::pair<float, const glm::vec3>* rotation) const
+void StandardMaterial::UpdateShader(const glm::vec3& position, const glm::vec3& scale, const std::pair<float, glm::vec3>* rotation) const
 {
     glm::mat4 model(1.0f);
 

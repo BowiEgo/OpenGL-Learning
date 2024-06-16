@@ -12,5 +12,5 @@ public:
 	Geometry() {};
 	virtual ~Geometry() {};
 
-    virtual std::array<Vertex, 36>* GetVertex() = 0;
+    virtual std::vector<Vertex>* GetVertex() = 0;
 };

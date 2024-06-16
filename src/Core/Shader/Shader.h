@@ -12,6 +12,11 @@ struct ShaderProgramSource
     std::string FragmentSource;
 };
 
+enum class ShaderType
+{
+    VertexShader = 0, GeometryShader, FragmentShader, 
+};
+
 using UniformValue = std::variant<
     bool,
     int,
@@ -32,7 +37,7 @@ class Shader
 public:
     Shader(const std::string& filepath);
     Shader(const std::string& vertexSrc, const std::string& fragmentSrc);
-    Shader(const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& filepath);
+    Shader(const std::string& vertexSrc, const std::string& geometrySrc, const std::string& fragmentSrc);
     ~Shader();
 
     void Setup() const;
@@ -62,13 +67,16 @@ private:
     static void InitializeUniformBuffer();
     int GetUniformLoaction(const std::string& name) const;
     ShaderProgramSource ParseShader(const std::string& filepath);
-    unsigned int CompileShader(unsigned int type, const std::string& source);
+    unsigned int CompileShader(const ShaderType& type, const std::string& source);
     unsigned int CreateShader(const std::string& vertextShader, const std::string& fragmentShader);
+    unsigned int CreateShader(const std::string& vertextShader,
+        const std::string& geometryShader,
+        const std::string& fragmentShader);
 private:
     static Ref<UniformBuffer> s_UBO_Matrices;
 private:
     std::string m_FilePath;
     std::string m_Name;
-    unsigned int m_RendererID;
+    uint32_t m_RendererID;
     mutable std::unordered_map<std::string, int> m_UniformLocationCache;
 };

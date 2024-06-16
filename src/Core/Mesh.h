@@ -31,6 +31,7 @@ class Mesh
 {
 public:
     Mesh(Ref<Geometry> geometry, Ref<Material> material);
+    Mesh(std::vector<Vertex> vertices, Ref<Material> material);
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Ref<Material> material);
     virtual ~Mesh() = default;
 
@@ -42,20 +43,23 @@ public:
     inline std::pair<float, glm::vec3>* GetRotation() { return &m_Rotation; }
 
     void Setup();
-    void SetMaterial(Ref<Material> material);
-    void SetPosition(float position[3]);
-    void SetPosition(glm::vec3& position);
-    void SetPosition(float x, float y, float z);
-    void SetScale(glm::vec3& scale);
-    void SetScale(float scaleX, float scaleY, float scaleZ);
-    void SetRotation(std::pair<float, glm::vec3> rotation);
-    void SetOutline(bool enable);
-    void SetOutlineWidth(float& width);
-    void SetOutlineColor(glm::vec3& color);
+    void SetDrawType(const DrawType& drawType);
+    void SetMaterial(const Ref<Material> material);
+    void SetPosition(const float position[3]);
+    void SetPosition(const glm::vec3& position);
+    void SetPosition(const float x, const float y, const float z);
+    void SetScale(const glm::vec3& scale);
+    void SetScale(const float scaleX, const float scaleY, const float scaleZ);
+    void SetRotation(const std::pair<float, glm::vec3> rotation);
+    void SetOutline(const bool enable);
+    void SetOutlineWidth(const float& width);
+    void SetOutlineColor(const glm::vec3& color);
+
+
     void Draw();
-    void Draw(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation);
+    void Draw(const glm::vec3& position, const glm::vec3& scale, const std::pair<float,glm::vec3>* rotation);
     void DrawOutline();
-    void DrawOutline(glm::vec3& position, glm::vec3& scale, std::pair<float, glm::vec3>* rotation);
+    void DrawOutline(const glm::vec3& position, const glm::vec3& scale, const std::pair<float, glm::vec3>* rotation);
 public:
     bool Is_Transparent = false;
     bool Outline_Enabled = false;
@@ -63,6 +67,7 @@ public:
     CullFaceOption Cull_Face = CULL_FACE_NONE;
 private:
     std::string m_MeshType = "normal";
+    DrawType m_DrawType = DrawType::Traingles;
 protected:
     Ref<Geometry> m_Geometry;
     Ref<Material> m_Material;

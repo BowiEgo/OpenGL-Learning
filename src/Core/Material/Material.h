@@ -22,9 +22,9 @@ public:
     // virtual inline std::vector<Ref<Texture2D>> GetTextures() const { return m_Textures; }
 
     virtual void BindShader() const = 0;
-    virtual void UpdateShader(const glm::vec3& position, const glm::vec3& scale, std::pair<float, const glm::vec3>* rotation) const = 0;
+    virtual void UpdateShader(const glm::vec3& position, const glm::vec3& scale, const std::pair<float, glm::vec3>* rotation) const = 0;
     virtual void UpdateShaderUniform(const std::string& uniformName, const UniformValue& uniformValue) const = 0;
-    void Update(const glm::vec3& position, const glm::vec3& scale, std::pair<float, const glm::vec3>* rotation);
+    void Update(const glm::vec3& position, const glm::vec3& scale, const std::pair<float, glm::vec3>* rotation);
 public:
     bool Wireframe_Enabled = false;
 private:
