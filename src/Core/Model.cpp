@@ -2,6 +2,8 @@
 
 #include "Scene.h"
 
+std::vector<Ref<Texture2D>> Model::s_Textures_Loaded = {};
+
 Model::Model(const std::string &path, const ModelOptions &options)
     : m_Options(options)
 {
@@ -202,11 +204,11 @@ void Model::loadMaterialTextures(aiMaterial *material, aiTextureType type, std::
         std::string filePath = m_Directory + "/" + path.C_Str();
         // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
         bool skip = false;
-        for(unsigned int j = 0; j < m_Textures_Loaded.size(); j++)
+        for(unsigned int j = 0; j < Model::s_Textures_Loaded.size(); j++)
         {
-            if(std::strcmp(m_Textures_Loaded[j]->GetFilePath().data(), filePath.c_str()) == 0)
+            if(std::strcmp(Model::s_Textures_Loaded[j]->GetFilePath().data(), filePath.c_str()) == 0)
             {
-                targetMaterial->AddTexture(m_Textures_Loaded[j]);
+                targetMaterial->AddTexture(Model::s_Textures_Loaded[j]);
                 skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
                 break;
             }
@@ -216,7 +218,7 @@ void Model::loadMaterialTextures(aiMaterial *material, aiTextureType type, std::
             Ref<Texture2D> texture = std::make_unique<Texture2D>(typeName, filePath, texOpts);
 
             targetMaterial->AddTexture(texture);
-            m_Textures_Loaded.push_back(texture); // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.
+            Model::s_Textures_Loaded.push_back(texture); // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.
         }
     }
 }

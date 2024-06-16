@@ -49,9 +49,10 @@ public:
     bool Outline_Enabled = false;
     bool Outline_SingleMesh = false;
 private:
+    static std::vector<Ref<Texture2D>> s_Textures_Loaded;
+
     ModelOptions m_Options;
 
-    std::vector<Ref<Texture2D>> m_Textures_Loaded;
     std::vector<Ref<Mesh>> m_Meshes;
     std::string m_Directory;
 
