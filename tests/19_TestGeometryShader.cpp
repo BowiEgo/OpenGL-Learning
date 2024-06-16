@@ -77,6 +77,34 @@ namespace test {
 
         // m_Scene->Add(mesh);
 
+        // Normal visualization
+        // shader
+        std::string normalVertSrc = FileSystem::ReadFile("../res/shaders/NormalVisualize.vert");
+        std::string normalGeomSrc = FileSystem::ReadFile("../res/shaders/NormalVisualize.geom");
+        std::string normalFragSrc = FileSystem::ReadFile("../res/shaders/SingleColor.frag");
+        Ref<Shader> normalShader = std::make_shared<Shader>(normalVertSrc, normalGeomSrc, normalFragSrc);
+        // material
+        Ref<ShaderMaterial> material_normal = std::make_shared<ShaderMaterial>(normalShader);
+        // --------------------
+        // Container
+        // --------------------
+        // geometry
+        Ref<BoxGeometry> geometry_container = std::make_shared<BoxGeometry>();
+        // texture
+        Ref<Texture2D> diffuseTexture_container = std::make_shared<Texture2D>("Texture_Diffuse", "../res/textures/marble.jpg");
+        // material
+        Ref<StandardMaterial> material_container = std::make_shared<StandardMaterial>();
+        material_container->AddTexture(diffuseTexture_container);
+        // mesh
+        Ref<Mesh> mesh_container = std::make_shared<Mesh>(geometry_container, material_container);
+        mesh_container->SetPosition(2.0f, 0.0f, 0.0f);
+        mesh_container->SetScale(0.2f, 0.2f, 0.2f);
+        m_Scene->Add(mesh_container);
+        // normal
+        m_Mesh_container_normal = std::make_shared<Mesh>(geometry_container, material_normal);
+        m_Mesh_container_normal->SetPosition(2.0f, 0.0f, 0.0f);
+        m_Mesh_container_normal->SetScale(0.2f, 0.2f, 0.2f);
+
         // --------------------
         // Model
         // --------------------
@@ -96,12 +124,8 @@ namespace test {
         m_Normal_Visualize_Nanosuit->Scale(0.2, 0.2, 0.2);
         for (auto mesh : m_Normal_Visualize_Nanosuit->GetMeshes())
         {
-            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->BindVertexShader("../res/shaders/NormalVisualize.vert");
-            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->BindFragmentShader("../res/shaders/NormalVisualize.frag");
-            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->BindGeometryShader("../res/shaders/NormalVisualize.geom");
-            dynamic_cast<StandardMaterial*>(mesh->GetMaterial().get())->Setup();
+            mesh->SetMaterial(material_normal);
         }
-        m_Scene->Add(m_Normal_Visualize_Nanosuit);
     }
 
     TestGeometryShader::~TestGeometryShader()
@@ -126,20 +150,27 @@ namespace test {
             // mesh->GetMaterial()->UpdateShaderUniform("u_Time", currentTime);
             mesh->GetMaterial()->UpdateShaderUniform("u_ExplodeProgress", m_ExplodeProgress);
         }
-
-        for (auto mesh : m_Normal_Visualize_Nanosuit->GetMeshes())
-        {
-            mesh->GetMaterial()->UpdateShaderUniform("u_Split_CoordX", test::GetViewportSize().x * m_ScreenSplit_X);
-        }
         m_Scene->Draw();
+
+        if (m_Normal_Visualize_Enabled)
+        {
+            m_Mesh_container_normal->GetMaterial()->UpdateShaderUniform("u_Color", m_NormalColor);
+            m_Scene->Draw(m_Mesh_container_normal.get());
+
+            for (auto mesh : m_Normal_Visualize_Nanosuit->GetMeshes())
+            {
+                mesh->GetMaterial()->UpdateShaderUniform("u_Color", m_NormalColor);
+            }
+            m_Scene->Draw(m_Normal_Visualize_Nanosuit.get());
+        }
     }
 
     void TestGeometryShader::OnImGuiRender()
     {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-        ImGui::Bullet();ImGui::Text("ScreenSplit");
-        ImGui::SliderFloat("##", &m_ScreenSplit_X, 0.0f, 1.0f);
+        ImGui::Bullet();ImGui::SameLine();ImGui::ToggleButton("Normal", &m_Normal_Visualize_Enabled);
+        ImGui::ColorEdit4("Color##Normal", glm::value_ptr(m_NormalColor));
 
         ImGui::Bullet();ImGui::Text("Explode");
         ImGui::SliderFloat("progress##Nanosuit", &m_ExplodeProgress, 0.0f, 1.0f);

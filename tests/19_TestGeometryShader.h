@@ -29,9 +29,11 @@ namespace test {
     private:
         Scene* m_Scene;
 
+        bool m_Normal_Visualize_Enabled = true;
+        glm::vec3 m_NormalColor = glm::vec3(1.0f, 1.0f, 0.0f);
+        Ref<Mesh> m_Mesh_container_normal;
         Ref<Model> m_Model_Nanosuit, m_Normal_Visualize_Nanosuit;
 
-        float m_ScreenSplit_X = 1.0f;
         float m_ExplodeProgress = 0.02f;
     };
 }

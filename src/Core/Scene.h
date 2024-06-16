@@ -40,6 +40,7 @@ public:
 
     void Draw();
     void Draw(Mesh* mesh);
+    void Draw(Model* model);
 private:
     static Scene* s_Instance;
     static MaterialManager* s_MaterialManager;

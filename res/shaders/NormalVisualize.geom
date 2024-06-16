@@ -10,20 +10,17 @@ layout (std140) uniform Matrices
 uniform mat4 modelMatrix;
 
 in VS_OUT {
-    vec3 Normal;
+    vec4 Normal;
 } vs_in[];
 
-const float MAGNITUDE = 0.05;
+const float MAGNITUDE = 0.01;
 
-void GenerateLine(int index, mat3 normalMatrix)
+void GenerateLine(int index)
 {
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * gl_in[index].gl_Position;
+    gl_Position = gl_in[index].gl_Position;
     EmitVertex();
 
-    vec4 ptOnNormal = viewMatrix * modelMatrix * gl_in[index].gl_Position
-        + vec4(normalize(normalMatrix * vs_in[index].Normal) * MAGNITUDE, 0.0);
-
-    gl_Position = projectionMatrix * ptOnNormal;
+    gl_Position = gl_in[index].gl_Position + vs_in[index].Normal * MAGNITUDE;
     EmitVertex();
 
     EndPrimitive();
@@ -31,9 +28,7 @@ void GenerateLine(int index, mat3 normalMatrix)
 
 void main()
 {
-    mat3 nMat = mat3(transpose(inverse(viewMatrix * modelMatrix)));
-
-    GenerateLine(0, nMat);
-    GenerateLine(1, nMat);
-    GenerateLine(2, nMat);
+    GenerateLine(0);
+    GenerateLine(1);
+    GenerateLine(2);
 }

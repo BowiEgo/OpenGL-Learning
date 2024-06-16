@@ -103,16 +103,7 @@ void Scene::Draw()
     // --------------------
     for (unsigned int i = 0; i < m_Meshes.size(); i++)
     {
-        if (dynamic_cast<InstanceMesh*>(m_Meshes[i].get()))
-        {
-            dynamic_cast<InstanceMesh*>(m_Meshes[i].get())->Draw();
-            dynamic_cast<InstanceMesh*>(m_Meshes[i].get())->DrawOutline();
-        }
-        else
-        {
-            m_Meshes[i]->Draw();
-            m_Meshes[i]->DrawOutline();
-        }
+        Draw(m_Meshes[i].get());
     }
 
     // --------------------
@@ -120,7 +111,7 @@ void Scene::Draw()
     // --------------------
     for (unsigned int i = 0; i < m_Models.size(); i++)
     {
-        m_Models[i]->Draw();
+        Draw(m_Models[i].get());
     }
 
     // --------------------
@@ -186,7 +177,12 @@ void Scene::Draw(Mesh *mesh)
     }
     else
     {
-        mesh->Draw(mesh->GetPosition(), mesh->GetScale(), mesh->GetRotation());
-        mesh->DrawOutline(mesh->GetPosition(), mesh->GetScale(), mesh->GetRotation());
+        mesh->Draw();
+        mesh->DrawOutline();
     }
+}
+
+void Scene::Draw(Model *model)
+{
+    model->Draw();
 }

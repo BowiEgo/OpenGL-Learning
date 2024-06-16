@@ -183,7 +183,7 @@ void Mesh::DrawOutline(const glm::vec3& position, const glm::vec3& scale, const 
 
     Scene::GetMaterialManager()->GetOutlineMaterial()->UpdateShaderUniform("u_OutlineDrawType", Outline_DrawType);
     Scene::GetMaterialManager()->GetOutlineMaterial()->UpdateShaderUniform("u_OutlineWidth", m_Outline_Width);
-    Scene::GetMaterialManager()->GetOutlineMaterial()->UpdateShaderUniform("u_OutlineColor", m_Outline_Color);
+    Scene::GetMaterialManager()->GetOutlineMaterial()->UpdateShaderUniform("u_Color", m_Outline_Color);
 
     Renderer renderer;
     if (m_IBO == nullptr)
