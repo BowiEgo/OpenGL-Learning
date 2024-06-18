@@ -232,7 +232,17 @@ namespace test {
         // --------------------
         // Draw stage
         // --------------------
-        FramebufferManager::GetByTag("viewport")->Bind();
+        Framebuffer* viewport;
+        if (FramebufferManager::s_SMAA_Enabled)
+        {
+            viewport = FramebufferManager::GetByTag("viewport").get();
+        }
+        else
+        {
+            viewport = FramebufferManager::GetByTag("nonMultisample_viewport").get();
+        }
+
+        viewport->Bind();
         GLCall(glClearColor(0.5f, 0.5f, 0.5f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
@@ -251,7 +261,7 @@ namespace test {
         m_Scene->Draw(m_Mesh_Grayscale.get());
         m_Scene->Draw(m_Mesh_Sharpen.get());
         m_Scene->Draw(m_Mesh_Blur.get());
-        FramebufferManager::GetByTag("viewport")->Unbind();
+        viewport->Unbind();
     }
 
     void TestFramebuffer::OnImGuiRender()
