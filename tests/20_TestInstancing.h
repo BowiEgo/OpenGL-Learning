@@ -32,6 +32,14 @@ namespace test {
         Ref<Shader> m_Shader;
         unsigned int m_QuadVAO;
 
+        bool m_Instancing_Enabled = true;
         Ref<Model> m_Model_Rock;
+        unsigned int m_Amount = 100000;
+
+        std::vector<glm::vec3> m_Translates, m_Scales;
+        std::vector<std::pair<float, glm::vec3>> m_Rotates;
+
+        glm::mat4 m_ModelMatrices[100000];
+        Ref<VertexBuffer> m_InstanceVBO_Rock;
     };
 }

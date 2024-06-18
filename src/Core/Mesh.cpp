@@ -71,7 +71,7 @@ void Mesh::SetDrawType(const DrawType &drawType)
     m_DrawType = drawType;
 }
 
-void Mesh::SetDrawWay(const DrawWay &drawWay, unsigned int& instanceCount)
+void Mesh::SetDrawWay(const DrawWay &drawWay, const unsigned int& instanceCount)
 {
     m_DrawWay = drawWay;
     m_InstanceCount = instanceCount;

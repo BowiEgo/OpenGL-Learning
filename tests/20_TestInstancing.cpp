@@ -134,23 +134,19 @@ namespace test {
         Ref<Model> Model_Planet = std::make_shared<Model>("../res/models/planet/planet.obj");
         Model_Planet->Translate(0.0f, -3.0f, 0.0f);
         Model_Planet->Scale(4.0f, 4.0f, 4.0f);
+        m_Scene->Add(Model_Planet);
         // rock
         m_Model_Rock = std::make_shared<Model>("../res/models/rock/rock.obj");
-        // instance VBO
-
-        unsigned int amount = 100000;
-        glm::mat4 modelMatrices[amount];
+        // matrices
         srand(static_cast<unsigned int>(glfwGetTime()));
-        std::vector<glm::vec3> translates, scales;
-        std::vector<std::pair<float, glm::vec3>> rotates;
         float radius = 150.0;
         float offset_rock = 25.0f;
 
-        for(unsigned int i = 0; i < amount; i++)
+        for(unsigned int i = 0; i < m_Amount; i++)
         {
             glm::mat4 model = glm::mat4(1.0f);
 
-            float angle = (float)i / (float)amount * 360.0f;
+            float angle = (float)i / (float)m_Amount * 360.0f;
             float displacement = (rand() % (int)(2 * offset_rock * 100)) / 100.0f - offset_rock;
             float x = sin(angle) * radius + displacement;
             displacement = (rand() % (int)(2 * offset_rock * 100)) / 100.0f - offset_rock;
@@ -158,30 +154,26 @@ namespace test {
             displacement = (rand() % (int)(2 * offset_rock * 100)) / 100.0f - offset_rock;
             float z = cos(angle) * radius + displacement;
             model = glm::translate(model, glm::vec3(x, y, z));
-            translates.push_back(glm::vec3(x, y, z));
+            m_Translates.push_back(glm::vec3(x, y, z));
 
             float scale = (rand() % 20) / 100.0f;
             model = glm::scale(model, glm::vec3(scale));
-            scales.push_back(glm::vec3(scale));
+            m_Scales.push_back(glm::vec3(scale));
 
             float rotAngle = (rand() % 360);
             model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
-            rotates.push_back(std::make_pair(rotAngle, glm::vec3(0.4f, 0.6f, 0.8f)));
+            m_Rotates.push_back(std::make_pair(rotAngle, glm::vec3(0.4f, 0.6f, 0.8f)));
 
-            modelMatrices[i] = model;
+            m_ModelMatrices[i] = model;
         }
-        Ref<VertexBuffer> instanceVBO_Rock = std::make_shared<VertexBuffer>(&modelMatrices[0], sizeof(glm::mat4) * amount);
+        // instance VBO
+        m_InstanceVBO_Rock = std::make_shared<VertexBuffer>(&m_ModelMatrices[0], sizeof(glm::mat4) * m_Amount);
         std::vector<Ref<Mesh>> meshes_Rock = m_Model_Rock->GetMeshes();
         GLsizei vec4Size = sizeof(glm::vec4);
         for (unsigned int i = 0; i < meshes_Rock.size(); i++)
         {
-            meshes_Rock[i]->SetDrawWay(DrawWay::Instanced, amount);
-            meshes_Rock[i]->GetMaterial()->UpdateShaderUniform("u_Is_Instance", true);
-            meshes_Rock[i]->AddInstanceVBO(instanceVBO_Rock, 4, vec4Size, 4);
+            meshes_Rock[i]->AddInstanceVBO(m_InstanceVBO_Rock, 4, vec4Size, 4);
         }
-
-        m_Scene->Add(Model_Planet);
-        m_Scene->Add(m_Model_Rock);
     }
 
     TestInstancing::~TestInstancing()
@@ -200,11 +192,40 @@ namespace test {
         GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
+        if (m_Instancing_Enabled)
+        {
+            std::vector<Ref<Mesh>> meshes_Rock = m_Model_Rock->GetMeshes();
+            GLsizei vec4Size = sizeof(glm::vec4);
+            for (unsigned int i = 0; i < meshes_Rock.size(); i++)
+            {
+                meshes_Rock[i]->SetDrawWay(DrawWay::Instanced, m_Amount);
+                meshes_Rock[i]->GetMaterial()->UpdateShaderUniform("u_Is_Instance", true);
+            }
+            m_Scene->Draw(m_Model_Rock.get());
+        }
+        else
+        {
+            std::vector<Ref<Mesh>> meshes_Rock = m_Model_Rock->GetMeshes();
+            for (unsigned int i = 0; i < meshes_Rock.size(); i++)
+            {
+                meshes_Rock[i]->SetDrawWay(DrawWay::None, m_Amount);
+                meshes_Rock[i]->GetMaterial()->UpdateShaderUniform("u_Is_Instance", false);
+            }
+            for (unsigned int i = 0; i < m_Translates.size(); i++)
+            {
+                m_Model_Rock->Translate(m_Translates[i]);
+                m_Model_Rock->Scale(m_Scales[i]);
+                m_Model_Rock->Rotate(m_Rotates[i]);
+                m_Scene->Draw(m_Model_Rock.get());
+            }
+        }
+
         m_Scene->Draw();
     }
 
     void TestInstancing::OnImGuiRender()
     {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::Bullet();ImGui::Text("Instancing");ImGui::SameLine();ImGui::ToggleButton("Instancing", &m_Instancing_Enabled);
     }
 }

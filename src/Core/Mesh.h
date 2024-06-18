@@ -48,7 +48,7 @@ public:
 
     void Setup();
     void SetDrawType(const DrawType& drawType);
-    void SetDrawWay(const DrawWay& drawWay, unsigned int& instanceCount);
+    void SetDrawWay(const DrawWay& drawWay, const unsigned int& instanceCount);
     void SetMaterial(const Ref<Material> material);
     void SetPosition(const float position[3]);
     void SetPosition(const glm::vec3& position);

@@ -38,7 +38,7 @@ void Model::Scale(float x, float y, float z)
     m_Scale.z = z;
 }
 
-void Model::Rotate(std::pair<float,glm::vec3>& rotation)
+void Model::Rotate(std::pair<float, glm::vec3>& rotation)
 {
     m_Rotation = rotation;
 }
