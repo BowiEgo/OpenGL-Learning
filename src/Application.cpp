@@ -33,6 +33,7 @@
 #include "../tests/19_TestGeometryShader.h"
 #include "../tests/20_TestInstancing.h"
 #include "../tests/21_TestAntiAliasing.h"
+#include "../tests/22_TestBlinnPhong.h"
 
 void RenderUI()
 {
@@ -153,6 +154,7 @@ int main(void)
     testMenu->RegisterTest<test::TestGeometryShader>("GeometryShader");
     testMenu->RegisterTest<test::TestInstancing>("Instancing");
     testMenu->RegisterTest<test::TestAntiAliasing>("AntiAliasing");
+    testMenu->RegisterTest<test::TestBlinnPhong>("BlinnPhong");
 
     // test::TestClearColor test;
 
