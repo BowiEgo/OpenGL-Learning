@@ -2,6 +2,7 @@
 layout (location = 0) in vec3 a_Position;
 layout (location = 1) in vec3 a_Normal;
 layout (location = 2) in vec2 a_TexCoords;
+layout (location = 7) in mat4 a_InstanceModelMatrix;
 
 layout (std140) uniform Matrices
 {
@@ -9,6 +10,7 @@ layout (std140) uniform Matrices
     mat4 viewMatrix;
 };
 
+uniform bool u_Is_Instance;
 uniform mat4 modelMatrix;
 
 out vec3 v_FragPosition;
@@ -23,7 +25,13 @@ out VS_OUT {
 
 void main()
 {
-    vec4 modelPosition = modelMatrix * vec4(a_Position, 1.0);
+    vec4 modelPosition;
+    if (u_Is_Instance)
+    {
+        modelPosition = a_InstanceModelMatrix * vec4(a_Position, 1.0);
+    } else {
+        modelPosition = modelMatrix * vec4(a_Position, 1.0);
+    }
     vec4 viewPosition = viewMatrix * modelPosition;
     vec4 projectionPosition = projectionMatrix * viewPosition;
 

@@ -31,7 +31,7 @@ namespace test {
         layout.Push<float>(3);
         layout.Push<float>(3);
         layout.Push<float>(2);
-        m_VAO->AddBuffer(*m_VertexBuffer, layout);
+        m_VAO->AddBufferLayout(*m_VertexBuffer, layout);
 
         m_IndexBuffer = std::make_unique<IndexBuffer>(indices, 6);
 

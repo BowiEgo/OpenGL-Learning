@@ -14,6 +14,11 @@ Model::~Model()
 {
 }
 
+void Model::Translate(const glm::vec3 &translate)
+{
+    m_Translate = translate;
+}
+
 void Model::Translate(float x, float y, float z)
 {
     m_Translate.x = x;
@@ -21,11 +26,21 @@ void Model::Translate(float x, float y, float z)
     m_Translate.z = z;
 }
 
+void Model::Scale(const glm::vec3 &scale)
+{
+    m_Scale = scale;
+}
+
 void Model::Scale(float x, float y, float z)
 {
     m_Scale.x = x;
     m_Scale.y = y;
     m_Scale.z = z;
+}
+
+void Model::Rotate(std::pair<float,glm::vec3>& rotation)
+{
+    m_Rotation = rotation;
 }
 
 void Model::SetOutlineWidth(float &width)

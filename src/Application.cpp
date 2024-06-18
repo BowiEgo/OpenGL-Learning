@@ -31,6 +31,7 @@
 #include "../tests/17_TestCubemap.h"
 #include "../tests/18_TestAdvancedGLSL.h"
 #include "../tests/19_TestGeometryShader.h"
+#include "../tests/20_TestInstancing.h"
 
 void RenderUI()
 {
@@ -142,6 +143,7 @@ int main(void)
     testMenu->RegisterTest<test::TestCubemap>("Cubemap");
     testMenu->RegisterTest<test::TestAdvancedGLSL>("AdvancedGLSL");
     testMenu->RegisterTest<test::TestGeometryShader>("GeometryShader");
+    testMenu->RegisterTest<test::TestInstancing>("Instancing");
 
     // test::TestClearColor test;
 

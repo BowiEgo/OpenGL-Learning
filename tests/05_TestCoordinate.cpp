@@ -87,7 +87,7 @@ namespace test {
         VertexBufferLayout layout;
         layout.Push<float>(3);
         layout.Push<float>(2);
-        m_VAO->AddBuffer(*m_VBO, layout);
+        m_VAO->AddBufferLayout(*m_VBO, layout);
         
         m_IBO = std::make_unique<IndexBuffer>(indices, 36);
 

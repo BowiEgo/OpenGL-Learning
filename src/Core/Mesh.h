@@ -26,6 +26,7 @@ enum CullFaceOption {
 };
 
 class Geometry;
+class VertexBufferElement;
 
 class Mesh
 {
@@ -35,6 +36,7 @@ public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Ref<Material> material);
     virtual ~Mesh() = default;
 
+    inline VertexArray* GetVAO() { return m_VAO.get(); }
     inline std::string* GetMeshType() { return &m_MeshType; }
     inline Ref<Geometry> GetGeometry() { return m_Geometry; }
     inline Ref<Material> GetMaterial() { return m_Material; }
@@ -42,8 +44,11 @@ public:
     inline glm::vec3& GetScale() { return m_Scale; }
     inline std::pair<float, glm::vec3>* GetRotation() { return &m_Rotation; }
 
+    void AddInstanceVBO(const Ref<VertexBuffer> instanceVBO, const unsigned int size, const unsigned unitSize, const unsigned int times = 1);
+
     void Setup();
     void SetDrawType(const DrawType& drawType);
+    void SetDrawWay(const DrawWay& drawWay, unsigned int& instanceCount);
     void SetMaterial(const Ref<Material> material);
     void SetPosition(const float position[3]);
     void SetPosition(const glm::vec3& position);
@@ -54,7 +59,6 @@ public:
     void SetOutline(const bool enable);
     void SetOutlineWidth(const float& width);
     void SetOutlineColor(const glm::vec3& color);
-
 
     void Draw();
     void Draw(const glm::vec3& position, const glm::vec3& scale, const std::pair<float,glm::vec3>* rotation);
@@ -68,13 +72,17 @@ public:
 private:
     std::string m_MeshType = "normal";
     DrawType m_DrawType = DrawType::Traingles;
+    DrawWay m_DrawWay = DrawWay::None;
+    unsigned int m_InstanceCount = 0;
 protected:
     Ref<Geometry> m_Geometry;
     Ref<Material> m_Material;
 
     Scope<VertexArray> m_VAO;
     Scope<VertexBuffer> m_VBO;
+    std::vector<Ref<VertexBuffer>> m_InstanceVBOs;
     Scope<IndexBuffer> m_IBO;
+    Scope<VertexBufferLayout> m_Layout;
     std::vector<Vertex> m_Vertices;
     std::vector<unsigned int> m_Indices;
 

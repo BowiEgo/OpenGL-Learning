@@ -71,6 +71,16 @@ void Camera::SetAspectRatio(const float& aspectRatio)
     UpdateProjMatrix();
 }
 
+void Camera::SetNear(const float& near)
+{
+    m_Near = near;
+}
+
+void Camera::SetFar(const float& far)
+{
+    m_Far = far;
+}
+
 void Camera::SetDirection(const glm::vec3 &direction)
 {
     m_CameraFront = direction;
@@ -258,7 +268,7 @@ void Camera::DisableControll()
 
 void Camera::UpdateProjMatrix()
 {
-    m_ProjMatrix = glm::perspective(glm::radians(m_FOV * m_ZoomLevel), m_AspectRatio, 0.1f, 100.f);
+    m_ProjMatrix = glm::perspective(glm::radians(m_FOV * m_ZoomLevel), m_AspectRatio, m_Near, m_Far);
 }
 
 void Camera::UpdateCameraFront(const glm::vec3 &direction)

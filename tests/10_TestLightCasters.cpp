@@ -84,11 +84,11 @@ namespace test {
 
         // Object model
         m_Obj_VAO = std::make_unique<VertexArray>();
-        m_Obj_VAO->AddBuffer(*m_VBO, layout);
+        m_Obj_VAO->AddBufferLayout(*m_VBO, layout);
 
         // LightCube model
         m_LightCube_VAO = std::make_unique<VertexArray>();
-        m_LightCube_VAO->AddBuffer(*m_VBO, layout);
+        m_LightCube_VAO->AddBufferLayout(*m_VBO, layout);
 
         // --------------------
         // Texture

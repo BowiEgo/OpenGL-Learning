@@ -1,6 +1,5 @@
 #include "Mesh.h"
 
-#include "Core/VertexBufferLayout.h"
 #include "Material/MaterialManager.h"
 #include "Scene.h"
 
@@ -26,6 +25,20 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     Setup();
 }
 
+void Mesh::AddInstanceVBO(const Ref<VertexBuffer> instanceVBO, const unsigned int size, const unsigned unitSize, const unsigned int times)
+{
+    m_VAO->Bind();
+    instanceVBO->Bind();
+    for (unsigned int i = 0; i < times; i++)
+    {
+        glEnableVertexAttribArray(m_VAO->GetElementCount());
+        glVertexAttribPointer(m_VAO->GetElementCount(), size, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(i * sizeof(glm::vec4)));
+        glVertexAttribDivisor(m_VAO->GetElementCount(), 1);
+        m_VAO->IncreaseElementCount();
+    }
+    instanceVBO->Unbind();
+    m_InstanceVBOs.push_back(instanceVBO);
+}
 
 void Mesh::Setup()
 {
@@ -33,30 +46,35 @@ void Mesh::Setup()
     m_VBO = std::make_unique<VertexBuffer>(m_Vertices.data(), m_Vertices.size() * sizeof(Vertex));
     if (m_Indices.size() != 0)
         m_IBO = std::make_unique<IndexBuffer>(&m_Indices[0], m_Indices.size());
-
-    VertexBufferLayout layout;
-
+    
+    m_Layout = std::make_unique<VertexBufferLayout>();
     // Vertex positions
-    layout.Push<Vertex>(3, 0);
+    m_Layout->Push<Vertex>(3, 0);
     // Vertex normals
-    layout.Push<Vertex>(3, (unsigned int)offsetof(Vertex, Normal));
+    m_Layout->Push<Vertex>(3, (unsigned int)offsetof(Vertex, Normal));
     // Vertex texture coords
-    layout.Push<Vertex>(2, (unsigned int)offsetof(Vertex, TexCoords));
+    m_Layout->Push<Vertex>(2, (unsigned int)offsetof(Vertex, TexCoords));
     // Vertex tangent
-    layout.Push<Vertex>(3, (unsigned int)offsetof(Vertex, Tangent));
+    m_Layout->Push<Vertex>(3, (unsigned int)offsetof(Vertex, Tangent));
     // Vertex bitangent
-    layout.Push<Vertex>(3, (unsigned int)offsetof(Vertex, Bitangent));
+    m_Layout->Push<Vertex>(3, (unsigned int)offsetof(Vertex, Bitangent));
     // Bone ids
-    layout.Push<Vertex>(4, (unsigned int)offsetof(Vertex, m_BoneIDs));
+    m_Layout->Push<Vertex>(4, (unsigned int)offsetof(Vertex, m_BoneIDs));
     // Bone weights
-    layout.Push<Vertex>(4, (unsigned int)offsetof(Vertex, m_Weights));
+    m_Layout->Push<Vertex>(4, (unsigned int)offsetof(Vertex, m_Weights));
 
-    m_VAO->AddBuffer(*m_VBO, layout);
+    m_VAO->AddBufferLayout(*m_VBO, *m_Layout);
 }
 
 void Mesh::SetDrawType(const DrawType &drawType)
 {
     m_DrawType = drawType;
+}
+
+void Mesh::SetDrawWay(const DrawWay &drawWay, unsigned int& instanceCount)
+{
+    m_DrawWay = drawWay;
+    m_InstanceCount = instanceCount;
 }
 
 void Mesh::SetMaterial(Ref<Material> material)
@@ -156,9 +174,9 @@ void Mesh::Draw(const glm::vec3& position, const glm::vec3& scale, const std::pa
 
     Renderer renderer;
     if (m_IBO == nullptr)
-        renderer.Draw(*m_VAO, m_DrawType);
+        renderer.Draw(*m_VAO, m_DrawWay, m_DrawType, m_InstanceCount);
     else
-        renderer.Draw(*m_VAO, *m_IBO, m_DrawType);
+        renderer.Draw(*m_VAO, *m_IBO, m_DrawWay, m_DrawType, m_InstanceCount);
 }
 
 void Mesh::DrawOutline()
@@ -187,9 +205,9 @@ void Mesh::DrawOutline(const glm::vec3& position, const glm::vec3& scale, const 
 
     Renderer renderer;
     if (m_IBO == nullptr)
-        renderer.Draw(*m_VAO, m_DrawType);
+        renderer.Draw(*m_VAO, m_DrawWay, m_DrawType, m_InstanceCount);
     else
-        renderer.Draw(*m_VAO, *m_IBO, m_DrawType);
+        renderer.Draw(*m_VAO, *m_IBO, m_DrawWay, m_DrawType, m_InstanceCount);
 
     GLCall(glStencilFunc(GL_ALWAYS, 1, 0xFF));
     GLCall(glStencilMask(0xFF));

@@ -2,8 +2,9 @@
 
 #include "pch.h"
 
-#include "VertexBufferLayout.h"
 #include "Renderer.h"
+
+#include "VertexBufferLayout.h"
 
 VertexArray::VertexArray()
 {
@@ -15,27 +16,36 @@ VertexArray::~VertexArray()
     GLCall(glDeleteVertexArrays(1, &m_RendererID));
 }
 
-void VertexArray::AddBuffer(const VertexBuffer &vb, const VertexBufferLayout &layout)
+void VertexArray::AddBuffer(const VertexBuffer &vb, const VertexBufferElement &element, const unsigned int stride)
+{
+    if (element.offset > 0)
+        m_Offset = element.offset;
+
+    GLCall(glVertexAttribPointer(m_Element_Count, element.count, element.type,
+        element.normalized, stride, (const void*)(intptr_t)m_Offset));
+    GLCall(glEnableVertexAttribArray(m_Element_Count));
+    
+    if (element.offset == 0)
+        m_Offset += element.count * VertexBufferElement::GetSizeOfType(element.type);
+}
+
+void VertexArray::AddBufferLayout(const VertexBuffer &vb, const VertexBufferLayout &layout)
 {
     Bind();
     vb.Bind();
     const auto& elements = layout.GetElements();
-    unsigned int offset = 0;
     for (unsigned int i = 0; i < elements.size(); i++)
     {
-        const auto& element = elements[i];
-        if (element.offset > 0)
-            offset = element.offset;
-
-        GLCall(glVertexAttribPointer(i, element.count, element.type,
-            element.normalized, layout.GetStride(), (const void*)(intptr_t)offset));
-        GLCall(glEnableVertexAttribArray(i));
-        
-        if (element.offset == 0)
-            offset += element.count * VertexBufferElement::GetSizeOfType(element.type);
+        AddBuffer(vb, elements[i], layout.GetStride());
+        m_Element_Count++;
     }
 
-    m_Count = vb.GetCount() / offset;
+    m_Count = vb.GetCount() / m_Offset;
+}
+
+void VertexArray::IncreaseElementCount()
+{
+    m_Element_Count++;
 }
 
 void VertexArray::Bind() const

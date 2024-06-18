@@ -19,7 +19,9 @@ public:
     Model(const std::string& path, const ModelOptions& options = ModelOptions());
     ~Model();
 
+    void Translate(const glm::vec3& translate);
     void Translate(float x, float y, float z);
+    void Scale(const glm::vec3& scale);
     void Scale(float x, float y, float z);
     void Rotate(std::pair<float, glm::vec3>& rotation);
 

@@ -37,7 +37,7 @@ void Renderer::Clear() const
     GLCall(glClear(GL_COLOR_BUFFER_BIT));
 }
 
-void Renderer::Draw(const VertexArray& va, const DrawType& drawType) const
+void Renderer::Draw(const VertexArray& va, const DrawWay& drawWay, const DrawType& drawType, const unsigned int& instancecount) const
 {
     unsigned int glType;
     switch (drawType)
@@ -54,10 +54,19 @@ void Renderer::Draw(const VertexArray& va, const DrawType& drawType) const
     }
 
     va.Bind();
-    GLCall(glDrawArrays(glType, 0, va.GetCount()));
+
+    switch (drawWay)
+    {
+    case DrawWay::None:
+        GLCall(glDrawArrays(glType, 0, va.GetCount()));
+        break;
+    case DrawWay::Instanced:
+        GLCall(glDrawArraysInstanced(glType, 0, va.GetCount(), instancecount));
+        break;
+    }
 }
 
-void Renderer::Draw(const VertexArray &va, const IndexBuffer& ib, const DrawType& drawType) const
+void Renderer::Draw(const VertexArray &va, const IndexBuffer& ib, const DrawWay& drawWay, const DrawType& drawType, const unsigned int& instancecount) const
 {
     unsigned int glType;
     switch (drawType)
@@ -75,7 +84,16 @@ void Renderer::Draw(const VertexArray &va, const IndexBuffer& ib, const DrawType
 
     va.Bind();
     ib.Bind();
-    GLCall(glDrawElements(glType, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
+
+    switch (drawWay)
+    {
+    case DrawWay::None:
+        GLCall(glDrawElements(glType, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
+        break;
+    case DrawWay::Instanced:
+        GLCall(glDrawElementsInstanced(glType, ib.GetCount(), GL_UNSIGNED_INT, nullptr, instancecount));
+        break;
+    }
 }
 
 void Renderer::Draw(const Shader &shader, const VertexArray &va) const
