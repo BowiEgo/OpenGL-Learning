@@ -27,6 +27,7 @@ public:
 
     void Resize(uint32_t width, uint32_t height);
 
+    uint32_t GetID() const { return m_RendererID; }
     uint32_t GetColorAttachmentRendererID() const { return m_ColorAttachment; }
     const FramebufferSpecification& GetSpecification() const { return m_Specification; }
 
@@ -47,6 +48,8 @@ public:
     static Ref<Framebuffer> CreateFramebuffer(std::string tag, const FramebufferSpecification& spec);
     static Ref<Framebuffer> GetByTag(const std::string& tag);
     static bool Remove(const std::string& tag);
+public:
+    static bool s_SMAA_Enabled;
 private:
     static FramebufferManager* s_Instance;
     std::vector<std::pair<std::string, Ref<Framebuffer>>> m_Pools = {};

@@ -32,6 +32,7 @@
 #include "../tests/18_TestAdvancedGLSL.h"
 #include "../tests/19_TestGeometryShader.h"
 #include "../tests/20_TestInstancing.h"
+#include "../tests/21_TestAntiAliasing.h"
 
 void RenderUI()
 {
@@ -76,6 +77,8 @@ int main(void)
     #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
+    /* Enable Multisample Buffer for MSAA */
+    // glfwWindowHint(GLFW_SAMPLES, 4);
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGL Learning", NULL, NULL);
@@ -100,10 +103,15 @@ int main(void)
     // Input
     Input::Create(window);
 
+    GLCall(glEnable(GL_MULTISAMPLE));
     // Blending
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
+    // Query the maximum number of samples supported
+    GLint maxSamples = 0;
+    glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+    std::cout << "Maximum number of samples supported: " << maxSamples << std::endl;
     // Renderer
     Renderer renderer;
 
@@ -144,6 +152,7 @@ int main(void)
     testMenu->RegisterTest<test::TestAdvancedGLSL>("AdvancedGLSL");
     testMenu->RegisterTest<test::TestGeometryShader>("GeometryShader");
     testMenu->RegisterTest<test::TestInstancing>("Instancing");
+    testMenu->RegisterTest<test::TestAntiAliasing>("AntiAliasing");
 
     // test::TestClearColor test;
 
@@ -153,10 +162,18 @@ int main(void)
     // Framebuffer
     FramebufferManager::Create();
 
+    GLint samples = 4;
     FramebufferSpecification fbSpec;
     fbSpec.Width = 1280;
     fbSpec.Height = 720;
+    fbSpec.Samples = std::min(samples, maxSamples);
     std::shared_ptr<Framebuffer> m_Framebuffer = FramebufferManager::CreateFramebuffer("viewport", fbSpec);
+
+    FramebufferSpecification nonMultisample_fbSpec;
+    nonMultisample_fbSpec.Width = 1280;
+    nonMultisample_fbSpec.Height = 720;
+    nonMultisample_fbSpec.Samples = 1;
+    std::shared_ptr<Framebuffer> m_Non_Multisample_Framebuffer = FramebufferManager::CreateFramebuffer("nonMultisample_viewport", nonMultisample_fbSpec);
 
     auto backTestMenu = [&]()
     {
@@ -203,9 +220,25 @@ int main(void)
         {
             currentTest->OnUpdate(deltaTime);
             currentTest->ProcessInput(deltaTime);
-            m_Framebuffer->Bind();
+            if (FramebufferManager::s_SMAA_Enabled)
+            {
+                m_Framebuffer->Bind();
+            } else {
+                m_Non_Multisample_Framebuffer->Bind();
+            }
             currentTest->OnRender();
-            m_Framebuffer->Unbind();
+            GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+            m_Non_Multisample_Framebuffer->Unbind();
+            if (FramebufferManager::s_SMAA_Enabled)
+            {
+                GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, m_Framebuffer->GetID()));
+            } else {
+                GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, m_Non_Multisample_Framebuffer->GetID()));
+            }
+            GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_Non_Multisample_Framebuffer->GetID()));
+            GLCall(glBlitFramebuffer(0, 0, m_Framebuffer->GetSpecification().Width, m_Framebuffer->GetSpecification().Height, 0, 0, m_Non_Multisample_Framebuffer->GetSpecification().Width, m_Non_Multisample_Framebuffer->GetSpecification().Height, GL_COLOR_BUFFER_BIT, GL_NEAREST));
+            GLCall(glViewport(0, 0, m_Framebuffer->GetSpecification().Width, m_Framebuffer->GetSpecification().Height));
+            GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
             ImGui::Begin("Test");
             if (ImGui::Button("<-"))
                 backTestMenu();
@@ -219,10 +252,11 @@ int main(void)
         if (test::GetViewportSize() != *((glm::vec2*)&viewportPanelSize))
         {
             m_Framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
+            m_Non_Multisample_Framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
             test::UpdateViewportSize(viewportPanelSize.x, viewportPanelSize.y);
             currentTest->OnViewPortResize(viewportPanelSize.x, viewportPanelSize.y);
         }
-        uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+        uint32_t textureID = m_Non_Multisample_Framebuffer->GetColorAttachmentRendererID();
         ImGui::Image((void*)(uintptr_t)textureID, ImVec2{ test::GetViewportSize().x, test::GetViewportSize().y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
         ImGui::End();
         ImGui::PopStyleVar();

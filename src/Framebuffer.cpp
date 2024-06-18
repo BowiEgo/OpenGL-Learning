@@ -18,7 +18,7 @@ Framebuffer::~Framebuffer()
 {
     GLCall(glDeleteFramebuffers(1, &m_RendererID));
     GLCall(glDeleteTextures(1, &m_ColorAttachment));
-    GLCall(glDeleteTextures(1, &m_DepthAttachment));
+    GLCall(glDeleteRenderbuffers(1, &m_DepthAttachment));
 }
 
 void Framebuffer::Invalidate()
@@ -27,32 +27,56 @@ void Framebuffer::Invalidate()
     {
         GLCall(glDeleteFramebuffers(1, &m_RendererID));
         GLCall(glDeleteTextures(1, &m_ColorAttachment));
-        GLCall(glDeleteTextures(1, &m_DepthAttachment));
+        GLCall(glDeleteRenderbuffers(1, &m_DepthAttachment));
     }
 
     GLCall(glGenFramebuffers(1, &m_RendererID));
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID));
 
+    // Create color attachment
     GLCall(glGenTextures(1, &m_ColorAttachment));
-    GLCall(glBindTexture(GL_TEXTURE_2D, m_ColorAttachment));
-    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Specification.Width, m_Specification.Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr));
-    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-    GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0));
+    if (m_Specification.Samples == 1)
+    {
+        GLCall(glBindTexture(GL_TEXTURE_2D, m_ColorAttachment));
+        GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Specification.Width, m_Specification.Height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
+        GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+        GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+        GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0));	// we only need a color buffer
+    }
+    else
+    {
+        GLCall(glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_ColorAttachment));
+        GLCall(glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, m_Specification.Width, m_Specification.Height, GL_TRUE));
+        GLCall(glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0));
+        GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, m_ColorAttachment, 0));
+    }
 
-    GLCall(glGenTextures(1, &m_DepthAttachment));
-    GLCall(glBindTexture(GL_TEXTURE_2D, m_DepthAttachment));
-    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr));
-    GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0));
+    // Create depth attachment
+    GLCall(glGenRenderbuffers(1, &m_DepthAttachment));
+    GLCall(glBindRenderbuffer(GL_RENDERBUFFER, m_DepthAttachment));
+    if (m_Specification.Samples == 1)
+    {
+        GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height));
+    }
+    else
+    {
+        GLCall(glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_Specification.Samples, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height));
+    }
+    GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthAttachment));
+    GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0)); // Unbind renderbuffer once
 
     CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 
+    // Unbind the framebuffer
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
 void Framebuffer::Bind()
 {
-    GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID));
+    // GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID));
+    GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, m_RendererID));
+    GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_RendererID));
+    GLCall(glBlitFramebuffer(0, 0, m_Specification.Width, m_Specification.Height, 0, 0, m_Specification.Width, m_Specification.Height, GL_COLOR_BUFFER_BIT, GL_NEAREST));
     GLCall(glViewport(0, 0, m_Specification.Width, m_Specification.Height));
 }
 
@@ -70,6 +94,7 @@ void Framebuffer::Resize(uint32_t width, uint32_t height)
 }
 
 FramebufferManager* FramebufferManager::s_Instance = nullptr;
+bool FramebufferManager::s_SMAA_Enabled = false;
 
 Ref<Framebuffer> FramebufferManager::CreateFramebuffer(std::string tag, const FramebufferSpecification &spec)
 {
