@@ -8,7 +8,8 @@
 
 #include "FileSystem/FileSystem.h"
 
-#include "Camera.h"
+#include "Camera/Camera.h"
+#include "Camera/PerspectiveCamera.h"
 
 #include <memory>
 

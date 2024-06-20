@@ -89,6 +89,7 @@ void Scene::Add(std::shared_ptr<Model> model)
 void Scene::SetCurrentCamera(Ref<Camera> camera)
 {
     m_CurrentCamera = camera;
+    Shader::UpdateMatricesProj(m_CurrentCamera->GetProjMatrix());
 }
 
 void Scene::Draw()

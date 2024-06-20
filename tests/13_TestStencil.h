@@ -7,7 +7,7 @@
 #include "Core/VertexBufferLayout.h"
 #include "Core/Texture2D.h"
 
-#include "Camera.h"
+#include "Camera/Camera.h"
 #include "Core/Scene.h"
 #include "Core/Model.h"
 
@@ -25,8 +25,6 @@ namespace test {
         void OnRender() override;
         void OnImGuiRender() override;
     private:
-        Scene* m_Scene;
-
         Ref<DirectionalLight> m_DirectionalLight;
         std::vector<Ref<PointLight>> m_PointLights;
 

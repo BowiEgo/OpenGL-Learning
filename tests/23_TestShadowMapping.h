@@ -9,29 +9,34 @@
 #include "Core/TextureCubemap.h"
 
 #include "Camera/Camera.h"
-#include "Framebuffer.h"
+#include "Camera/OrthographicCamera.h"
+#include "DepthMapFBO.h"
 #include "Core/Scene.h"
 #include "Core/Model.h"
 
 #include "Core/Light/DirectionalLight.h"
 #include "Core/Light/PointLight.h"
 
+#include "Core/Material/BasicMaterial.h"
+
 namespace test {
-    class TestGeometryShader : public Test
+    class TestShadowMapping : public Test
     {
     public:
-        TestGeometryShader(GLFWwindow* window);
-        ~TestGeometryShader();
+        TestShadowMapping(GLFWwindow* window);
+        ~TestShadowMapping();
 
         void OnUpdate(float deltaTime) override;
         void OnRender() override;
         void OnImGuiRender() override;
     private:
-        bool m_Normal_Visualize_Enabled = true;
-        glm::vec3 m_NormalColor = glm::vec3(1.0f, 1.0f, 0.0f);
-        Ref<Mesh> m_Mesh_container_normal;
-        Ref<Model> m_Model_Nanosuit, m_Normal_Visualize_Nanosuit;
+        Ref<PerspectiveCamera> m_Viewport_Camera;
+        Ref<OrthographicCamera> m_DepthMap_Camera;
 
-        float m_ExplodeProgress = 0.02f;
+        Ref<Mesh> m_Mesh_Floor;
+        std::vector<Ref<Mesh>> m_Mesh_Boxes;
+
+        Ref<DepthMapFBO> m_DepthMapFBO;
+        Ref<Mesh> m_Mesh_DepthMap;
     };
 }

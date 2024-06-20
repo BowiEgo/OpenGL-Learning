@@ -8,7 +8,7 @@
 #include "Core/Texture2D.h"
 #include "Core/TextureCubemap.h"
 
-#include "Camera.h"
+#include "Camera/Camera.h"
 #include "Framebuffer.h"
 #include "Core/Scene.h"
 #include "Core/Model.h"
@@ -29,7 +29,6 @@ namespace test {
         void OnRender() override;
         void OnImGuiRender() override;
     private:
-        Scene* m_Scene;
         
         bool m_SMAA_Enabled;
         bool m_BlinnPhong_Enabled;

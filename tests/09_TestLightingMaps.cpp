@@ -14,13 +14,17 @@ namespace test {
       : Test(window), m_ObjPositions(glm::vec3(0.0)), m_LightPosition(glm::vec3(1.2f, 1.0f, 2.0f))
     {
         GLCall(glEnable(GL_DEPTH_TEST));
-
+        // --------------------
+        // Setup
+        // --------------------
+        m_Scene = Scene::Create();
         // --------------------
         // Camera
         // --------------------
-        m_Camera = std::make_unique<Camera>();
+        m_Camera = std::make_shared<PerspectiveCamera>();
         m_Camera->SetPositionZ(6.0f);
         m_Camera->SetPosition({1.2f, 1.2f, 4.2f});
+        m_Scene->Add(m_Camera);
         // glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         // --------------------
@@ -206,9 +210,9 @@ namespace test {
     void TestLightingMaps::OnImGuiRender()
     {
         ImGui::SeparatorText("Camera");
-        float fov = m_Camera->GetFOV();
+        float fov = dynamic_cast<PerspectiveCamera*>(m_Camera.get())->GetFOV();
         if (ImGui::SliderFloat("FOV", &fov, 0.0f, 180.0f))
-            m_Camera->SetFOV(fov);
+            dynamic_cast<PerspectiveCamera*>(m_Camera.get())->SetFOV(fov);
 
         ImGui::Bullet();ImGui::Text("Material attributes");
         ImGui::SliderFloat("Shininess##Material", &m_MaterialShininess, 0.0f, 256.0f);

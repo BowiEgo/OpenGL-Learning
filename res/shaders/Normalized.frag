@@ -13,7 +13,6 @@ uniform int u_Normalized_Type;
 #define NORMALIZED_TYPE_SHARPEN 2
 #define NORMALIZED_TYPE_BLUR 3
 
-
 const float offset = 1.0 / 300.0;
 
 vec2 offsets[9] = vec2[](

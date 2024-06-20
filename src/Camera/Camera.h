@@ -2,21 +2,17 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+enum CameraType {
+    Perspective,
+    Orthographic
+};
+
 class Camera
 {
 public:
-    Camera(
-        const float position[3] = nullptr,
-        const float target[3] = nullptr,
-        float fov = 45.0f,
-        float aspectRatio = WINDOW_WIDTH / WINDOW_HEIGHT,
-        float near = 0.1f,
-        float far = 100.0f
-    );
     ~Camera();
 
-    inline float GetFOV() const { return m_FOV; }
-    inline float GetAspectRatio() const { return m_AspectRatio; }
+    virtual inline CameraType GetType() const = 0;
     inline glm::vec3 GetPosition() const { return m_CameraPos; }
     inline glm::vec3 GetTarget() const { return m_CameraTarget; }
     inline glm::vec3 GetFront() const { return m_CameraFront; }
@@ -26,9 +22,7 @@ public:
     inline glm::mat4 GetViewMatrix() const { return m_ViewMatrix; }
 
     void Init();
-    void SetFOV(const float& fov);
     void SetZoomLevel(const float& zoomlv);
-    void SetAspectRatio(const float& aspectRatio);
     void SetNear(const float& near);
     void SetFar(const float& far);
     void SetDirection(const glm::vec3& direction);
@@ -48,15 +42,16 @@ public:
     void EnableControll();
     void DisableControll();
 private:
-    void UpdateProjMatrix();
+    virtual void UpdateProjMatrix() = 0;
     void UpdateCameraFront(const glm::vec3& direction);
+    void UpdateViewMatrix();
     void UpdatePitchAndYaw();
     float GetYawByDirection(const glm::vec3& direction);
     float GetPitchByDirection(const glm::vec3& direction);
 private:
-    float m_FOV;
+    CameraType m_Type;
+protected:
     float m_ZoomLevel = 1.0f;
-    float m_AspectRatio;
     float m_Near, m_Far;
 
     glm::mat4 m_ProjMatrix, m_ViewMatrix;

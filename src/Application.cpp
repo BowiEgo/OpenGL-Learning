@@ -34,6 +34,7 @@
 #include "../tests/20_TestInstancing.h"
 #include "../tests/21_TestAntiAliasing.h"
 #include "../tests/22_TestBlinnPhong.h"
+#include "../tests/23_TestShadowMapping.h"
 
 void RenderUI()
 {
@@ -155,6 +156,7 @@ int main(void)
     testMenu->RegisterTest<test::TestInstancing>("Instancing");
     testMenu->RegisterTest<test::TestAntiAliasing>("AntiAliasing");
     testMenu->RegisterTest<test::TestBlinnPhong>("BlinnPhong");
+    testMenu->RegisterTest<test::TestShadowMapping>("ShadowMapping");
 
     // test::TestClearColor test;
 
@@ -201,7 +203,10 @@ int main(void)
             currentTest->EnableCameraControll();
         }
         if (Input::IsKeyPressed(OPL_KEY_BACKSPACE))
+        {
+            Input::EnableCursor();
             backTestMenu();
+        }
 
         float currentTime = glfwGetTime();
         deltaTime = currentTime - lastTime;
@@ -256,7 +261,7 @@ int main(void)
             m_Framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
             m_Non_Multisample_Framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
             test::UpdateViewportSize(viewportPanelSize.x, viewportPanelSize.y);
-            currentTest->OnViewPortResize(viewportPanelSize.x, viewportPanelSize.y);
+            currentTest->OnViewPortResize();
         }
         uint32_t textureID = m_Non_Multisample_Framebuffer->GetColorAttachmentRendererID();
         ImGui::Image((void*)(uintptr_t)textureID, ImVec2{ test::GetViewportSize().x, test::GetViewportSize().y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });

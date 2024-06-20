@@ -16,10 +16,15 @@ namespace test {
         GLCall(glEnable(GL_DEPTH_TEST));
 
         // --------------------
+        // Setup
+        // --------------------
+        m_Scene = Scene::Create();
+        // --------------------
         // Camera
         // --------------------
-        m_Camera = std::make_unique<Camera>();
+        m_Camera = std::make_unique<PerspectiveCamera>();
         m_Camera->SetPosition({1.2f, 1.2f, 4.2f});
+        m_Scene->Add(m_Camera);
 
         // --------------------
         // Model datas
@@ -163,9 +168,9 @@ namespace test {
     void TestBasicLighting::OnImGuiRender()
     {
         ImGui::Text("Camera");
-        float fov = m_Camera->GetFOV();
+        float fov = dynamic_cast<PerspectiveCamera*>(m_Camera.get())->GetFOV();
         if (ImGui::SliderFloat("FOV", &fov, 0.0f, 180.0f))
-            m_Camera->SetFOV(fov);
+            dynamic_cast<PerspectiveCamera*>(m_Camera.get())->SetFOV(fov);
 
         glm::vec3 camPos = m_Camera->GetPosition();
         if (ImGui::SliderFloat("CamPosX", &camPos.x, -10.0f, 10.0f))

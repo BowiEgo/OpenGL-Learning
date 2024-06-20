@@ -1,36 +1,8 @@
-#include "Camera.h"
+#include "Camera/Camera.h"
 
 #include "Input.h"
 #include "KeyCodes.h"
-
-float lerp(float a, float b, float t) {
-    return a + t * (b - a);
-}
-
-Camera::Camera(const float position[3], const float target[3], float fov, float aspectRatio, float near, float far)
-    : m_FOV(fov), m_AspectRatio(aspectRatio), m_Near(near), m_Far(far)
-{
-    if (position)
-    {
-        m_CameraPos = glm::vec3(position[0], position[1], position[2]);
-    }
-    else
-    {
-        m_CameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-    }
-
-    if (target)
-    {
-        m_CameraTarget = glm::vec3(target[0], target[1], target[2]);
-    }
-    else
-    {
-        m_CameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-    }
-
-    Init();
-    Input::DisableCursor();
-}
+#include "Camera.h"
 
 Camera::~Camera()
 {
@@ -50,24 +22,9 @@ void Camera::Init()
     UpdatePitchAndYaw();
 }
 
-void Camera::SetFOV(const float &fov)
-{
-    m_FOV = fov;
-    UpdateProjMatrix();
-}
-
 void Camera::SetZoomLevel(const float &zoomlv)
 {
     m_ZoomLevel = zoomlv;
-    UpdateProjMatrix();
-}
-
-void Camera::SetAspectRatio(const float& aspectRatio)
-{
-    if (aspectRatio == m_AspectRatio)
-        return;
-
-    m_AspectRatio = aspectRatio;
     UpdateProjMatrix();
 }
 
@@ -175,13 +132,6 @@ void Camera::SetTarget(const glm::vec3& target)
     if (target == m_CameraTarget)
         return;
     m_CameraTarget = glm::vec3(target[0], target[1], target[2]);
-    // m_CameraFront = glm::normalize(m_CameraTarget - m_CameraPos);
-    // m_CameraRight = glm::normalize(glm::cross(m_CameraFront, m_CameraUp));
-
-    // m_Yaw = GetYawByDirection(m_CameraFront);
-    // m_Pitch = GetPitchByDirection(m_CameraFront);
-
-    // UpdatePitchAndYaw();
     Init();
 }
 
@@ -266,14 +216,14 @@ void Camera::DisableControll()
     m_Controll_Enabled = false;
 }
 
-void Camera::UpdateProjMatrix()
-{
-    m_ProjMatrix = glm::perspective(glm::radians(m_FOV * m_ZoomLevel), m_AspectRatio, m_Near, m_Far);
-}
-
 void Camera::UpdateCameraFront(const glm::vec3 &direction)
 {
     m_CameraFront = glm::normalize(direction);
+    UpdateViewMatrix();
+}
+
+void Camera::UpdateViewMatrix()
+{
     m_ViewMatrix = glm::lookAt(m_CameraPos, m_CameraPos + m_CameraFront, m_CameraUp);
 }
 

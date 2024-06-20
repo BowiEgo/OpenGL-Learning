@@ -37,7 +37,7 @@ namespace test {
         // --------------------
         // Camera
         // --------------------
-        m_Camera = std::make_shared<Camera>();
+        m_Camera = std::make_shared<PerspectiveCamera>();
         m_Camera->SetFar(500.0f);
         m_Camera->SetPositionZ(150.0f);
         m_Scene->Add(m_Camera);

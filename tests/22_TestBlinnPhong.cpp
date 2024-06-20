@@ -35,7 +35,7 @@ namespace test {
         // --------------------
         // Camera
         // --------------------
-        m_Camera = std::make_shared<Camera>();
+        m_Camera = std::make_shared<PerspectiveCamera>();
         m_Scene->Add(m_Camera);
         // --------------------
         // Light
@@ -68,7 +68,7 @@ namespace test {
         // Floor
         // --------------------
         //geometry
-        Ref<PlaneGeometry> geometry_container = std::make_shared<PlaneGeometry>();
+        Ref<PlaneGeometry> geometry_floor = std::make_shared<PlaneGeometry>();
         // texture
         Ref<Texture2D> diffuseTexture_floor = std::make_shared<Texture2D>("Texture_Diffuse", "../res/textures/wood.png");
         diffuseTexture_floor->SetWrapping(GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -77,7 +77,7 @@ namespace test {
         Ref<StandardMaterial> material_floor = std::make_shared<StandardMaterial>();
         material_floor->AddTexture(diffuseTexture_floor);
         // mesh
-        m_Mesh_Floor = std::make_shared<Mesh>(geometry_container, material_floor);
+        m_Mesh_Floor = std::make_shared<Mesh>(geometry_floor, material_floor);
 
         m_Scene->Add(m_Mesh_Floor);
     }

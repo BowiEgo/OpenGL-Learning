@@ -6,7 +6,9 @@
 #include <GLFW/glfw3.h>
 
 #include "Core/Scene.h"
-#include "Camera.h"
+#include "Camera/Camera.h"
+#include "Camera/PerspectiveCamera.h"
+#include "Camera/OrthographicCamera.h"
 
 namespace test {
     static glm::vec2 s_ViewportSize(0.0f);
@@ -27,7 +29,7 @@ namespace test {
         virtual void EnableCameraControll();
         virtual void DisableCameraControll();
 
-        void OnViewPortResize(const float width, const float height);
+        void OnViewPortResize();
     protected:
         GLFWwindow* m_Window;
         Scene* m_Scene;

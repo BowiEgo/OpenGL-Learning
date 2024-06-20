@@ -14,9 +14,13 @@ namespace test {
       : Test(window)
     {
         GLCall(glEnable(GL_DEPTH_TEST));
-
+        // --------------------
+        // Setup
+        // --------------------
+        m_Scene = Scene::Create();
         // Camera
-        m_Camera = std::make_unique<Camera>();
+        m_Camera = std::make_unique<PerspectiveCamera>();
+        m_Scene->Add(m_Camera);
 
         GLfloat vertices[] = {
             -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  // A 0
@@ -153,9 +157,9 @@ namespace test {
 
     void TestCamera::OnImGuiRender()
     {
-        float fov = m_Camera->GetFOV();
+        float fov = dynamic_cast<PerspectiveCamera*>(m_Camera.get())->GetFOV();
         if (ImGui::SliderFloat("FOV", &fov, 0.0f, 180.0f))
-            m_Camera->SetFOV(fov);
+            dynamic_cast<PerspectiveCamera*>(m_Camera.get())->SetFOV(fov);
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     }

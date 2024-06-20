@@ -7,7 +7,7 @@
 #include "Core/VertexBufferLayout.h"
 #include "Core/Texture2D.h"
 
-#include "Camera.h"
+#include "Camera/Camera.h"
 #include "Core/Scene.h"
 #include "Core/Model.h"
 #include "Core/Light/DirectionalLight.h"
@@ -25,8 +25,6 @@ namespace test {
         void OnRender() override;
         void OnImGuiRender() override;
     private:
-        Scene* m_Scene;
-
         std::shared_ptr<DirectionalLight> m_DirectionalLight;
         std::vector<std::shared_ptr<PointLight>> m_PointLights;
         std::shared_ptr<SpotLight> m_SpotLight;

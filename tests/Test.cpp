@@ -28,39 +28,46 @@ namespace test
             if (ImGui::Button(test.first.c_str()))
             {
                 m_CurrentTest = test.second();
-                m_CurrentTest->OnViewPortResize(s_ViewportSize.x, s_ViewportSize.y);
+                m_CurrentTest->OnViewPortResize();
             }
         }
     }
 
     void Test::ProcessInput(float deltaTime)
     {
-        if (m_Camera != nullptr)
+        if (m_Scene != nullptr)
         {
-            m_Camera->ProcessKeyboardMovement(deltaTime);
-            m_Camera->ProcessMouseMovement();
-            m_Camera->ProcessMouseScroll();
+            Scene::GetCurrentCamera()->ProcessKeyboardMovement(deltaTime);
+            Scene::GetCurrentCamera()->ProcessMouseMovement();
+            Scene::GetCurrentCamera()->ProcessMouseScroll();
         }
     }
 
     void Test::EnableCameraControll()
     {
-        if (m_Camera != nullptr)
-            m_Camera->EnableControll();
+        if (m_Scene != nullptr)
+        {
+            Scene::GetCurrentCamera()->EnableControll();
+        }
     }
 
     void Test::DisableCameraControll()
     {
-        if (m_Camera != nullptr)
-            m_Camera->DisableControll();
+        if (m_Scene != nullptr)
+        {
+            Scene::GetCurrentCamera()->DisableControll();
+        }
     }
 
-    void Test::OnViewPortResize(const float width, const float height)
+    void Test::OnViewPortResize()
     {
-        if (m_Camera != nullptr)
+        if (m_Scene != nullptr)
         {
-            m_Camera->SetAspectRatio(width / height);
-            Shader::UpdateMatricesProj(m_Camera->GetProjMatrix());
+            if (Scene::GetCurrentCamera()->GetType() == CameraType::Perspective)
+            {
+                dynamic_cast<PerspectiveCamera*>(Scene::GetCurrentCamera())->SetAspectRatio(test::GetViewportSize().x / test::GetViewportSize().y);
+            }
+            Shader::UpdateMatricesProj(Scene::GetCurrentCamera()->GetProjMatrix());
         }
     }
 }

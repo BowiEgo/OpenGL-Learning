@@ -40,8 +40,8 @@ namespace test {
         // --------------------
         // Camera
         // --------------------
-        m_Camera = std::make_shared<Camera>();
-        m_Camera_Mirror = std::make_shared<Camera>();
+        m_Camera = std::make_shared<PerspectiveCamera>();
+        m_Camera_Mirror = std::make_shared<PerspectiveCamera>();
         // m_Camera_Mirror->SetPosition(m_Mirror_Position);
         // m_Camera_Mirror->DisableControll();
         m_Scene->Add(m_Camera);

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "pch.h"
-#include "Camera.h"
+#include "Camera/Camera.h"
 #include "Light/DirectionalLight.h"
 #include "Light/PointLight.h"
 #include "Light/SpotLight.h"
@@ -18,11 +18,12 @@ public:
 
     static Scene* Create();
 
+    inline static Scene* GetScene() { return s_Instance; }
     inline static MaterialManager* GetMaterialManager() { return s_MaterialManager; }
     inline static Texture2D* GetVoidTexture2D() { return s_VoidTexture2D; }
     inline static TextureCubemap* GetVoidTextureCubemap() { return s_VoidTextureCubemap; }
     inline static Camera* GetCurrentCamera() { return s_Instance->m_CurrentCamera.get(); }
-    inline static std::vector<Ref<Camera>>* GetCameras() { return &(s_Instance->m_Cameras); }
+    inline static std::vector<Ref<Camera>>& GetCameras() { return s_Instance->m_Cameras; }
     inline static std::vector<Ref<DirectionalLight>>& GetDirectionalLights() { return s_Instance->m_DirectionalLights; }
     inline static std::vector<Ref<PointLight>>& GetPointLights() { return s_Instance->m_PointLights; }
     inline static std::vector<Ref<SpotLight>>& GetSpotLights() { return s_Instance->m_SpotLights; }
