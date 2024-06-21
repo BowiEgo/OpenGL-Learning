@@ -247,6 +247,7 @@ namespace test {
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
         m_Scene->SetCurrentCamera(m_Camera);
+        OnViewPortResize();
 
         m_Mesh_Floor->Cull_Face = m_CullFaceOption_Floor;
         m_Mesh_Container->Cull_Face = m_CullFaceOption_Container;

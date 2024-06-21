@@ -136,7 +136,7 @@ namespace test {
         ImGui::Bullet();ImGui::Text("Directional Light");
         ImGui::SameLine();ImGui::ToggleButton("IsEnabled##DirectionalLight", m_DirectionalLight->GetIsEnabled());
         if (m_DirectionalLight->GetIsEnabled())
-            ImGui::SliderFloat3("Direction##DirectionalLight", m_DirectionalLight->GetDirection(), -glm::pi<float>(), glm::pi<float>());
+            ImGui::SliderFloat3("Direction##DirectionalLight", glm::value_ptr(*m_DirectionalLight->GetDirection()), -glm::pi<float>(), glm::pi<float>());
         
         ImGui::Bullet();ImGui::Text("Point Light");
         ImGui::SameLine();ImGui::ToggleButton("IsEnabled##PointLight", &m_IsPointLightsEnabled);

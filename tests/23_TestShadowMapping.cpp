@@ -35,21 +35,19 @@ namespace test {
         // --------------------
         // Camera
         // --------------------
-        // m_Camera = std::make_shared<PerspectiveCamera>();
-        // m_Scene->Add(m_Camera);
+        glm::vec3 dirLight_Dir = glm::vec3(2.0f, -2.0f, 1.0f);
         m_Viewport_Camera = std::make_shared<PerspectiveCamera>();
         m_Viewport_Camera->SetPosition({ -2.0f, 2.0f, -1.0f });
         m_DepthMap_Camera = std::make_shared<OrthographicCamera>();
-        m_DepthMap_Camera->SetPosition({ -2.0f, 2.0f, -1.0f });
+        m_DepthMap_Camera->SetPosition(-dirLight_Dir);
         m_Camera = m_Viewport_Camera;
         m_Scene->Add(m_Camera);
         m_Scene->Add(m_DepthMap_Camera);
-        // m_DepthMap_Camera->DisableControll();
-        // m_Scene->Add(m_DepthMap_Camera);
         // --------------------
         // Light
         // --------------------
         Ref<DirectionalLight> m_DirLight = std::make_shared<DirectionalLight>();
+        m_DirLight->SetDirection(dirLight_Dir);
         m_Scene->Add(m_DirLight);
         
         // std::vector<Ref<PointLight>> m_PointLights;
@@ -72,6 +70,38 @@ namespace test {
         // mesh_lightCube->SetScale(glm::vec3(0.2f));
         
         // m_Scene->Add(mesh_lightCube);
+
+        // --------------------
+        // Framebuffer plane
+        // --------------------
+        FramebufferSpecification fbSpec;
+        fbSpec.Width = 1024;
+        fbSpec.Height = 1024;
+        m_DepthMapFBO = DepthMapFBO::Create(fbSpec);
+        // texture
+        Ref<Texture2D> diffuseTexture_screen = std::make_shared<Texture2D>("Texture_Diffuse", m_DepthMapFBO->GetDepthMapID());
+        // shader
+        std::string screenVertSrc = FileSystem::ReadFile("../res/shaders/DepthMap_Screen.vert");
+        std::string screenFragSrc = FileSystem::ReadFile("../res/shaders/DepthMap_Screen.frag");
+        Ref<Shader> shader_screen = std::make_shared<Shader>(screenVertSrc, screenFragSrc);
+        // material
+        Ref<ShaderMaterial> material_screen = std::make_shared<ShaderMaterial>(shader_screen);
+        material_screen->AddTexture(diffuseTexture_screen);
+        // mesh
+        m_Mesh_Screen = std::make_shared<Mesh>(std::make_shared<QuadGeometry>(), material_screen);
+
+        // --------------------
+        // ShadowMap texture
+        // --------------------
+        // shader
+        std::string depthMapVertSrc = FileSystem::ReadFile("../res/shaders/DepthMap.vert");
+        std::string depthMapFragSrc = FileSystem::ReadFile("../res/shaders/DepthMap.frag");
+        Ref<Shader> shader_depthMap = std::make_shared<Shader>(depthMapVertSrc, depthMapFragSrc);
+        // material
+        m_Material_DepthMap = std::make_shared<ShaderMaterial>(shader_depthMap);
+        // texture
+        m_Texture_ShadowMap = std::make_shared<Texture2D>("Texture_ShadowMap", m_DepthMapFBO->GetDepthMapID());
+
         // --------------------
         // Floor
         // --------------------
@@ -82,12 +112,13 @@ namespace test {
         diffuseTexture_floor->SetWrapping(GL_TEXTURE_WRAP_S, GL_REPEAT);
         diffuseTexture_floor->SetWrapping(GL_TEXTURE_WRAP_T, GL_REPEAT);
         // material
-        Ref<StandardMaterial> material_floor = std::make_shared<StandardMaterial>();
-        material_floor->AddTexture(diffuseTexture_floor);
+        m_Material_Wood = std::make_shared<StandardMaterial>();
+        m_Material_Wood->AddTexture(diffuseTexture_floor);
+        m_Material_Wood->AddTexture(m_Texture_ShadowMap);
         // mesh
-        m_Mesh_Floor = std::make_shared<Mesh>(geometry_floor, material_floor);
+        m_Mesh_Floor = std::make_shared<Mesh>(geometry_floor, m_Material_Wood);
 
-        m_Scene->Add(m_Mesh_Floor);
+        // m_Scene->Add(m_Mesh_Floor); // exclude floor when drawing to resolve shadow acne.
         // --------------------
         // Container
         // --------------------
@@ -95,27 +126,35 @@ namespace test {
         std::vector<glm::vec3> translate_boxes = {
             glm::vec3( 0.0f, 1.5f, 0.0f),
             glm::vec3( 2.0f, 0.0f, 1.0f),
-            glm::vec3(-1.0f, 0.0f, 2.0f)
+            glm::vec3(-1.0f, 0.0f, 2.0f),
+            glm::vec3( 1.0f, 0.0f, -2.0f)
         };
         std::vector<glm::vec3> scale_boxes = {
             glm::vec3( 0.5f),
             glm::vec3( 0.5f),
-            glm::vec3(0.25f)
+            glm::vec3(0.25f),
+            glm::vec3( 1.0f),
         };
         std::vector<std::pair<float, glm::vec3>> rotate_boxes = {
             std::make_pair( 0.0f, glm::normalize(glm::vec3(1.0f, 0.0f, 1.0f))),  
             std::make_pair( 0.0f, glm::normalize(glm::vec3(1.0f, 0.0f, 1.0f))),  
-            std::make_pair(60.0f, glm::normalize(glm::vec3(1.0f, 0.0f, 1.0f))),  
+            std::make_pair(60.0f, glm::normalize(glm::vec3(1.0f, 0.0f, 1.0f))),
+            std::make_pair(0.0f, glm::normalize(glm::vec3(1.0f, 0.0f, 1.0f))),
         };
         // geometry
         Ref<BoxGeometry> geometry_box = std::make_shared<BoxGeometry>();
+        // texture
+        Ref<Texture2D> diffuseTexture_container = std::make_shared<Texture2D>("Texture_Diffuse", "../res/textures/container2.png");
+        Ref<Texture2D> specularTexture_container = std::make_shared<Texture2D>("Texture_Specular", "../res/textures/container2_specular.png");
         // material
-        Ref<StandardMaterial> material_box = std::make_shared<StandardMaterial>();
-        material_box->AddTexture(diffuseTexture_floor);
+        m_Material_Container = std::make_shared<StandardMaterial>();
+        m_Material_Container->AddTexture(diffuseTexture_container);
+        m_Material_Container->AddTexture(specularTexture_container);
+        m_Material_Container->AddTexture(m_Texture_ShadowMap);
         // mesh
         for (unsigned int i = 0; i < translate_boxes.size(); i++)
         {
-            Ref<Mesh> mesh_box = std::make_shared<Mesh>(geometry_box, material_box);
+            Ref<Mesh> mesh_box = std::make_shared<Mesh>(geometry_box, m_Material_Container);
             mesh_box->SetPosition(translate_boxes[i]);
             mesh_box->SetScale(scale_boxes[i]);
             mesh_box->SetRotation(rotate_boxes[i]);
@@ -123,34 +162,6 @@ namespace test {
             m_Mesh_Boxes.push_back(mesh_box);
             m_Scene->Add(mesh_box);
         }
-
-        // --------------------
-        // Framebuffer plane
-        // --------------------
-        FramebufferSpecification fbSpec;
-        fbSpec.Width = 1024;
-        fbSpec.Height = 1024;
-        m_DepthMapFBO = DepthMapFBO::Create(fbSpec);
-        // texture
-        uint32_t textureID = m_DepthMapFBO->GetDepthMapID();
-        Ref<Texture2D> diffuseTexture_mirror = std::make_shared<Texture2D>("Texture_Diffuse", textureID);
-        // shader
-        std::string normalizedVertSrc = FileSystem::ReadFile("../res/shaders/Normalized.vert");
-        std::string normalizedFragSrc = FileSystem::ReadFile("../res/shaders/DepthMap.frag");
-        Ref<Shader> screenShader_depthMap = std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc);
-        // material
-        Ref<ShaderMaterial> material_depthMap = std::make_shared<ShaderMaterial>(screenShader_depthMap);
-        material_depthMap->AddTexture(diffuseTexture_mirror);
-        // mesh
-        m_Mesh_DepthMap = std::make_shared<Mesh>(std::make_shared<QuadGeometry>(), material_depthMap);
-
-        // --------------------
-        // LightSpaceMatrix
-        // --------------------
-        GLfloat near_plane = 1.0f, far_plane = 7.5f;
-        glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-        glm::mat4 lightView = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::mat4 lightSpaceMatrix = lightProjection * lightView;
     }
 
     TestShadowMapping::~TestShadowMapping()
@@ -174,6 +185,13 @@ namespace test {
         m_DepthMapFBO->Bind();
         GLCall(glEnable(GL_DEPTH_TEST));
         m_Scene->SetCurrentCamera(m_DepthMap_Camera);
+        m_Mesh_Floor->SetMaterial(m_Material_DepthMap);
+        for (auto mesh : m_Mesh_Boxes)
+        {
+            mesh->SetMaterial(m_Material_DepthMap);
+            mesh->Cull_Face = CULL_FACE_FRONT;
+
+        }
         m_Scene->Draw();
         m_DepthMapFBO->Unbind();
 
@@ -195,8 +213,17 @@ namespace test {
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
         m_Scene->SetCurrentCamera(m_Viewport_Camera);
         OnViewPortResize();
+        m_Material_Wood->UpdateShaderUniform("u_LightSpaceMatrix", m_DepthMap_Camera->GetProjMatrix() * m_DepthMap_Camera->GetViewMatrix()); // add lightSpaceMatrix to shader
+        m_Mesh_Floor->SetMaterial(m_Material_Wood);
+        for (auto mesh : m_Mesh_Boxes)
+        {
+            m_Material_Container->UpdateShaderUniform("u_LightSpaceMatrix", m_DepthMap_Camera->GetProjMatrix() * m_DepthMap_Camera->GetViewMatrix()); // add lightSpaceMatrix to shader
+            mesh->SetMaterial(m_Material_Container);
+            mesh->Cull_Face = CULL_FACE_BACK;
+        }
         m_Scene->Draw();
-        m_Scene->Draw(m_Mesh_DepthMap.get());
+        m_Scene->Draw(m_Mesh_Floor.get());
+        m_Scene->Draw(m_Mesh_Screen.get());
         viewport->Unbind();
     }
 

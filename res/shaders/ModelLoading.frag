@@ -8,6 +8,13 @@ in vec3 v_FragPosition;
 in vec3 v_Normal;
 in vec2 v_TexCoords;
 
+in VS_OUT {
+    vec3 FragPosition;
+    vec3 Normal;
+    vec2 TexCoords;
+    vec4 FragPosLightSpace;
+} fs_in;
+
 uniform sampler2D u_Texture_Diffuse1;
 uniform sampler2D u_Texture_Diffuse2;
 uniform sampler2D u_Texture_Diffuse3;
@@ -15,6 +22,7 @@ uniform sampler2D u_Texture_Specular1;
 uniform sampler2D u_Texture_Specular2;
 uniform sampler2D u_Texture_Normal1;
 uniform sampler2D u_Texture_Height1;
+uniform sampler2D u_Texture_ShadowMap1;
 
 uniform samplerCube u_Texture_Environment;
 uniform bool u_Is_EnvironmentTexture_Valid;
@@ -89,6 +97,29 @@ uniform bool u_Is_Opaque;
 
 uniform bool u_Blinn_Enabled;
 
+float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
+{
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+    float closestDepth = texture(u_Texture_ShadowMap1, projCoords.xy).r;
+    float currentDepth = projCoords.z;
+    // PCF
+    float shadow = 0.0;
+    vec2 texelSize = 1.0 / textureSize(u_Texture_ShadowMap1, 0);
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(u_Texture_ShadowMap1, projCoords.xy + vec2(x, y) * texelSize).r; 
+            shadow += currentDepth > pcfDepth  ? 1.0 : 0.0;        
+        }    
+    }
+    shadow /= 9.0;
+    if(projCoords.z > 1.0)
+        shadow = 0.0;
+    return shadow;
+}
+
 vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
     if (!light.enable)
@@ -115,8 +146,10 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     vec3 ambient  = light.ambient  * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
     vec3 diffuse  = light.diffuse  * diff * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
     vec3 specular = light.specular * spec * texture(u_Texture_Specular1, v_TexCoords).rgb;
+    // shadow
+    float shadow = ShadowCalculation(fs_in.FragPosLightSpace, normal, lightDir);
  
-    return (ambient + diffuse + specular);
+    return (ambient + (1.0 - shadow) * (diffuse + specular));
 }
 
 vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)

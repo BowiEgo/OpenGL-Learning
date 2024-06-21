@@ -35,5 +35,5 @@ OrthographicCamera::~OrthographicCamera()
 
 void OrthographicCamera::UpdateProjMatrix()
 {
-    m_ProjMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 7.5f);
+    m_ProjMatrix = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, 1.0f, 7.5f);
 }

@@ -12,6 +12,7 @@ layout (std140) uniform Matrices
 
 uniform bool u_Is_Instance;
 uniform mat4 modelMatrix;
+uniform mat4 u_LightSpaceMatrix;
 
 out vec3 v_FragPosition;
 out vec3 v_Normal;
@@ -21,6 +22,7 @@ out VS_OUT {
     vec3 FragPosition;
     vec3 Normal;
     vec2 TexCoords;
+    vec4 FragPosLightSpace;
 } vs_out;
 
 void main()
@@ -42,4 +44,5 @@ void main()
     vs_out.FragPosition = vec3(modelPosition);
     vs_out.Normal = a_Normal;
     vs_out.TexCoords = a_TexCoords;
+    vs_out.FragPosLightSpace = u_LightSpaceMatrix * vec4(vs_out.FragPosition, 1.0);
 }

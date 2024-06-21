@@ -41,6 +41,7 @@ private:
     std::vector<Ref<Texture2D>> m_Specular_Textures;
     std::vector<Ref<Texture2D>> m_Normal_Textures;
     std::vector<Ref<Texture2D>> m_Height_Textures;
+    std::vector<Ref<Texture2D>> m_ShadowMap_Textures;
     Ref<TextureCubemap> m_Env_Texture;
 
     float m_MaterialShininess = 32.0f, m_MaterialEmmisionStength = 1.0f;

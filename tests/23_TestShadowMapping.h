@@ -33,10 +33,15 @@ namespace test {
         Ref<PerspectiveCamera> m_Viewport_Camera;
         Ref<OrthographicCamera> m_DepthMap_Camera;
 
+        Ref<ShaderMaterial> m_Material_DepthMap;
+        Ref<StandardMaterial> m_Material_Wood, m_Material_Container;
+
         Ref<Mesh> m_Mesh_Floor;
         std::vector<Ref<Mesh>> m_Mesh_Boxes;
 
         Ref<DepthMapFBO> m_DepthMapFBO;
-        Ref<Mesh> m_Mesh_DepthMap;
+        Ref<Mesh> m_Mesh_Screen;
+
+        Ref<Texture2D> m_Texture_ShadowMap;
     };
 }

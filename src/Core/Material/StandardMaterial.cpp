@@ -74,6 +74,10 @@ void StandardMaterial::AddTexture(Ref<Texture2D> texture)
     {
         m_Height_Textures.push_back(texture);
     }
+    else if (texture->GetType().find("ShadowMap") != std::string::npos)
+    {
+        m_ShadowMap_Textures.push_back(texture);
+    }
 }
 
 void StandardMaterial::SetTextures(std::vector<Ref<Texture2D>> textures)
@@ -156,6 +160,7 @@ void StandardMaterial::BindTextures() const
     unsigned int specularNr = m_Specular_Textures.size();
     unsigned int normalNr = m_Normal_Textures.size();
     unsigned int heightNr = m_Height_Textures.size();
+    unsigned int shadowMapNr = m_ShadowMap_Textures.size();
 
     unsigned int slot;
 
@@ -229,7 +234,24 @@ void StandardMaterial::BindTextures() const
         }
     }
 
-    unsigned int allNr = diffuseNr + specularNr + normalNr + heightNr;
+    slot = diffuseNr + specularNr + normalNr + heightNr;
+    if (shadowMapNr == 0)
+    {
+        // Scene::GetVoidTexture2D()->Bind(slot);
+        // m_Shader->SetUniform(("u_Texture_Height1"), slot);
+        // shadowMapNr = 1;
+    }
+    else
+    {
+        for (unsigned int i = 0; i < shadowMapNr; i++)
+        {
+            slot += i;
+            m_ShadowMap_Textures[i]->Bind(slot);
+            m_Shader->SetUniform("u_Texture_ShadowMap" + std::to_string(i + 1), slot);
+        }
+    }
+
+    unsigned int allNr = diffuseNr + specularNr + normalNr + heightNr + shadowMapNr;
     if (Scene::GetSkybox() != nullptr)
     {
         dynamic_cast<CubemapMaterial*>(Scene::GetSkybox()->GetMaterial().get())->BindTexture(allNr);

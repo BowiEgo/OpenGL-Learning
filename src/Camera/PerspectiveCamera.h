@@ -30,5 +30,4 @@ private:
     CameraType m_Type = CameraType::Perspective;
     float m_FOV;
     float m_AspectRatio;
-    float m_Near, m_Far;
 };

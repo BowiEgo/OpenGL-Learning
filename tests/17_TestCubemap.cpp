@@ -265,6 +265,7 @@ namespace test {
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
         m_Scene->SetCurrentCamera(m_Camera);
+        OnViewPortResize();
 
         for (auto mesh : m_Model_Michelle->GetMeshes())
         {

@@ -14,3 +14,8 @@ void DirectionalLight::Update(Shader* shader)
     shader->SetUniformVec3("u_DirectionalLight.specular",  m_Specular);
     shader->SetUniformVec3("u_DirectionalLight.direction", m_Direction);
 }
+
+void DirectionalLight::SetDirection(glm::vec3 &direction)
+{
+    m_Direction = direction;
+}

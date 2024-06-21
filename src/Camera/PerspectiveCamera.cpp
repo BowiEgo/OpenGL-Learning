@@ -4,7 +4,7 @@
 #include "KeyCodes.h"
 
 PerspectiveCamera::PerspectiveCamera(const float position[3], const float target[3], float fov, float aspectRatio, float near, float far)
-    : m_FOV(fov), m_AspectRatio(aspectRatio), m_Near(near), m_Far(far), m_Type(CameraType::Perspective)
+    : m_FOV(fov), m_AspectRatio(aspectRatio), m_Type(CameraType::Perspective)
 {
     if (position)
     {
@@ -23,6 +23,9 @@ PerspectiveCamera::PerspectiveCamera(const float position[3], const float target
     {
         m_CameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
     }
+
+    m_Near = near;
+    m_Far = far;
 
     Init();
     Input::DisableCursor();
