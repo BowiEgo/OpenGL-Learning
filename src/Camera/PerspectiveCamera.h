@@ -15,6 +15,14 @@ public:
         float near = 0.1f,
         float far = 100.0f
     );
+    PerspectiveCamera(
+        const glm::vec3 position,
+        const glm::vec3 target,
+        float fov = 45.0f,
+        float aspectRatio = WINDOW_WIDTH / WINDOW_HEIGHT,
+        float near = 0.1f,
+        float far = 100.0f
+    );
     ~PerspectiveCamera();
 
     virtual inline CameraType GetType() const override { return m_Type; };

@@ -3,6 +3,8 @@
 #include "pch.h"
 #include "Core/Renderer.h"
 
+#include "Texture.h"
+
 struct TextureOptions {
     GLint minFilter = GL_NEAREST;
     GLint magFilter = GL_LINEAR;
@@ -11,7 +13,7 @@ struct TextureOptions {
     bool flip = true;
 };
 
-class Texture2D
+class Texture2D : public Texture
 {
 public:
     Texture2D(const std::string& type, const unsigned int rendererID);
@@ -25,15 +27,15 @@ public:
     // static unsigned int Create(const std::string& type, const std::string& path, const TextureOptions& options = TextureOptions());
     static Texture2D* CreateVoidTexture(const std::string& type);
 
-    void Bind(unsigned int slot = 0) const;
-    void Unbind() const;
+    virtual void Bind(unsigned int slot = 0) const override;
+    virtual void Unbind() const override;
 
-    void SetWrapping(GLenum pname, GLint param) const;
+    virtual void SetWrapping(GLenum pname, GLint param) const override;
 
-    inline int GetWidth() const { return m_Width; }
-    inline int GetHeight() const { return m_Height; }
-    inline unsigned int GetID() const { return m_RendererID; }
-    inline std::string GetType() const { return m_Type; }
+    virtual inline int GetWidth() const override { return m_Width; }
+    virtual inline int GetHeight() const override { return m_Height; }
+    virtual inline unsigned int GetID() const override { return m_RendererID; }
+    virtual inline std::string GetType() const override { return m_Type; }
     inline std::string GetFilePath() const { return m_FilePath; }
 private:
     TextureOptions m_Options;

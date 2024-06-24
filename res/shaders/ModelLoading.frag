@@ -23,6 +23,8 @@ uniform sampler2D u_Texture_Specular2;
 uniform sampler2D u_Texture_Normal1;
 uniform sampler2D u_Texture_Height1;
 uniform sampler2D u_Texture_ShadowMap1;
+uniform samplerCube u_Texture_CubeShadowMap1;
+uniform float u_Far;
 
 uniform samplerCube u_Texture_Environment;
 uniform bool u_Is_EnvironmentTexture_Valid;
@@ -120,6 +122,36 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
     return shadow;
 }
 
+float PointShadowCalculation(vec3 fragPos, vec3 lightPos, float viewDistance)
+{
+    vec3 fragToLight = fragPos - lightPos; 
+    float currentDepth = length(fragToLight);
+
+    vec3 sampleOffsetDirections[20] = vec3[]
+    (
+      vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1), 
+        vec3( 1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1,  1, -1),
+      vec3( 1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),
+      vec3( 1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),
+      vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
+    );
+
+    float shadow = 0.0;
+    float bias = 0.15;
+    int samples = 20;
+    float diskRadius = (1.0 + (viewDistance / u_Far)) / 25.0;
+    for(int i = 0; i < samples; ++i)
+    {
+        float closestDepth = texture(u_Texture_CubeShadowMap1, fragToLight + sampleOffsetDirections[i] * diskRadius).r;
+        closestDepth *= u_Far;   // Undo mapping [0;1]
+        if(currentDepth - bias > closestDepth)
+            shadow += 1.0;
+    }
+    shadow /= float(samples);
+
+    return shadow;
+}
+
 vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
     if (!light.enable)
@@ -152,7 +184,7 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     return (ambient + (1.0 - shadow) * (diffuse + specular));
 }
 
-vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, float viewDistance)
 {
     if (!light.enable)
     {
@@ -182,11 +214,13 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 ambient  = light.ambient  * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
     vec3 diffuse  = light.diffuse  * diff * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
     vec3 specular = light.specular * spec * texture(u_Texture_Specular1, v_TexCoords).rgb;
+    // shadow
+    float shadow = PointShadowCalculation(fs_in.FragPosition, light.position, viewDistance);
 
     ambient  *= attenuation;
     diffuse  *= attenuation;
     specular *= attenuation;
-    return (ambient + diffuse + specular);
+    return (1.0 - shadow * attenuation) * (ambient + (diffuse + specular));
 }
 
 vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
@@ -237,6 +271,7 @@ void main()
     vec3 pointLights = vec3(0.0);
 
     vec3 viewDirection = normalize(u_CameraPosition - v_FragPosition);
+    float viewDistance = length(u_CameraPosition - v_FragPosition);
 
     // Environment mapping
     if (u_Is_EnvironmentTexture_Valid)
@@ -258,7 +293,7 @@ void main()
     vec3 spotight =         calcSpotLight(u_SpotLight, v_Normal, v_FragPosition, viewDirection);
 
     for(int i = 0; i < u_NR_PointLights; i++)
-        pointLights += calcPointLight(u_PointLights[i], v_Normal, v_FragPosition, viewDirection);
+        pointLights += calcPointLight(u_PointLights[i], v_Normal, v_FragPosition, viewDirection, viewDistance);
 
 
     final += directionalLight + pointLights + spotight;
@@ -274,4 +309,10 @@ void main()
         alpha = 1.0;
 
     FragColor = vec4(final, alpha);
+
+    // vec3 fragToLight = v_FragPosition - u_PointLights[0].position; 
+    // float closestDepth = texture(u_Texture_CubeShadowMap1, fragToLight).r;
+    // closestDepth *= u_Far;
+    // FragColor = vec4(vec3(closestDepth / u_Far), 1.0);
+    // FragColor = vec4(vec3(texture(u_Texture_CubeShadowMap1, fragToLight).r), 1.0);
 }

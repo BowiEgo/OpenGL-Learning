@@ -13,23 +13,24 @@ public:
     PointLight(const glm::vec3& position);
 
     inline bool*  GetIsEnabled() { return &m_IsEnabled; }
-    inline float* GetPositions() { return m_Position; }
+    inline glm::vec3& GetPositions() { return m_Position; }
     inline float* GetAmbient()   { return m_Ambient; }
     inline float* GetDiffuse()   { return m_Diffuse; }
     inline float* GetSpecular()  { return m_Specular; }
 
     void SetEnabled(bool& value);
-    void SetPositions(float position[3]);
-    void SetPositions(glm::vec3& position);
+    void SetPosition(float position[3]);
+    void SetPosition(glm::vec3& position);
+    void SetAmbient(const std::array<float, 3>& ambient);
 
     virtual void SetID(unsigned int id) override;
     virtual void Update(Shader* shader) override;
 private:
     unsigned int m_RendererID;
     bool m_IsEnabled = true;
-    float m_Position[3] = { 0.0f, 0.0f, 0.0f };
+    glm::vec3 m_Position = glm::vec3(0.0f);
 
-    float m_Ambient[3] = { 0.05f, 0.05f, 0.05f },
+    float m_Ambient[3] = { 0.2f, 0.2f, 0.2f },
           m_Diffuse[3] = { 0.5f, 0.5f, 0.5f },
           m_Specular[3] = { 1.0f, 1.0f, 1.0f };
 };

@@ -31,6 +31,19 @@ PerspectiveCamera::PerspectiveCamera(const float position[3], const float target
     Input::DisableCursor();
 }
 
+PerspectiveCamera::PerspectiveCamera(const glm::vec3 position, const glm::vec3 target, float fov, float aspectRatio, float near, float far)
+    : m_FOV(fov), m_AspectRatio(aspectRatio), m_Type(CameraType::Perspective)
+{
+    m_CameraPos = position;
+    m_CameraTarget = target;
+
+    m_Near = near;
+    m_Far = far;
+
+    Init();
+    Input::DisableCursor();
+}
+
 PerspectiveCamera::~PerspectiveCamera()
 {
     Input::EnableCursor();

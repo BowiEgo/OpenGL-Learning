@@ -56,7 +56,7 @@ void StandardMaterial::BindGeometryShader(const std::string& filepath)
     }
 }
 
-void StandardMaterial::AddTexture(Ref<Texture2D> texture)
+void StandardMaterial::AddTexture(Ref<Texture> texture)
 {
     if (texture->GetType().find("Diffuse") != std::string::npos)
     {
@@ -76,7 +76,10 @@ void StandardMaterial::AddTexture(Ref<Texture2D> texture)
     }
     else if (texture->GetType().find("ShadowMap") != std::string::npos)
     {
-        m_ShadowMap_Textures.push_back(texture);
+        if (dynamic_cast<Texture2D*>(texture.get()))
+            m_ShadowMap_Textures.push_back(texture);
+        else if (dynamic_cast<TextureCubemap*>(texture.get()))
+            m_CubeShadowMap_Textures.push_back(texture);
     }
 }
 
@@ -161,6 +164,7 @@ void StandardMaterial::BindTextures() const
     unsigned int normalNr = m_Normal_Textures.size();
     unsigned int heightNr = m_Height_Textures.size();
     unsigned int shadowMapNr = m_ShadowMap_Textures.size();
+    unsigned int cubeShadowMapNr = m_CubeShadowMap_Textures.size();
 
     unsigned int slot;
 
@@ -251,7 +255,27 @@ void StandardMaterial::BindTextures() const
         }
     }
 
-    unsigned int allNr = diffuseNr + specularNr + normalNr + heightNr + shadowMapNr;
+    slot = diffuseNr + specularNr + normalNr + heightNr + shadowMapNr;
+    if (cubeShadowMapNr == 0)
+    {
+        // Scene::GetVoidTexture2D()->Bind(slot);
+        // m_Shader->SetUniform(("u_Texture_Height1"), slot);
+        // cubeShadowMapNr = 1;
+        Scene::GetVoidTextureCubemap()->Bind(slot);
+        m_Shader->SetUniform("u_Texture_CubeShadowMap1", slot);
+        slot++;
+    }
+    else
+    {
+        for (unsigned int i = 0; i < cubeShadowMapNr; i++)
+        {
+            slot += i;
+            m_CubeShadowMap_Textures[i]->Bind(slot);
+            m_Shader->SetUniform("u_Texture_CubeShadowMap" + std::to_string(i + 1), slot);
+        }
+    }
+
+    unsigned int allNr = diffuseNr + specularNr + normalNr + heightNr + shadowMapNr + cubeShadowMapNr + 1;
     if (Scene::GetSkybox() != nullptr)
     {
         dynamic_cast<CubemapMaterial*>(Scene::GetSkybox()->GetMaterial().get())->BindTexture(allNr);

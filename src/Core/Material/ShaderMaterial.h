@@ -2,7 +2,7 @@
 
 #include "Material.h"
 
-#include "Core/Texture2D.h"
+#include "Core/Texture.h"
 
 class ShaderMaterial : public Material
 {
@@ -11,6 +11,7 @@ public:
     ~ShaderMaterial() {};
 
     inline unsigned int GetType() const override { return m_Type; }
+    inline Shader* GetShader() const { return m_Shader.get(); }
 
     void AddTexture(Ref<Texture2D> texture);
     void SetTextures(std::vector<Ref<Texture2D>> textures);

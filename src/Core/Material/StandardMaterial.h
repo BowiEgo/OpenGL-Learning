@@ -18,7 +18,7 @@ public:
     void BindVertexShader(const std::string& filepath);
     void BindFragmentShader(const std::string& filepath);
     void BindGeometryShader(const std::string& filepath);
-    void AddTexture(Ref<Texture2D> texture);
+    void AddTexture(Ref<Texture> texture);
     void SetTextures(std::vector<Ref<Texture2D>> textures);
     void SetEnvironmentReflectiveRate(const float& rate);
     void SetEnvironmentRefractiveRate(const float& rate);
@@ -37,11 +37,12 @@ private:
     std::string m_VertSrc, m_FragSrc, m_GeomSrc = "";
     unsigned int m_Type = MATERIAL_TYPE_STANDARD;
     Ref<Shader> m_Shader;
-    std::vector<Ref<Texture2D>> m_Diffuse_Textures;
-    std::vector<Ref<Texture2D>> m_Specular_Textures;
-    std::vector<Ref<Texture2D>> m_Normal_Textures;
-    std::vector<Ref<Texture2D>> m_Height_Textures;
-    std::vector<Ref<Texture2D>> m_ShadowMap_Textures;
+    std::vector<Ref<Texture>> m_Diffuse_Textures;
+    std::vector<Ref<Texture>> m_Specular_Textures;
+    std::vector<Ref<Texture>> m_Normal_Textures;
+    std::vector<Ref<Texture>> m_Height_Textures;
+    std::vector<Ref<Texture>> m_ShadowMap_Textures;
+    std::vector<Ref<Texture>> m_CubeShadowMap_Textures;
     Ref<TextureCubemap> m_Env_Texture;
 
     float m_MaterialShininess = 32.0f, m_MaterialEmmisionStength = 1.0f;

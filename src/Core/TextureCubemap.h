@@ -3,6 +3,8 @@
 #include "pch.h"
 #include "Core/Renderer.h"
 
+#include "Texture.h"
+
 struct TextureCubemapOptions {
     GLint wrapS = GL_CLAMP_TO_EDGE;
     GLint wrapT = GL_CLAMP_TO_EDGE;
@@ -12,26 +14,28 @@ struct TextureCubemapOptions {
     bool flip = false;
 };
 
-class TextureCubemap
+class TextureCubemap : public Texture
 {
 public:
     TextureCubemap(const std::string& type, const unsigned int rendererID);
+    TextureCubemap(const std::string& type, int width, int height, const TextureCubemapOptions& options = TextureCubemapOptions());
     TextureCubemap(const std::string& type, const std::vector<std::string> facePaths, const TextureCubemapOptions& options = TextureCubemapOptions());
     ~TextureCubemap();
 
     void SetupTextureCubemap(const std::vector<std::string> facePaths, const TextureCubemapOptions& options = TextureCubemapOptions());
+    void SetupDepthCubemap(const TextureCubemapOptions& options = TextureCubemapOptions());
 
     static TextureCubemap* CreateVoidTexture(const std::string& type);
 
-    void Bind(unsigned int slot = 0) const;
-    void Unbind() const;
+    virtual void Bind(unsigned int slot = 0) const override;
+    virtual void Unbind() const override;
 
-    void SetWrapping(GLenum pname, GLint param) const;
+    virtual void SetWrapping(GLenum pname, GLint param) const override;
 
-    inline int GetWidth() const { return m_Width; }
-    inline int GetHeight() const { return m_Height; }
-    inline unsigned int GetID() const { return m_RendererID; }
-    inline std::string GetType() const { return m_Type; }
+    virtual inline int GetWidth() const override { return m_Width; }
+    virtual inline int GetHeight() const override { return m_Height; }
+    virtual inline unsigned int GetID() const override { return m_RendererID; }
+    virtual inline std::string GetType() const override { return m_Type; }
     inline std::vector<std::string> GetFilePaths() const { return m_FilePaths; }
 private:
     TextureCubemapOptions m_Options;

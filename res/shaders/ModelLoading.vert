@@ -44,5 +44,5 @@ void main()
     vs_out.FragPosition = vec3(modelPosition);
     vs_out.Normal = a_Normal;
     vs_out.TexCoords = a_TexCoords;
-    vs_out.FragPosLightSpace = u_LightSpaceMatrix * vec4(vs_out.FragPosition, 1.0);
+    vs_out.FragPosLightSpace = u_LightSpaceMatrix * vec4(vs_out.FragPosition, 1.0); // use for directional light
 }

@@ -29,7 +29,8 @@ using UniformValue = std::variant<
     glm::vec3,
     glm::vec4,
     glm::mat3,
-    glm::mat4
+    glm::mat4,
+    std::vector<glm::mat4>
 >;
 
 class Shader
@@ -48,6 +49,7 @@ public:
     static void UpdateMatricesProj(const glm::mat4& projection);
     static void UpdateMatricesView(const glm::mat4& view);
 
+    inline uint32_t GetID() const { return m_RendererID; };
     // Set uniforms
     void SetUniformBool(const std::string& name, bool value);
     void SetUniform1i(const std::string& name, int value);
@@ -62,6 +64,7 @@ public:
     void SetUniformVec4(const std::string& name, const glm::vec4& vector);
     void SetUniformMat3(const std::string& name, const glm::mat3& matrix);
     void SetUniformMat4(const std::string& name, const glm::mat4& matrix);
+    void SetUniformMat4V(const std::string& name, const std::vector<glm::mat4>& array);
     void SetUniform(const std::string& name, const UniformValue& value);
 private:
     static void InitializeUniformBuffer();

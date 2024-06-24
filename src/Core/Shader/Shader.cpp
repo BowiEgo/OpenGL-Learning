@@ -129,6 +129,11 @@ void Shader::SetUniformMat4(const std::string& name, const glm::mat4& matrix)
     GLCall(glUniformMatrix4fv(GetUniformLoaction(name), 1, GL_FALSE, &matrix[0][0]));
 }
 
+void Shader::SetUniformMat4V(const std::string& name, const std::vector<glm::mat4>& array)
+{
+    GLCall(glUniformMatrix4fv(GetUniformLoaction(name), array.size(), GL_FALSE, &array[0][0][0]));
+}
+
 void Shader::SetUniform(const std::string& name, const UniformValue& value)
 {
     std::visit([&](auto&& arg) {
@@ -159,6 +164,8 @@ void Shader::SetUniform(const std::string& name, const UniformValue& value)
             SetUniformMat3(name, arg);
         } else if constexpr (std::is_same_v<T, glm::mat4>) {
             SetUniformMat4(name, arg);
+        } else if constexpr (std::is_same_v<T, std::vector<glm::mat4>>) {
+            SetUniformMat4V(name, arg);
         }
     }, value);
 }
