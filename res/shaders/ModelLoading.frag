@@ -7,6 +7,7 @@ out vec4 FragColor;
 in vec3 v_FragPosition;
 in vec3 v_Normal;
 in vec2 v_TexCoords;
+in vec4 v_FragPosLightSpace;
 
 in VS_OUT {
     vec3 FragPosition;
@@ -25,6 +26,7 @@ uniform sampler2D u_Texture_Height1;
 uniform sampler2D u_Texture_ShadowMap1;
 uniform samplerCube u_Texture_CubeShadowMap1;
 uniform float u_Far;
+uniform bool u_Shadow_Enabled;
 
 uniform samplerCube u_Texture_Environment;
 uniform bool u_Is_EnvironmentTexture_Valid;
@@ -179,7 +181,9 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     vec3 diffuse  = light.diffuse  * diff * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
     vec3 specular = light.specular * spec * texture(u_Texture_Specular1, v_TexCoords).rgb;
     // shadow
-    float shadow = ShadowCalculation(fs_in.FragPosLightSpace, normal, lightDir);
+    float shadow = 0.0;
+    if (u_Shadow_Enabled)
+        shadow = ShadowCalculation(v_FragPosLightSpace, normal, lightDir);
  
     return (ambient + (1.0 - shadow) * (diffuse + specular));
 }
@@ -215,7 +219,9 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, f
     vec3 diffuse  = light.diffuse  * diff * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
     vec3 specular = light.specular * spec * texture(u_Texture_Specular1, v_TexCoords).rgb;
     // shadow
-    float shadow = PointShadowCalculation(fs_in.FragPosition, light.position, viewDistance);
+    float shadow = 0.0;
+    if (u_Shadow_Enabled)
+        shadow = PointShadowCalculation(v_FragPosition, light.position, viewDistance);
 
     ambient  *= attenuation;
     diffuse  *= attenuation;
@@ -309,10 +315,4 @@ void main()
         alpha = 1.0;
 
     FragColor = vec4(final, alpha);
-
-    // vec3 fragToLight = v_FragPosition - u_PointLights[0].position; 
-    // float closestDepth = texture(u_Texture_CubeShadowMap1, fragToLight).r;
-    // closestDepth *= u_Far;
-    // FragColor = vec4(vec3(closestDepth / u_Far), 1.0);
-    // FragColor = vec4(vec3(texture(u_Texture_CubeShadowMap1, fragToLight).r), 1.0);
 }

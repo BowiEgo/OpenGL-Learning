@@ -40,6 +40,8 @@ namespace test {
         std::vector<Ref<Mesh>> m_Mesh_Boxes;
         Ref<Model> m_Model_Michelle;
 
+        bool m_Shadow_Enabled = true;
+
         Ref<DepthMapFBO> m_DepthMapFBO;
         Ref<Mesh> m_Mesh_Screen;
 

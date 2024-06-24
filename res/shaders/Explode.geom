@@ -6,11 +6,13 @@ in VS_OUT {
     vec3 FragPosition;
     vec3 Normal;
     vec2 TexCoords;
+    vec4 FragPosLightSpace;
 } gs_in[];
 
 out vec3 v_FragPosition;
 out vec3 v_Normal;
 out vec2 v_TexCoords;
+out vec4 v_FragPosLightSpace;
 
 uniform float u_ExplodeProgress;
 uniform float u_Time;
@@ -38,18 +40,21 @@ void main()
     v_FragPosition = gs_in[0].FragPosition;
     v_Normal = gs_in[0].Normal;
     v_TexCoords = gs_in[0].TexCoords;
+    v_FragPosLightSpace = gs_in[0].FragPosLightSpace;
     EmitVertex();
 
     gl_Position = Explode(gl_in[1].gl_Position, normal);
     v_FragPosition = gs_in[1].FragPosition;
     v_Normal = gs_in[1].Normal;
     v_TexCoords = gs_in[1].TexCoords;
+    v_FragPosLightSpace = gs_in[1].FragPosLightSpace;
     EmitVertex();
 
     gl_Position = Explode(gl_in[2].gl_Position, normal);
     v_FragPosition = gs_in[2].FragPosition;
     v_Normal = gs_in[2].Normal;
     v_TexCoords = gs_in[2].TexCoords;
+    v_FragPosLightSpace = gs_in[2].FragPosLightSpace;
     EmitVertex();
 
     EndPrimitive();

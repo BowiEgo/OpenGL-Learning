@@ -229,16 +229,19 @@ namespace test {
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
         m_Scene->SetCurrentCamera(m_Viewport_Camera);
         OnViewPortResize();
+        m_Material_Wood->UpdateShaderUniform("u_Shadow_Enabled", m_Shadow_Enabled);
         m_Material_Wood->UpdateShaderUniform("u_LightSpaceMatrix", m_DepthMap_Camera->GetProjMatrix() * m_DepthMap_Camera->GetViewMatrix()); // add lightSpaceMatrix to shader
         m_Mesh_Floor->SetMaterial(m_Material_Wood);
         for (auto mesh : m_Mesh_Boxes)
         {
+            m_Material_Container->UpdateShaderUniform("u_Shadow_Enabled", m_Shadow_Enabled);
             m_Material_Container->UpdateShaderUniform("u_LightSpaceMatrix", m_DepthMap_Camera->GetProjMatrix() * m_DepthMap_Camera->GetViewMatrix()); // add lightSpaceMatrix to shader
             mesh->SetMaterial(m_Material_Container);
             mesh->Cull_Face = CULL_FACE_BACK;
         }
         for (auto mesh : m_Model_Michelle->GetMeshes())
         {
+            m_Material_Container->UpdateShaderUniform("u_Shadow_Enabled", m_Shadow_Enabled);
             m_Material_Container->UpdateShaderUniform("u_LightSpaceMatrix", m_DepthMap_Camera->GetProjMatrix() * m_DepthMap_Camera->GetViewMatrix()); // add lightSpaceMatrix to shader
             mesh->Cull_Face = CULL_FACE_BACK;
         }
@@ -251,5 +254,6 @@ namespace test {
     void TestShadowMapping::OnImGuiRender()
     {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::Bullet();ImGui::Text("Shadow");ImGui::SameLine();ImGui::ToggleButton("DirectionalShadow", &m_Shadow_Enabled);
     }
 }

@@ -35,6 +35,8 @@ namespace test {
 
         Ref<PointLight> m_PointLight;
 
+        bool m_Shadow_Enabled = true;
+
         Ref<ShaderMaterial> m_Material_DepthMap;
         Ref<StandardMaterial> m_Material_Wood, m_Material_Container;
 

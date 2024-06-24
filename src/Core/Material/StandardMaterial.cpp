@@ -166,11 +166,10 @@ void StandardMaterial::BindTextures() const
     unsigned int shadowMapNr = m_ShadowMap_Textures.size();
     unsigned int cubeShadowMapNr = m_CubeShadowMap_Textures.size();
 
-    unsigned int slot;
+    unsigned int slot = 0;
 
     if (diffuseNr == 0)
     {
-        slot = 0;
         Scene::GetVoidTexture2D()->Bind(slot);
         m_Shader->SetUniform("u_Texture_Diffuse1", slot);
         diffuseNr = 1;
@@ -179,13 +178,12 @@ void StandardMaterial::BindTextures() const
     {
         for (unsigned int i = 0; i < diffuseNr; i++)
         {
-            slot = i;
             m_Diffuse_Textures[i]->Bind(slot);
             m_Shader->SetUniform("u_Texture_Diffuse" + std::to_string(i + 1), slot);
+            slot++;
         }
     }
 
-    slot = diffuseNr;
     if (specularNr == 0)
     {
         // Scene::GetVoidTexture2D()->Bind(slot);
@@ -197,13 +195,12 @@ void StandardMaterial::BindTextures() const
         for (unsigned int i = 0; i < specularNr; i++)
         {
            
-            slot += i;
             m_Specular_Textures[i]->Bind(slot);
             m_Shader->SetUniform("u_Texture_Specular" + std::to_string(i + 1), slot);
+            slot++;
         }
     }
 
-    slot = diffuseNr + specularNr;
     if (normalNr == 0)
     {
         // Scene::GetVoidTexture2D()->Bind(slot);
@@ -215,13 +212,12 @@ void StandardMaterial::BindTextures() const
         for (unsigned int i = 0; i < normalNr; i++)
         {
            
-            slot += i;
             m_Normal_Textures[i]->Bind(slot);
             m_Shader->SetUniform("u_Texture_Normal" + std::to_string(i + 1), slot);
+            slot++;
         }
     }
 
-    slot = diffuseNr + specularNr + normalNr;
     if (heightNr == 0)
     {
         // Scene::GetVoidTexture2D()->Bind(slot);
@@ -235,15 +231,18 @@ void StandardMaterial::BindTextures() const
             slot += i;
             m_Height_Textures[i]->Bind(slot);
             m_Shader->SetUniform("u_Texture_Height" + std::to_string(i + 1), slot);
+            slot++;
         }
     }
 
-    slot = diffuseNr + specularNr + normalNr + heightNr;
     if (shadowMapNr == 0)
     {
         // Scene::GetVoidTexture2D()->Bind(slot);
         // m_Shader->SetUniform(("u_Texture_Height1"), slot);
         // shadowMapNr = 1;
+        Scene::GetVoidTextureCubemap()->Bind(slot);
+        m_Shader->SetUniform("u_Texture_ShadowMap1", slot);
+        slot++;
     }
     else
     {
@@ -252,10 +251,10 @@ void StandardMaterial::BindTextures() const
             slot += i;
             m_ShadowMap_Textures[i]->Bind(slot);
             m_Shader->SetUniform("u_Texture_ShadowMap" + std::to_string(i + 1), slot);
+            slot++;
         }
     }
 
-    slot = diffuseNr + specularNr + normalNr + heightNr + shadowMapNr;
     if (cubeShadowMapNr == 0)
     {
         // Scene::GetVoidTexture2D()->Bind(slot);
@@ -269,19 +268,18 @@ void StandardMaterial::BindTextures() const
     {
         for (unsigned int i = 0; i < cubeShadowMapNr; i++)
         {
-            slot += i;
             m_CubeShadowMap_Textures[i]->Bind(slot);
             m_Shader->SetUniform("u_Texture_CubeShadowMap" + std::to_string(i + 1), slot);
+            slot++;
         }
     }
 
-    unsigned int allNr = diffuseNr + specularNr + normalNr + heightNr + shadowMapNr + cubeShadowMapNr + 1;
     if (Scene::GetSkybox() != nullptr)
     {
-        dynamic_cast<CubemapMaterial*>(Scene::GetSkybox()->GetMaterial().get())->BindTexture(allNr);
-        m_Shader->SetUniform("u_Texture_Environment", allNr);
+        dynamic_cast<CubemapMaterial*>(Scene::GetSkybox()->GetMaterial().get())->BindTexture(slot);
+        m_Shader->SetUniform("u_Texture_Environment", slot);
     } else {
-        Scene::GetVoidTextureCubemap()->Bind(allNr);
-        m_Shader->SetUniform("u_Texture_Environment", allNr);
+        Scene::GetVoidTextureCubemap()->Bind(slot);
+        m_Shader->SetUniform("u_Texture_Environment", slot);
     }
 }

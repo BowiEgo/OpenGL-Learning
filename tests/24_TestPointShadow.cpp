@@ -227,10 +227,12 @@ namespace test {
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
         m_Scene->SetCurrentCamera(m_Viewport_Camera);
         OnViewPortResize();
+        m_Material_Wood->UpdateShaderUniform("u_Shadow_Enabled", m_Shadow_Enabled);
         m_Material_Wood->UpdateShaderUniform("u_Far", m_Far);
         m_Mesh_Room->SetMaterial(m_Material_Wood);
         for (auto mesh : m_Mesh_Boxes)
         {
+            m_Material_Container->UpdateShaderUniform("u_Shadow_Enabled", m_Shadow_Enabled);
             m_Material_Container->UpdateShaderUniform("u_Far", m_Far);
             mesh->SetMaterial(m_Material_Container);
             mesh->Cull_Face = CULL_FACE_BACK;
@@ -243,5 +245,6 @@ namespace test {
     void TestPointShadow::OnImGuiRender()
     {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::Bullet();ImGui::Text("Shadow");ImGui::SameLine();ImGui::ToggleButton("PointShadow", &m_Shadow_Enabled);
     }
 }
