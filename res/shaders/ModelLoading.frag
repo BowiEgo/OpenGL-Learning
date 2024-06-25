@@ -8,6 +8,9 @@ in vec3 v_FragPosition;
 in vec3 v_Normal;
 in vec2 v_TexCoords;
 in vec4 v_FragPosLightSpace;
+in mat3 v_TBN;
+in vec3 v_TangentCamPos;
+in vec3 v_TangentFragPos;
 
 in VS_OUT {
     vec3 FragPosition;
@@ -27,6 +30,7 @@ uniform sampler2D u_Texture_ShadowMap1;
 uniform samplerCube u_Texture_CubeShadowMap1;
 uniform float u_Far;
 uniform bool u_Shadow_Enabled;
+uniform bool u_NormalMapping_Enabled;
 
 uniform samplerCube u_Texture_Environment;
 uniform bool u_Is_EnvironmentTexture_Valid;
@@ -195,7 +199,11 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, f
         return vec3(0.0);
     }
 
-    vec3 lightDir = normalize(light.position - fragPos);
+    vec3 lightPos = light.position;
+    if (u_NormalMapping_Enabled)
+        lightPos = v_TBN * lightPos;
+
+    vec3 lightDir = normalize(lightPos - fragPos);
 
     float diff = max(dot(normal, lightDir), 0.0);
 
@@ -211,7 +219,7 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, f
         spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Material.shininess);
     }
 
-    float distance    = length(light.position - fragPos);
+    float distance    = length(lightPos - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + 
                  light.quadratic * (distance * distance));
 
@@ -221,7 +229,7 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, f
     // shadow
     float shadow = 0.0;
     if (u_Shadow_Enabled)
-        shadow = PointShadowCalculation(v_FragPosition, light.position, viewDistance);
+        shadow = PointShadowCalculation(fragPos, lightPos, viewDistance);
 
     ambient  *= attenuation;
     diffuse  *= attenuation;
@@ -236,7 +244,11 @@ vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
         return vec3(0.0);
     }
 
-    vec3 lightDir = normalize(light.position - fragPos);
+    vec3 lightPos = light.position;
+    if (u_NormalMapping_Enabled)
+        lightPos = v_TBN * lightPos;
+
+    vec3 lightDir = normalize(lightPos - fragPos);
 
     // Intensity
     float theta = dot(lightDir, normalize(-light.direction));
@@ -257,7 +269,7 @@ vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
         spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Material.shininess);
     }
 
-    float distance    = length(light.position - fragPos);
+    float distance    = length(lightPos - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + 
                  light.quadratic * (distance * distance));
 
@@ -275,17 +287,33 @@ void main()
 {
     vec3 final = vec3(0.0);
     vec3 pointLights = vec3(0.0);
+    vec3 normal = v_Normal;
+    vec3 camPos = u_CameraPosition;
+    vec3 fragPos = v_FragPosition;
 
-    vec3 viewDirection = normalize(u_CameraPosition - v_FragPosition);
-    float viewDistance = length(u_CameraPosition - v_FragPosition);
+    if (u_NormalMapping_Enabled)
+    {
+        vec3 texNormal;
+        texNormal = texture(u_Texture_Normal1, v_TexCoords).rgb;
+        texNormal = normalize(texNormal * 2.0 - 1.0);
+
+        if (texNormal != vec3(0.0))
+            normal = texNormal;
+
+        camPos = v_TangentCamPos;
+        fragPos = v_TangentFragPos;
+    }
+
+    vec3 viewDirection = normalize(camPos - fragPos);
+    float viewDistance = length(camPos - fragPos);
 
     // Environment mapping
     if (u_Is_EnvironmentTexture_Valid)
     {
         float ratio = 1.00 / u_Env_Refractive_Index;
         vec3 I = -viewDirection;
-        vec3 reflectDir = reflect(I, normalize(v_Normal));
-        vec3 refractDir = refract(I, normalize(v_Normal), ratio);
+        vec3 reflectDir = reflect(I, normalize(normal));
+        vec3 refractDir = refract(I, normalize(normal), ratio);
 
         vec3 reflection = texture(u_Texture_Height1, v_TexCoords).rgb * texture(u_Texture_Environment, reflectDir).rgb;
         vec3 refraction = texture(u_Texture_Environment, refractDir).rgb;
@@ -295,11 +323,11 @@ void main()
     }
 
     // Lighting
-    vec3 directionalLight = calcDirLight(u_DirectionalLight, v_Normal, viewDirection);
-    vec3 spotight =         calcSpotLight(u_SpotLight, v_Normal, v_FragPosition, viewDirection);
+    vec3 directionalLight = calcDirLight(u_DirectionalLight, normal, viewDirection);
+    vec3 spotight =         calcSpotLight(u_SpotLight, normal, fragPos, viewDirection);
 
     for(int i = 0; i < u_NR_PointLights; i++)
-        pointLights += calcPointLight(u_PointLights[i], v_Normal, v_FragPosition, viewDirection, viewDistance);
+        pointLights += calcPointLight(u_PointLights[i], normal, fragPos, viewDirection, viewDistance);
 
 
     final += directionalLight + pointLights + spotight;

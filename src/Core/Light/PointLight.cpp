@@ -19,11 +19,11 @@ void PointLight::SetEnabled(bool& value)
     m_IsEnabled = value;
 }
 
-void PointLight::SetPosition(float position[3])
+void PointLight::SetPosition(const std::array<float, 3>& position)
 {
-    m_Position.x = position[0];
-    m_Position.y = position[1];
-    m_Position.z = position[2];
+    m_Position[0] = position[0];
+    m_Position[1] = position[1];
+    m_Position[2] = position[2];
 }
 
 void PointLight::SetPosition(glm::vec3 &position)

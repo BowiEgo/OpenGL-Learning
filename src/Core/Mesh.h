@@ -88,7 +88,7 @@ protected:
 
     glm::vec3 m_Position = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 m_Scale = glm::vec3(1.0f, 1.0f, 1.0f);
-    std::pair<float, glm::vec3> m_Rotation = { 0.0, glm::vec3(0.0, 0.0, 1.0) };
+    std::pair<float, glm::vec3> m_Rotation = { glm::radians(0.0), glm::vec3(0.0, 0.0, 1.0) };
 
     float m_Outline_Width = 1.0f;
     glm::vec3 m_Outline_Color = glm::vec3(0.7647f, 0.9294f, 0.9137f);

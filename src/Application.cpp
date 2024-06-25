@@ -36,6 +36,7 @@
 #include "../tests/22_TestBlinnPhong.h"
 #include "../tests/23_TestShadowMapping.h"
 #include "../tests/24_TestPointShadow.h"
+#include "../tests/25_TestNormalMapping.h"
 
 void RenderUI()
 {
@@ -159,6 +160,7 @@ int main(void)
     testMenu->RegisterTest<test::TestBlinnPhong>("BlinnPhong");
     testMenu->RegisterTest<test::TestShadowMapping>("ShadowMapping");
     testMenu->RegisterTest<test::TestPointShadow>("PointShadow");
+    testMenu->RegisterTest<test::TestNormalMapping>("NormalMapping");
 
     // test::TestClearColor test;
 

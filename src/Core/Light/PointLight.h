@@ -19,8 +19,9 @@ public:
     inline float* GetSpecular()  { return m_Specular; }
 
     void SetEnabled(bool& value);
-    void SetPosition(float position[3]);
+    void SetPosition(const std::array<float, 3>& position);
     void SetPosition(glm::vec3& position);
+    void SetPosition(glm::vec3* position);
     void SetAmbient(const std::array<float, 3>& ambient);
 
     virtual void SetID(unsigned int id) override;
