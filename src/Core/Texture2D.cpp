@@ -51,6 +51,11 @@ void Texture2D::SetupTexture2D(const std::string &path, const TextureOptions &op
         internalFormat = GL_RGB8;
         dataFormat = GL_RGB;
     }
+    else if (m_Channels == 1)
+    {
+        internalFormat = GL_RED;
+        dataFormat = GL_RED;
+    }
 
     CORE_INFO("{0}, {1}, {2}, {3}, {4}, {5}",path, m_Channels, internalFormat, m_Width, m_Height, dataFormat);
     GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, dataFormat, GL_UNSIGNED_BYTE, m_LocalBuffer));

@@ -31,6 +31,8 @@ uniform samplerCube u_Texture_CubeShadowMap1;
 uniform float u_Far;
 uniform bool u_Shadow_Enabled;
 uniform bool u_NormalMapping_Enabled;
+uniform bool u_ParallaxMapping_Enabled;
+uniform float u_Height_Scale;
 
 uniform samplerCube u_Texture_Environment;
 uniform bool u_Is_EnvironmentTexture_Valid;
@@ -105,6 +107,47 @@ uniform bool u_Is_Opaque;
 
 uniform bool u_Blinn_Enabled;
 
+vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
+{ 
+    const float minLayers = 8;
+    const float maxLayers = 150;
+    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));
+    // calculate the size of each layer
+    float layerDepth = 1.0 / numLayers;
+    // depth of current layer
+    float currentLayerDepth = 0.0;
+    // the amount to shift the texture coordinates per layer (from vector P)
+    vec2 P = viewDir.xy * u_Height_Scale; 
+    vec2 deltaTexCoords = P / numLayers;
+
+    // get initial values
+    vec2  currentTexCoords     = texCoords;
+    float currentDepthMapValue = 1.0 - texture(u_Texture_Height1, currentTexCoords).r;
+
+    while(currentLayerDepth < currentDepthMapValue)
+    {
+        // shift texture coordinates along direction of P
+        currentTexCoords -= deltaTexCoords;
+        // get depthmap value at current texture coordinates
+        currentDepthMapValue = 1.0 - texture(u_Texture_Height1, currentTexCoords).r;  
+        // get depth of next layer
+        currentLayerDepth += layerDepth;  
+    }
+
+    // get texture coordinates before collision (reverse operations)
+    vec2 prevTexCoords = currentTexCoords + deltaTexCoords;
+
+    // get depth after and before collision for linear interpolation
+    float afterDepth  = currentDepthMapValue - currentLayerDepth;
+    float beforeDepth = texture(u_Texture_Height1, prevTexCoords).r - currentLayerDepth + layerDepth;
+
+    // interpolation of texture coordinates
+    float weight = afterDepth / (afterDepth - beforeDepth);
+    vec2 finalTexCoords = prevTexCoords * weight + currentTexCoords * (1.0 - weight);
+
+    return finalTexCoords;
+}
+
 float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir)
 {
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -158,7 +201,7 @@ float PointShadowCalculation(vec3 fragPos, vec3 lightPos, float viewDistance)
     return shadow;
 }
 
-vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
+vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
 {
     if (!light.enable)
     {
@@ -181,9 +224,9 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
         spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Material.shininess);
     }
 
-    vec3 ambient  = light.ambient  * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
-    vec3 diffuse  = light.diffuse  * diff * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
-    vec3 specular = light.specular * spec * texture(u_Texture_Specular1, v_TexCoords).rgb;
+    vec3 ambient  = light.ambient  * texture(u_Texture_Diffuse1, texCoords).rgb;
+    vec3 diffuse  = light.diffuse  * diff * texture(u_Texture_Diffuse1, texCoords).rgb;
+    vec3 specular = light.specular * spec * texture(u_Texture_Specular1, texCoords).rgb;
     // shadow
     float shadow = 0.0;
     if (u_Shadow_Enabled)
@@ -192,7 +235,7 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     return (ambient + (1.0 - shadow) * (diffuse + specular));
 }
 
-vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, float viewDistance)
+vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, float viewDistance, vec2 texCoords)
 {
     if (!light.enable)
     {
@@ -223,9 +266,9 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, f
     float attenuation = 1.0 / (light.constant + light.linear * distance + 
                  light.quadratic * (distance * distance));
 
-    vec3 ambient  = light.ambient  * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
-    vec3 diffuse  = light.diffuse  * diff * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
-    vec3 specular = light.specular * spec * texture(u_Texture_Specular1, v_TexCoords).rgb;
+    vec3 ambient  = light.ambient  * texture(u_Texture_Diffuse1, texCoords).rgb;
+    vec3 diffuse  = light.diffuse  * diff * texture(u_Texture_Diffuse1, texCoords).rgb;
+    vec3 specular = light.specular * spec * texture(u_Texture_Specular1, texCoords).rgb;
     // shadow
     float shadow = 0.0;
     if (u_Shadow_Enabled)
@@ -237,7 +280,7 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, f
     return (1.0 - shadow * attenuation) * (ambient + (diffuse + specular));
 }
 
-vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoords)
 {
     if (!light.enable)
     {
@@ -273,9 +316,9 @@ vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float attenuation = 1.0 / (light.constant + light.linear * distance + 
                  light.quadratic * (distance * distance));
 
-    vec3 ambient  = light.ambient  * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
-    vec3 diffuse  = light.diffuse  * diff * texture(u_Texture_Diffuse1, v_TexCoords).rgb;
-    vec3 specular = light.specular * spec * texture(u_Texture_Specular1, v_TexCoords).rgb;
+    vec3 ambient  = light.ambient  * texture(u_Texture_Diffuse1, texCoords).rgb;
+    vec3 diffuse  = light.diffuse  * diff * texture(u_Texture_Diffuse1, texCoords).rgb;
+    vec3 specular = light.specular * spec * texture(u_Texture_Specular1, texCoords).rgb;
 
     ambient  *= (attenuation * intensity);
     diffuse  *= (attenuation * intensity);
@@ -287,14 +330,24 @@ void main()
 {
     vec3 final = vec3(0.0);
     vec3 pointLights = vec3(0.0);
+    vec2 texCoords = v_TexCoords;
     vec3 normal = v_Normal;
     vec3 camPos = u_CameraPosition;
     vec3 fragPos = v_FragPosition;
+    vec3 viewDirection;
+    float viewDistance;
+
+    if (u_ParallaxMapping_Enabled)
+    {
+        texCoords = ParallaxMapping(texCoords, normalize(v_TangentCamPos - v_TangentFragPos));
+        if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
+            discard;
+    }
 
     if (u_NormalMapping_Enabled)
     {
         vec3 texNormal;
-        texNormal = texture(u_Texture_Normal1, v_TexCoords).rgb;
+        texNormal = texture(u_Texture_Normal1, texCoords).rgb;
         texNormal = normalize(texNormal * 2.0 - 1.0);
 
         if (texNormal != vec3(0.0))
@@ -304,8 +357,8 @@ void main()
         fragPos = v_TangentFragPos;
     }
 
-    vec3 viewDirection = normalize(camPos - fragPos);
-    float viewDistance = length(camPos - fragPos);
+    viewDirection = normalize(camPos - fragPos);
+    viewDistance = length(camPos - fragPos);
 
     // Environment mapping
     if (u_Is_EnvironmentTexture_Valid)
@@ -315,7 +368,7 @@ void main()
         vec3 reflectDir = reflect(I, normalize(normal));
         vec3 refractDir = refract(I, normalize(normal), ratio);
 
-        vec3 reflection = texture(u_Texture_Height1, v_TexCoords).rgb * texture(u_Texture_Environment, reflectDir).rgb;
+        vec3 reflection = texture(u_Texture_Height1, texCoords).rgb * texture(u_Texture_Environment, reflectDir).rgb;
         vec3 refraction = texture(u_Texture_Environment, refractDir).rgb;
 
         final += mix(vec3(0.0), reflection, u_Env_Reflective_Rate);
@@ -323,11 +376,11 @@ void main()
     }
 
     // Lighting
-    vec3 directionalLight = calcDirLight(u_DirectionalLight, normal, viewDirection);
-    vec3 spotight =         calcSpotLight(u_SpotLight, normal, fragPos, viewDirection);
+    vec3 directionalLight = calcDirLight(u_DirectionalLight, normal, viewDirection, texCoords);
+    vec3 spotight =         calcSpotLight(u_SpotLight, normal, fragPos, viewDirection, texCoords);
 
     for(int i = 0; i < u_NR_PointLights; i++)
-        pointLights += calcPointLight(u_PointLights[i], normal, fragPos, viewDirection, viewDistance);
+        pointLights += calcPointLight(u_PointLights[i], normal, fragPos, viewDirection, viewDistance, texCoords);
 
 
     final += directionalLight + pointLights + spotight;
@@ -335,7 +388,7 @@ void main()
         // final += directionalLight + pointLights + spotight;
 
     // Alpha
-    float alpha = texture(u_Texture_Diffuse1, v_TexCoords).a;
+    float alpha = texture(u_Texture_Diffuse1, texCoords).a;
     if (u_Discard_Transparent && alpha < 0.1)
         discard;
     

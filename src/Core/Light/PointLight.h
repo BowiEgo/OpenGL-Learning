@@ -31,7 +31,7 @@ private:
     bool m_IsEnabled = true;
     glm::vec3 m_Position = glm::vec3(0.0f);
 
-    float m_Ambient[3] = { 0.2f, 0.2f, 0.2f },
+    float m_Ambient[3] = { 0.02f, 0.02f, 0.02f },
           m_Diffuse[3] = { 0.5f, 0.5f, 0.5f },
           m_Specular[3] = { 1.0f, 1.0f, 1.0f };
 };
