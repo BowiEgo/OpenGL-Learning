@@ -38,6 +38,7 @@
 #include "../tests/24_TestPointShadow.h"
 #include "../tests/25_TestNormalMapping.h"
 #include "../tests/26_TestParallaxMapping.h"
+#include "../tests/27_TestHDR.h"
 
 void RenderUI()
 {
@@ -163,6 +164,7 @@ int main(void)
     testMenu->RegisterTest<test::TestPointShadow>("PointShadow");
     testMenu->RegisterTest<test::TestNormalMapping>("NormalMapping");
     testMenu->RegisterTest<test::TestParallaxMapping>("ParallaxMapping");
+    testMenu->RegisterTest<test::TestHDR>("HDR");
 
     // test::TestClearColor test;
 

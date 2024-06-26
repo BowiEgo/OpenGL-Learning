@@ -11,6 +11,7 @@ struct FramebufferSpecification
     uint32_t Samples = 1;
 
     bool SwapChainTarget = false;
+    bool HDR = false;
 };
 
 

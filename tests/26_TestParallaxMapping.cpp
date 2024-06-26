@@ -90,7 +90,9 @@ namespace test {
         m_Mesh_Wall->GetMaterial()->UpdateShaderUniform("u_Height_Scale", m_Height_Scale);
         m_Mesh_Wall->SetRotation({ glm::radians(m_Rotate_Wall), glm::vec3(1.0f, 0.0f, 0.0f) });
         m_PointLight->SetPosition(m_LightPos);
+        m_PointLight->SetColor(m_LightColor);
         m_Mesh_lightCube->SetPosition(m_LightPos);
+        dynamic_cast<BasicMaterial*>(m_Mesh_lightCube->GetMaterial().get())->SetColor(m_LightColor);
 
         m_Scene->Draw();
     }
@@ -101,6 +103,7 @@ namespace test {
         ImGui::Bullet();ImGui::Text("ParallaxMapping");ImGui::SameLine();ImGui::ToggleButton("ParallaxMapping", &m_ParallaxMapping_Enabled);
         ImGui::SliderFloat("HeightScale##ParallaxMapping", &m_Height_Scale, 0.0f, 1.0f);
         ImGui::SliderFloat3("Position##PointLight", glm::value_ptr(m_LightPos), -5.0f, 5.0f);
+        ImGui::ColorEdit4("Color##PointLight", glm::value_ptr(m_LightColor));
         ImGui::SliderFloat("Rotation##Wall", &m_Rotate_Wall, -90.0f, 90.0f);
     }
 }

@@ -38,6 +38,18 @@ void PointLight::SetAmbient(const std::array<float, 3>& ambient)
     m_Ambient[2] = ambient[2];
 }
 
+void PointLight::SetColor(const std::array<float, 3> &color)
+{
+    m_Color[0] = color[0];
+    m_Color[1] = color[1];
+    m_Color[2] = color[2];
+}
+
+void PointLight::SetColor(glm::vec3 &color)
+{
+    m_Color = color;
+}
+
 void PointLight::SetID(unsigned int id)
 {
     m_RendererID = id;
@@ -53,6 +65,7 @@ void PointLight::Update(Shader* shader)
     shader->SetUniformVec3((uniformBase + "diffuse").c_str(),   m_Diffuse);
     shader->SetUniformVec3((uniformBase + "specular").c_str(),  m_Specular);
     shader->SetUniformVec3((uniformBase + "position").c_str(),  m_Position);
+    shader->SetUniformVec3((uniformBase + "color").c_str(),     m_Color);
     shader->  SetUniform1f((uniformBase + "constant").c_str(),  1.0f);
     shader->  SetUniform1f((uniformBase + "linear").c_str(),    0.09f);
     shader->  SetUniform1f((uniformBase + "quadratic").c_str(), 0.032f);

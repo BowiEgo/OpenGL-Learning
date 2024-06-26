@@ -21,8 +21,9 @@ public:
     void SetEnabled(bool& value);
     void SetPosition(const std::array<float, 3>& position);
     void SetPosition(glm::vec3& position);
-    void SetPosition(glm::vec3* position);
     void SetAmbient(const std::array<float, 3>& ambient);
+    void SetColor(const std::array<float, 3>& color);
+    void SetColor(glm::vec3& color);
 
     virtual void SetID(unsigned int id) override;
     virtual void Update(Shader* shader) override;
@@ -34,4 +35,6 @@ private:
     float m_Ambient[3] = { 0.02f, 0.02f, 0.02f },
           m_Diffuse[3] = { 0.5f, 0.5f, 0.5f },
           m_Specular[3] = { 1.0f, 1.0f, 1.0f };
+
+    glm::vec3 m_Color = glm::vec3(1.0f);
 };

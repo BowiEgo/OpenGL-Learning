@@ -19,26 +19,25 @@
 
 #include "Core/Material/BasicMaterial.h"
 
+#include "Postprocessing.h"
+
 namespace test {
-    class TestParallaxMapping : public Test
+    class TestHDR : public Test
     {
     public:
-        TestParallaxMapping(GLFWwindow* window);
-        ~TestParallaxMapping();
+        TestHDR(GLFWwindow* window);
+        ~TestHDR();
 
         void OnUpdate(float deltaTime) override;
         void OnRender() override;
         void OnImGuiRender() override;
     private:
-        Ref<PointLight> m_PointLight;
-        glm::vec3 m_LightPos = glm::vec3(0.0f, 1.0f, 1.0f);
-        glm::vec3 m_LightColor = glm::vec3(1.0f);
-        Ref<Mesh> m_Mesh_lightCube;
+        std::vector<Ref<PointLight>> m_PointLights;
+        std::vector<Ref<Mesh>> m_Mesh_LightCubes;
+        Ref<Mesh> m_Mesh_Cube;
 
-        bool m_ParallaxMapping_Enabled = true;
-        float m_Height_Scale = 0.1f;
-
-        Ref<Mesh> m_Mesh_Wall;
-        float m_Rotate_Wall = 0.0f;
+        Ref<Postprocessing> m_Postprocessing_HDR;
+        float m_Exposure = 0.5f;
+        float m_ScreenSplit_X = 0.5f;
     };
 }

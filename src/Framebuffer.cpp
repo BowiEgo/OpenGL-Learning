@@ -38,7 +38,14 @@ void Framebuffer::Invalidate()
     if (m_Specification.Samples == 1)
     {
         GLCall(glBindTexture(GL_TEXTURE_2D, m_ColorAttachment));
-        GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Specification.Width, m_Specification.Height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
+        if (m_Specification.HDR)
+        {
+            GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, m_Specification.Width, m_Specification.Height, 0, GL_RGB, GL_FLOAT, NULL));
+        }
+        else
+        {
+            GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Specification.Width, m_Specification.Height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
+        }
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
         GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0));	// we only need a color buffer
@@ -46,7 +53,14 @@ void Framebuffer::Invalidate()
     else
     {
         GLCall(glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_ColorAttachment));
-        GLCall(glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, m_Specification.Width, m_Specification.Height, GL_TRUE));
+        if (m_Specification.HDR)
+        {
+            GLCall(glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB16F, m_Specification.Width, m_Specification.Height, GL_TRUE));
+        }
+        else
+        {
+            GLCall(glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, m_Specification.Width, m_Specification.Height, GL_TRUE));
+        }
         GLCall(glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0));
         GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, m_ColorAttachment, 0));
     }
