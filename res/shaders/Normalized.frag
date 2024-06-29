@@ -1,5 +1,6 @@
 #version 330 core
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 BrightColor;
   
 in vec2 v_TexCoords;
 
@@ -39,6 +40,7 @@ void main()
 {
     vec3 final = vec3(0.0);
     vec3 screenTexture = vec3(texture(u_Texture_Diffuse1, v_TexCoords));
+    final = screenTexture;
 
     if (u_Normalized_Type == NORMALIZED_TYPE_INVERSION)
     {

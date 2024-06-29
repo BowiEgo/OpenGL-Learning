@@ -18,6 +18,11 @@
 
 #include "Log.h"
 
+template<typename T, size_t N>
+constexpr size_t ArrayLength(const T (&)[N]) {
+    return N;
+}
+
 template<typename T>
 using Scope = std::unique_ptr<T>;
 

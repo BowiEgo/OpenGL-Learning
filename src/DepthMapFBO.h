@@ -15,7 +15,7 @@ public:
     void Unbind();
 
     uint32_t GetID() const { return m_RendererID; }
-    uint32_t GetColorAttachmentRendererID() const { return m_ColorAttachment; }
+    uint32_t GetColorAttachmentID() const { return m_ColorAttachment; }
     uint32_t GetDepthMapID() const { return m_DepthAttachment; }
     const FramebufferSpecification& GetSpecification() const { return m_Specification; }
 

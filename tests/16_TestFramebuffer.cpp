@@ -160,7 +160,7 @@ namespace test {
         // Framebuffer plane
         // --------------------
         // texture
-        uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+        uint32_t textureID = m_Framebuffer->GetColorAttachments()[0];
         Ref<Texture2D> diffuseTexture_mirror = std::make_shared<Texture2D>("Texture_Diffuse", textureID);
         // shader
         std::string normalizedVertSrc = FileSystem::ReadFile("../res/shaders/Normalized.vert");

@@ -8,64 +8,40 @@ std::shared_ptr<Framebuffer> Framebuffer::Create(const FramebufferSpecification&
     return std::make_shared<Framebuffer>(spec);
 }
 
-Framebuffer::Framebuffer(const FramebufferSpecification & spec)
-    : m_Specification(spec)
+void Framebuffer::GenColorAttachment()
 {
-    Invalidate();
-}
-
-Framebuffer::~Framebuffer()
-{
-    GLCall(glDeleteFramebuffers(1, &m_RendererID));
-    GLCall(glDeleteTextures(1, &m_ColorAttachment));
-    GLCall(glDeleteRenderbuffers(1, &m_DepthAttachment));
-}
-
-void Framebuffer::Invalidate()
-{
-    if (m_RendererID)
+    GLCall(glGenTextures(2, m_ColorAttachments));
+    for (unsigned int i = 0; i < 2; i++)
     {
-        GLCall(glDeleteFramebuffers(1, &m_RendererID));
-        GLCall(glDeleteTextures(1, &m_ColorAttachment));
-        GLCall(glDeleteRenderbuffers(1, &m_DepthAttachment));
-    }
-
-    GLCall(glGenFramebuffers(1, &m_RendererID));
-    GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID));
-
-    // Create color attachment
-    GLCall(glGenTextures(1, &m_ColorAttachment));
-    if (m_Specification.Samples == 1)
-    {
-        GLCall(glBindTexture(GL_TEXTURE_2D, m_ColorAttachment));
-        if (m_Specification.HDR)
-        {
-            GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, m_Specification.Width, m_Specification.Height, 0, GL_RGB, GL_FLOAT, NULL));
-        }
-        else
-        {
-            GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Specification.Width, m_Specification.Height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
-        }
+        glBindTexture(GL_TEXTURE_2D, m_ColorAttachments[i]);
+        GLenum internalFormat = m_Specification.HDR ? GL_RGB16 : GL_RGB, dataFormat = GL_RGB;
+        GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Specification.Width, m_Specification.Height, 0, dataFormat, GL_FLOAT, NULL));
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-        GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0));	// we only need a color buffer
+        GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_ColorAttachments[i], 0));	// we only need a color buffer
     }
-    else
-    {
-        GLCall(glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_ColorAttachment));
-        if (m_Specification.HDR)
-        {
-            GLCall(glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB16F, m_Specification.Width, m_Specification.Height, GL_TRUE));
-        }
-        else
-        {
-            GLCall(glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, m_Specification.Width, m_Specification.Height, GL_TRUE));
-        }
-        GLCall(glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0));
-        GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, m_ColorAttachment, 0));
-    }
+    GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    GLCall(glDrawBuffers(2, attachments));
+}
 
-    // Create depth attachment
+void Framebuffer::GenMultisamplesColorAttachment()
+{
+   
+    GLCall(glGenTextures(2, m_ColorAttachments));
+    for (unsigned int i = 0; i < 2; i++)
+    {
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_ColorAttachments[i]);
+        GLenum internalFormat = m_Specification.HDR ? GL_RGB16 : GL_RGB, dataFormat = GL_RGB;
+        GLCall(glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, internalFormat, m_Specification.Width, m_Specification.Height, GL_TRUE));
+        GLCall(glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0));
+        GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D_MULTISAMPLE, m_ColorAttachments[i], 0));	// we only need a color buffer
+    }
+    GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    GLCall(glDrawBuffers(2, attachments));
+}
+
+void Framebuffer::GenDepthAttachment()
+{
     GLCall(glGenRenderbuffers(1, &m_DepthAttachment));
     GLCall(glBindRenderbuffer(GL_RENDERBUFFER, m_DepthAttachment));
     if (m_Specification.Samples == 1)
@@ -77,7 +53,45 @@ void Framebuffer::Invalidate()
         GLCall(glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_Specification.Samples, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height));
     }
     GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthAttachment));
-    GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0)); // Unbind renderbuffer once
+    GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
+
+}
+
+Framebuffer::Framebuffer(const FramebufferSpecification & spec)
+    : m_Specification(spec)
+{
+    Invalidate();
+}
+
+Framebuffer::~Framebuffer()
+{
+    GLCall(glDeleteFramebuffers(1, &m_RendererID));
+    GLCall(glDeleteTextures(2, m_ColorAttachments));
+    GLCall(glDeleteRenderbuffers(1, &m_DepthAttachment));
+}
+
+void Framebuffer::Invalidate()
+{
+    if (m_RendererID)
+    {
+        GLCall(glDeleteFramebuffers(1, &m_RendererID));
+        GLCall(glDeleteTextures(2, m_ColorAttachments));
+        GLCall(glDeleteRenderbuffers(1, &m_DepthAttachment));
+    }
+
+    GLCall(glGenFramebuffers(1, &m_RendererID));
+    GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID));
+
+    if (m_Specification.Samples > 1)
+    {
+        GenMultisamplesColorAttachment();
+    }
+    else
+    {
+        GenColorAttachment();
+    }
+
+    GenDepthAttachment();
 
     CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 
@@ -87,7 +101,6 @@ void Framebuffer::Invalidate()
 
 void Framebuffer::Bind()
 {
-    // GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID));
     GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, m_RendererID));
     GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_RendererID));
     GLCall(glBlitFramebuffer(0, 0, m_Specification.Width, m_Specification.Height, 0, 0, m_Specification.Width, m_Specification.Height, GL_COLOR_BUFFER_BIT, GL_NEAREST));

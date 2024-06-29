@@ -11,7 +11,7 @@ Postprocessing::Postprocessing()
     fbSpec.HDR = true;
     m_Framebuffer = Framebuffer::Create(fbSpec);
     // texture
-    uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+    uint32_t textureID = m_Framebuffer->GetColorAttachments()[0];
     m_Texture = std::make_shared<Texture2D>("Texture_Diffuse", textureID);
     // shader
     std::string normalizedVertSrc = FileSystem::ReadFile("../res/shaders/Postprocessing.vert");

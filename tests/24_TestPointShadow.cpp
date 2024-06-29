@@ -104,7 +104,7 @@ namespace test {
         std::string screenFragSrc = FileSystem::ReadFile("../res/shaders/DepthMap_Screen.frag");
         Ref<Shader> shader_screen = std::make_shared<Shader>(screenVertSrc, screenFragSrc);
         // texture
-        Ref<TextureCubemap> diffuseTexture_screen = std::make_shared<TextureCubemap>("Texture_Diffuse", m_DepthMapFBO->GetColorAttachmentRendererID());
+        Ref<TextureCubemap> diffuseTexture_screen = std::make_shared<TextureCubemap>("Texture_Diffuse", m_DepthMapFBO->GetColorAttachmentID());
         // material
         Ref<ShaderMaterial> material_screen = std::make_shared<ShaderMaterial>(shader_screen);
         // material_screen->AddTexture("Texture_Diffuse", diffuseTexture_screen);

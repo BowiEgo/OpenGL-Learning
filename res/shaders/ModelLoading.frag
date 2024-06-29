@@ -2,7 +2,8 @@
 
 #define MAX_LIGHTS 10
 
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 BrightColor;
 
 in vec3 v_FragPosition;
 in vec3 v_Normal;
@@ -107,6 +108,9 @@ uniform bool u_Discard_Transparent;
 uniform bool u_Is_Opaque;
 
 uniform bool u_Blinn_Enabled;
+
+uniform float u_Split_CoordX;
+uniform float u_Exposure;
 
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
 { 
@@ -383,8 +387,9 @@ void main()
     for(int i = 0; i < u_NR_PointLights; i++)
         pointLights += calcPointLight(u_PointLights[i], normal, fragPos, viewDirection, viewDistance, texCoords);
 
+    vec3 light = directionalLight + pointLights + spotight;
 
-    final += directionalLight + pointLights + spotight;
+    final += light;
     // if (gl_FragCoord.x < u_Split_CoordX)
         // final += directionalLight + pointLights + spotight;
 
@@ -392,9 +397,17 @@ void main()
     float alpha = texture(u_Texture_Diffuse1, texCoords).a;
     if (u_Discard_Transparent && alpha < 0.1)
         discard;
-    
+
     if (u_Is_Opaque)
         alpha = 1.0;
 
+    // final
     FragColor = vec4(final, alpha);
+
+    BrightColor = vec4(vec3(0.0), 1.0);
+    float brightness = dot(FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+    if(brightness > 1.0)
+    {
+        BrightColor = vec4(FragColor.rgb, 1.0);
+    }
 }

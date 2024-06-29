@@ -39,6 +39,7 @@
 #include "../tests/25_TestNormalMapping.h"
 #include "../tests/26_TestParallaxMapping.h"
 #include "../tests/27_TestHDR.h"
+#include "../tests/28_TestBloom.h"
 
 void RenderUI()
 {
@@ -165,6 +166,7 @@ int main(void)
     testMenu->RegisterTest<test::TestNormalMapping>("NormalMapping");
     testMenu->RegisterTest<test::TestParallaxMapping>("ParallaxMapping");
     testMenu->RegisterTest<test::TestHDR>("HDR");
+    testMenu->RegisterTest<test::TestBloom>("Bloom");
 
     // test::TestClearColor test;
 
@@ -179,12 +181,14 @@ int main(void)
     fbSpec.Width = 1280;
     fbSpec.Height = 720;
     fbSpec.Samples = std::min(samples, maxSamples);
+    fbSpec.HDR = true;
     std::shared_ptr<Framebuffer> m_Framebuffer = FramebufferManager::CreateFramebuffer("viewport", fbSpec);
 
     FramebufferSpecification nonMultisample_fbSpec;
     nonMultisample_fbSpec.Width = 1280;
     nonMultisample_fbSpec.Height = 720;
     nonMultisample_fbSpec.Samples = 1;
+    nonMultisample_fbSpec.HDR = true;
     std::shared_ptr<Framebuffer> m_Non_Multisample_Framebuffer = FramebufferManager::CreateFramebuffer("nonMultisample_viewport", nonMultisample_fbSpec);
 
     auto backTestMenu = [&]()
@@ -271,7 +275,7 @@ int main(void)
             test::UpdateViewportSize(viewportPanelSize.x, viewportPanelSize.y);
             currentTest->OnViewPortResize();
         }
-        uint32_t textureID = m_Non_Multisample_Framebuffer->GetColorAttachmentRendererID();
+        uint32_t textureID = m_Non_Multisample_Framebuffer->GetColorAttachments()[0];
         ImGui::Image((void*)(uintptr_t)textureID, ImVec2{ test::GetViewportSize().x, test::GetViewportSize().y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
         ImGui::End();
         ImGui::PopStyleVar();
