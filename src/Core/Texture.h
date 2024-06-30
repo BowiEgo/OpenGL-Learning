@@ -3,8 +3,6 @@
 #include "pch.h"
 #include "Core/Renderer.h"
 
-
-
 class Texture
 {
 public:

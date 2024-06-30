@@ -13,6 +13,11 @@ void ShaderMaterial::AddTexture(Ref<Texture2D> texture)
     m_Textures.push_back(texture);
 }
 
+void ShaderMaterial::AddTexture(const std::string &name, const Ref<Texture2D> texture)
+{
+    m_Named_Textures.push_back({ name, texture });
+}
+
 void ShaderMaterial::SetTextures(std::vector<Ref<Texture2D>> textures)
 {
     m_Textures = textures;
@@ -36,6 +41,12 @@ void ShaderMaterial::UpdateShader(const glm::vec3& position, const glm::vec3& sc
 
     m_Shader->SetUniform("u_CameraPosition", Scene::GetCurrentCamera()->GetPosition());
 
+    for (unsigned int i = 0; i < Scene::GetPointLights().size(); i++)
+    {
+        m_Shader->SetUniform("u_NR_PointLights", (int)Scene::GetPointLights().size());
+        Scene::GetPointLights()[i]->Update(m_Shader.get());
+    }
+
     unsigned int diffuseNr = 1;
 
     for (unsigned int i = 0; i < m_Textures.size(); i++)
@@ -48,6 +59,15 @@ void ShaderMaterial::UpdateShader(const glm::vec3& position, const glm::vec3& sc
             number = std::to_string(diffuseNr++);
 
         m_Shader->SetUniform(("u_" + type + number).c_str(), i);
+    }
+
+    for (unsigned int i = 0; i < m_Named_Textures.size(); i++)
+    {
+        std::string name = m_Named_Textures[i].first;
+        Ref<Texture2D> texture = m_Named_Textures[i].second;
+        texture->Bind(i);
+
+        m_Shader->SetUniform((name).c_str(), i);
     }
 }
 

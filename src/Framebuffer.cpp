@@ -54,7 +54,6 @@ void Framebuffer::GenDepthAttachment()
     }
     GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthAttachment));
     GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
-
 }
 
 Framebuffer::Framebuffer(const FramebufferSpecification & spec)

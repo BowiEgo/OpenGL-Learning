@@ -14,6 +14,7 @@ public:
     inline Shader* GetShader() const { return m_Shader.get(); }
 
     void AddTexture(Ref<Texture2D> texture);
+    void AddTexture(const std::string& name, const Ref<Texture2D> texture);
     void SetTextures(std::vector<Ref<Texture2D>> textures);
 
     virtual void BindShader() const override;
@@ -23,4 +24,5 @@ private:
     unsigned int m_Type = MATERIAL_TYPE_SHADER;
     Ref<Shader> m_Shader;
     std::vector<Ref<Texture2D>> m_Textures;
+    std::vector<std::pair<std::string, Ref<Texture2D>>> m_Named_Textures;
 };

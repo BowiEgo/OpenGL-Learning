@@ -65,6 +65,7 @@ public:
     void DrawOutline();
     void DrawOutline(const glm::vec3& position, const glm::vec3& scale, const std::pair<float, glm::vec3>* rotation);
 public:
+    bool DepthTest_Enabled = true;
     bool Is_Transparent = false;
     bool Outline_Enabled = false;
     bool Outline_DrawType = OUTLINE_DRAWTYPE_SCALE;

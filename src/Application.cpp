@@ -3,7 +3,7 @@
 
 #include "Log.h"
 #include "Core/Renderer.h"
-#include "Framebuffer.h"
+#include "Core/Framebuffer/FramebufferNew.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -40,6 +40,7 @@
 #include "../tests/26_TestParallaxMapping.h"
 #include "../tests/27_TestHDR.h"
 #include "../tests/28_TestBloom.h"
+#include "../tests/29_TestDeferredShading.h"
 
 void RenderUI()
 {
@@ -167,6 +168,7 @@ int main(void)
     testMenu->RegisterTest<test::TestParallaxMapping>("ParallaxMapping");
     testMenu->RegisterTest<test::TestHDR>("HDR");
     testMenu->RegisterTest<test::TestBloom>("Bloom");
+    testMenu->RegisterTest<test::TestDeferredShading>("DeferredShading");
 
     // test::TestClearColor test;
 

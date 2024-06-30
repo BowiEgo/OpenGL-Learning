@@ -14,7 +14,6 @@ struct FramebufferSpecification
     bool HDR = false;
 };
 
-
 class Framebuffer
 {
 public:

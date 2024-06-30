@@ -1,6 +1,6 @@
 #version 330 core
 
-#define MAX_LIGHTS 10
+#define MAX_LIGHTS 32
 
 layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec4 BrightColor;

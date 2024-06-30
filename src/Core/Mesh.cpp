@@ -161,7 +161,14 @@ void Mesh::Draw(const glm::vec3& position, const glm::vec3& scale, const std::pa
         break;
     }
 
-    GLCall(glEnable(GL_DEPTH_TEST));
+    if (DepthTest_Enabled)
+    {
+        GLCall(glEnable(GL_DEPTH_TEST));
+    }
+    else
+    {
+        GLCall(glDisable(GL_DEPTH_TEST));
+    }
 
     GLCall(glStencilMask(0x00));
 
