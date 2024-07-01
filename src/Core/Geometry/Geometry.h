@@ -13,4 +13,5 @@ public:
 	virtual ~Geometry() {};
 
     virtual std::vector<Vertex>* GetVertex() = 0;
+	virtual std::vector<unsigned int>* GetIndices() = 0;
 };

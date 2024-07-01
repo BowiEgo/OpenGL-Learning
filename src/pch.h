@@ -16,6 +16,7 @@
 #include <unordered_set>
 #include <initializer_list>
 
+#include "Constants.h"
 #include "Log.h"
 
 template<typename T, size_t N>

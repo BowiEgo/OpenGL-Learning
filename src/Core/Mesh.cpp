@@ -10,6 +10,8 @@ Mesh::Mesh(std::shared_ptr<Geometry> geometry, std::shared_ptr<Material> materia
 {
     std::vector<Vertex>* vr = geometry->GetVertex();
     m_Vertices = std::vector<Vertex>(vr->begin(), vr->end());
+    std::vector<unsigned int>* vi = geometry->GetIndices();
+    m_Indices = std::vector<unsigned int>(vi->begin(), vi->end());
     Setup();
 }
 

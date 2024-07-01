@@ -41,6 +41,7 @@
 #include "../tests/27_TestHDR.h"
 #include "../tests/28_TestBloom.h"
 #include "../tests/29_TestDeferredShading.h"
+#include "../tests/31_TestPBR.h"
 
 void RenderUI()
 {
@@ -169,6 +170,7 @@ int main(void)
     testMenu->RegisterTest<test::TestHDR>("HDR");
     testMenu->RegisterTest<test::TestBloom>("Bloom");
     testMenu->RegisterTest<test::TestDeferredShading>("DeferredShading");
+    testMenu->RegisterTest<test::TestPBR>("PBR");
 
     // test::TestClearColor test;
 
