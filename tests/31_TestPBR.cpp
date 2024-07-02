@@ -30,7 +30,7 @@ namespace test {
         // Camera
         // --------------------
         m_Camera = std::make_shared<PerspectiveCamera>();
-        m_Camera->SetPosition({ -8.0f, 5.0f, 20.0f });
+        m_Camera->SetPosition({ 0.0f, 0.0f, 24.0f });
         m_Scene->Add(m_Camera);
         // --------------------
         // Light
@@ -59,7 +59,21 @@ namespace test {
         // --------------------
         // Spheres
         // --------------------
+        // geometry
         Ref<SphereGeometry> geometry_sphere = std::make_shared<SphereGeometry>(1.0f, 64, 64);
+        // textures
+        std::vector<std::vector<Ref<Texture2D>>> PBR_Texture_Boundle;
+        for (int i = 0; i < m_PBR_Textures.size(); i++) {
+            PBR_Texture_Boundle.push_back({
+                std::make_shared<Texture2D>("Texture_Albedo", "../res/textures/" + m_PBR_Textures[i] + "/albedo.png"),
+                std::make_shared<Texture2D>("Texture_Normal", "../res/textures/" + m_PBR_Textures[i] + "/normal.png"),
+                std::make_shared<Texture2D>("Texture_Metallic", "../res/textures/" + m_PBR_Textures[i] + "/metallic.png"),
+                std::make_shared<Texture2D>("Texture_Roughness", "../res/textures/" + m_PBR_Textures[i] + "/roughness.png"),
+                std::make_shared<Texture2D>("Texture_AO", "../res/textures/" + m_PBR_Textures[i] + "/ao.png"),
+            });
+        }
+
+        // shader
         std::string vertSrc = FileSystem::ReadFile("../res/shaders/ModelLoading.vert");
         std::string fragSrc = FileSystem::ReadFile("../res/shaders/PBR.frag");
 
@@ -73,13 +87,22 @@ namespace test {
                 Ref<Shader> shader_sphere = std::make_shared<Shader>(vertSrc, fragSrc);
                 Ref<ShaderMaterial> material_sphere = std::make_shared<ShaderMaterial>(shader_sphere);
                 material_sphere->UpdateShaderUniform("u_Metallic", (float)row / (float)nrRows);
-                material_sphere->UpdateShaderUniform("u_Albedo", glm::vec3(0.5f, 0.0f, 0.0f));
-                material_sphere->UpdateShaderUniform("u_AO", 1.0f);
+                material_sphere->UpdateShaderUniform("u_Albedo",   glm::vec3(0.5f, 0.0f, 0.0f));
+                material_sphere->UpdateShaderUniform("u_AO",       1.0f);
                 // we clamp the roughness to 0.05 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look a bit off
                 // on direct lighting.
                 material_sphere->UpdateShaderUniform("u_Roughness", glm::clamp((float)col / (float)nrColumns, 0.05f, 1.0f));
+        
+                if (row < PBR_Texture_Boundle.size())
+                {
+                    material_sphere->AddTexture("albedoMap", PBR_Texture_Boundle[row][0]);
+                    material_sphere->AddTexture("normalMap", PBR_Texture_Boundle[row][1]);
+                    material_sphere->AddTexture("metallicMap", PBR_Texture_Boundle[row][2]);
+                    material_sphere->AddTexture("roughnessMap", PBR_Texture_Boundle[row][3]);
+                    material_sphere->AddTexture("aoMap", PBR_Texture_Boundle[row][4]);
+                }
                 Ref<Mesh> mesh_sphere = std::make_shared<Mesh>(geometry_sphere, material_sphere);
-                
+
                 mesh_sphere->SetPosition(glm::vec3(
                     (col - (nrColumns / 2)) * spacing, 
                     (row - (nrRows / 2)) * spacing, 
@@ -108,6 +131,9 @@ namespace test {
         GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
+        for (auto mesh : m_Sphere_Meshes) {
+            mesh->GetMaterial()->UpdateShaderUniform("u_Map_Disabled", m_Map_Disabled);
+        }
         m_Scene->Draw();
     }
 
@@ -115,5 +141,7 @@ namespace test {
     {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::Text("CameraPosition %.3f, %.3f, %.3f", m_Camera->GetPosition().x, m_Camera->GetPosition().y, m_Camera->GetPosition().z);
+
+        ImGui::Bullet();ImGui::Text("TextureMapping");ImGui::SameLine();ImGui::ToggleButton("TextureMapping", &m_Map_Disabled);
     }
 }

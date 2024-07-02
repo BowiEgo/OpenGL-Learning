@@ -16,6 +16,14 @@ uniform float u_Metallic;
 uniform float u_Roughness;
 uniform float u_AO;
 
+uniform bool u_Map_Disabled;
+uniform sampler2D albedoMap;
+uniform sampler2D normalMap;
+uniform sampler2D metallicMap;
+uniform sampler2D roughnessMap;
+uniform sampler2D aoMap;
+
+
 // lights
 #define MAX_LIGHTS 32
 struct PointLight {
@@ -38,6 +46,27 @@ uniform PointLight u_PointLights[MAX_LIGHTS];
 uniform vec3 u_CameraPosition;
 
 const float PI = 3.14159265359;
+// ----------------------------------------------------------------------------
+// Easy trick to get tangent-normals to world-space to keep PBR code simplified.
+// Don't worry if you don't get what's going on; you generally want to do normal 
+// mapping the usual way for performance anyways; I do plan make a note of this 
+// technique somewhere later in the normal mapping tutorial.
+vec3 getNormalFromMap()
+{
+    vec3 tangentNormal = texture(normalMap, v_TexCoords).xyz * 2.0 - 1.0;
+
+    vec3 Q1  = dFdx(v_FragPosition);
+    vec3 Q2  = dFdy(v_FragPosition);
+    vec2 st1 = dFdx(v_TexCoords);
+    vec2 st2 = dFdy(v_TexCoords);
+
+    vec3 N   = normalize(v_Normal);
+    vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
+    vec3 B  = -normalize(cross(N, T));
+    mat3 TBN = mat3(T, B, N);
+
+    return normalize(TBN * tangentNormal);
+}
 // ----------------------------------------------------------------------------
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
@@ -81,13 +110,30 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 // ----------------------------------------------------------------------------
 void main()
 {
+    vec3  albedo;
+    float metallic;
+    float roughness;
+    float ao;
+
+    if (u_Map_Disabled) {
+        albedo    = pow(texture(albedoMap, v_TexCoords).rgb, vec3(2.2));
+        metallic  = texture(metallicMap, v_TexCoords).r;
+        roughness = texture(roughnessMap, v_TexCoords).r;
+        ao        = texture(aoMap, v_TexCoords).r;
+    } else {
+        albedo    = u_Albedo;
+        metallic  = u_Metallic;
+        roughness = u_Roughness;
+        ao        = u_AO;
+    }
+    
     vec3 N = normalize(v_Normal);
     vec3 V = normalize(u_CameraPosition - v_FragPosition);
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
     vec3 F0 = vec3(0.04);
-    F0 = mix(F0, u_Albedo, u_Metallic);
+    F0 = mix(F0, albedo, metallic);
 
     // reflectance equation
     vec3 Lo = vec3(0.0);
@@ -101,8 +147,8 @@ void main()
         vec3 radiance     = u_PointLights[i].color * attenuation;
 
         // cook-torrance brdf
-        float NDF = DistributionGGX(N, H, u_Roughness);
-        float G   = GeometrySmith(N, V, L, u_Roughness);
+        float NDF = DistributionGGX(N, H, roughness);
+        float G   = GeometrySmith(N, V, L, roughness);
         vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);
 
         vec3 numerator    = NDF * G * F; 
@@ -118,18 +164,18 @@ void main()
         // multiply kD by the inverse metalness such that only non-metals 
         // have diffuse lighting, or a linear blend if partly metal (pure metals
         // have no diffuse light).
-        kD *= 1.0 - u_Metallic;
+        kD *= 1.0 - metallic;
 
         // scale light by NdotL
         float NdotL = max(dot(N, L), 0.0);
 
         // add to outgoing radiance Lo
-        Lo += (kD * u_Albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+        Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
     }
 
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
-    vec3 ambient = vec3(0.03) * u_Albedo * u_AO;
+    vec3 ambient = vec3(0.03) * albedo * ao;
 
     vec3 color = ambient + Lo;
 

@@ -49,5 +49,16 @@ namespace test {
         };
         
         std::vector<Ref<Mesh>> m_Sphere_Meshes;
+        bool m_Map_Disabled;
+
+        std::vector<std::string> m_PBR_Textures = {
+            "speckled_countertop",
+            "patchy_cement",
+            "pockedconcrete",
+            "speckled_rust",
+            "armani_marble",
+            "rustediron",
+            "bamboo_wood_semigloss"
+        };
     };
 }
