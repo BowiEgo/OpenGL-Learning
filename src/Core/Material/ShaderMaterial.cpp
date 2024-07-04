@@ -18,6 +18,11 @@ void ShaderMaterial::AddTexture(const std::string &name, const Ref<Texture2D> te
     m_Named_Textures.push_back({ name, texture });
 }
 
+void ShaderMaterial::AddTexture(const std::string &name, const Ref<TextureCubemap> texture)
+{
+    m_Named_CubemapTextures.push_back({ name, texture });
+}
+
 void ShaderMaterial::SetTextures(std::vector<Ref<Texture2D>> textures)
 {
     m_Textures = textures;
@@ -65,9 +70,31 @@ void ShaderMaterial::UpdateShader(const glm::vec3& position, const glm::vec3& sc
     {
         std::string name = m_Named_Textures[i].first;
         Ref<Texture2D> texture = m_Named_Textures[i].second;
-        texture->Bind(i);
 
-        m_Shader->SetUniform((name).c_str(), i);
+        unsigned int slot = m_Textures.size() + i;
+        texture->Bind(slot);
+        m_Shader->SetUniform((name).c_str(), slot);
+    }
+
+    unsigned int irradianceMapNr = 0;
+    for (unsigned int i = 0; i < m_Named_CubemapTextures.size(); i++)
+    {
+        std::string name = m_Named_CubemapTextures[i].first;
+        Ref<TextureCubemap> texture = m_Named_CubemapTextures[i].second;
+
+        unsigned int slot = m_Textures.size() + m_Named_Textures.size() + i + 1;
+        texture->Bind(slot);
+        m_Shader->SetUniform((name).c_str(), slot);
+        if (name == "irradianceMap")
+        {
+            irradianceMapNr++;
+        }
+    }
+    if (irradianceMapNr == 0)
+    {
+        unsigned int slot = m_Textures.size() + m_Named_Textures.size() + m_Named_CubemapTextures.size();
+        Scene::GetVoidTextureCubemap()->Bind(slot);
+        m_Shader->SetUniform("irradianceMap", slot);
     }
 }
 

@@ -15,6 +15,7 @@ public:
 
     void AddTexture(Ref<Texture2D> texture);
     void AddTexture(const std::string& name, const Ref<Texture2D> texture);
+    void AddTexture(const std::string& name, const Ref<TextureCubemap> texture);
     void SetTextures(std::vector<Ref<Texture2D>> textures);
 
     virtual void BindShader() const override;
@@ -25,4 +26,5 @@ private:
     Ref<Shader> m_Shader;
     std::vector<Ref<Texture2D>> m_Textures;
     std::vector<std::pair<std::string, Ref<Texture2D>>> m_Named_Textures;
+    std::vector<std::pair<std::string, Ref<TextureCubemap>>> m_Named_CubemapTextures;
 };

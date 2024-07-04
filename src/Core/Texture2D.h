@@ -11,6 +11,7 @@ struct TextureOptions {
     GLint wrapS = GL_CLAMP_TO_EDGE;
     GLint wrapT = GL_CLAMP_TO_EDGE;
     bool flip = true;
+    bool HDR = false;
 };
 
 class Texture2D : public Texture

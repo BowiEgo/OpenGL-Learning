@@ -31,7 +31,7 @@ public:
     uint32_t* GetColorAttachments() { return m_ColorAttachments; }
     const FramebufferSpecification& GetSpecification() const { return m_Specification; }
 
-    static std::shared_ptr<Framebuffer> Create(const FramebufferSpecification& spec);
+    static std::shared_ptr<Framebuffer> Create(const FramebufferSpecification& spec = FramebufferSpecification());
 private:
     void GenColorAttachment();
     void GenMultisamplesColorAttachment();

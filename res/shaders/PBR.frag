@@ -22,7 +22,9 @@ uniform sampler2D normalMap;
 uniform sampler2D metallicMap;
 uniform sampler2D roughnessMap;
 uniform sampler2D aoMap;
-
+// IBL
+uniform samplerCube irradianceMap;
+uniform bool u_IrradianceMapEnabled;
 
 // lights
 #define MAX_LIGHTS 32
@@ -47,10 +49,6 @@ uniform vec3 u_CameraPosition;
 
 const float PI = 3.14159265359;
 // ----------------------------------------------------------------------------
-// Easy trick to get tangent-normals to world-space to keep PBR code simplified.
-// Don't worry if you don't get what's going on; you generally want to do normal 
-// mapping the usual way for performance anyways; I do plan make a note of this 
-// technique somewhere later in the normal mapping tutorial.
 vec3 getNormalFromMap()
 {
     vec3 tangentNormal = texture(normalMap, v_TexCoords).xyz * 2.0 - 1.0;
@@ -107,6 +105,11 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
+// ----------------------------------------------------------------------------
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+}   
 // ----------------------------------------------------------------------------
 void main()
 {
@@ -173,9 +176,19 @@ void main()
         Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
     }
 
-    // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
-    vec3 ambient = vec3(0.03) * albedo * ao;
+    vec3 ambient = vec3(0.1) * albedo * ao;
+    if (u_IrradianceMapEnabled)
+    {
+        vec3 kS = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+        vec3 kD = vec3(1.0) - kS;
+        vec3 irradiance = vec3(0.1);
+        if (textureSize(irradianceMap, 0).x > 0) {
+            irradiance = texture(irradianceMap, N).rgb;
+        }
+        vec3 diffuse    = irradiance * albedo;
+        ambient         = (kD * diffuse) * ao;
+    }
 
     vec3 color = ambient + Lo;
 

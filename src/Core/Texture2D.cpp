@@ -43,12 +43,12 @@ void Texture2D::SetupTexture2D(const std::string &path, const TextureOptions &op
     GLenum internalFormat = 0, dataFormat = 0;
     if (m_Channels == 4)
     {
-        internalFormat = GL_RGBA8;
+        internalFormat = m_Options.HDR ? GL_RGB16F : GL_RGBA8;
         dataFormat = GL_RGBA;
     }
     else if (m_Channels == 3)
     {
-        internalFormat = GL_RGB8;
+        internalFormat = m_Options.HDR ? GL_RGB16F : GL_RGB8;
         dataFormat = GL_RGB;
     }
     else if (m_Channels == 1)
