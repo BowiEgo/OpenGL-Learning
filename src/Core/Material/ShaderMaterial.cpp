@@ -90,12 +90,12 @@ void ShaderMaterial::UpdateShader(const glm::vec3& position, const glm::vec3& sc
             irradianceMapNr++;
         }
     }
-    if (irradianceMapNr == 0)
-    {
-        unsigned int slot = m_Textures.size() + m_Named_Textures.size() + m_Named_CubemapTextures.size();
-        Scene::GetVoidTextureCubemap()->Bind(slot);
-        m_Shader->SetUniform("irradianceMap", slot);
-    }
+    // if (irradianceMapNr == 0)
+    // {
+    //     unsigned int slot = m_Textures.size() + m_Named_Textures.size() + m_Named_CubemapTextures.size();
+    //     Scene::GetVoidTextureCubemap()->Bind(slot);
+    //     m_Shader->SetUniform("irradianceMap", slot);
+    // }
 }
 
 void ShaderMaterial::UpdateShaderUniform(const std::string &uniformName, const UniformValue &uniformValue) const

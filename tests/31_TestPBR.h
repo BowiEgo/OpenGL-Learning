@@ -19,7 +19,7 @@
 
 #include "Core/Material/BasicMaterial.h"
 
-#include "PostprocessingGBuffer.h"
+#include "EnvCubemapFBO.h"
 
 namespace test {
     class TestPBR : public Test
@@ -48,15 +48,23 @@ namespace test {
             glm::vec3(300.0f, 300.0f, 300.0f)
         };
         
+        Ref<EnvCubemapFBO> m_Envmap_FBO;
+        glm::vec3 m_Sphere_Color = glm::vec3(0.5f, 0.0f, 0.0f);
         std::vector<Ref<Mesh>> m_Sphere_Meshes;
-        bool m_Map_Disabled;
+        Ref<TextureCubemap> m_Irradiance_texture;
+        bool m_IrradianceMapEnabled = true;
+        bool m_PrefilterMapEnabled = true;
+
+        Ref<Mesh> m_Mesh_BRDF;
+
+        bool m_Map_Enabled;
 
         std::vector<std::string> m_PBR_Textures = {
             "speckled_countertop",
             "patchy_cement",
-            "pockedconcrete",
             "speckled_rust",
             "armani_marble",
+            "gold_scuffed",
             "rustediron",
             "bamboo_wood_semigloss"
         };

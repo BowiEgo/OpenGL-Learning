@@ -12,7 +12,12 @@ Texture2D::Texture2D(const std::string &path, const TextureOptions &options)
     : m_Type("texture_default"), m_FilePath(path), m_LocalBuffer(nullptr), m_Options(options),
       m_Width(0), m_Height(0), m_Channels(0)
 {
-    SetupTexture2D(path, options);
+    if (m_Options.HDRI)
+    {
+        SetupTextureHDR(path);
+    } else {
+        SetupTexture2D(path, options);
+    }
 }
 
 Texture2D::Texture2D(const std::string &type, const std::string &path, const TextureOptions &options)
@@ -60,6 +65,28 @@ void Texture2D::SetupTexture2D(const std::string &path, const TextureOptions &op
     CORE_INFO("{0}, {1}, {2}, {3}, {4}, {5}",path, m_Channels, internalFormat, m_Width, m_Height, dataFormat);
     GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, dataFormat, GL_UNSIGNED_BYTE, m_LocalBuffer));
     GLCall(glGenerateMipmap(GL_TEXTURE_2D));
+    GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+
+    if (m_LocalBuffer)
+        stbi_image_free(m_LocalBuffer);
+}
+
+void Texture2D::SetupTextureHDR(const std::string &path)
+{
+    stbi_set_flip_vertically_on_load(true);
+    float *m_LocalBuffer = stbi_loadf(path.c_str(), &m_Width, &m_Height, &m_Channels, 0);
+
+    GLCall(glGenTextures(1, &m_RendererID));
+    GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+
+    CORE_INFO("{0}, {1}, {2}, {3}, {4}, {5}",path, m_Channels, m_Width, m_Height);
+
+    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, m_Width, m_Height, 0, GL_RGB, GL_FLOAT, m_LocalBuffer));
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 
     if (m_LocalBuffer)

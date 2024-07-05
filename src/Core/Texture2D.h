@@ -12,6 +12,7 @@ struct TextureOptions {
     GLint wrapT = GL_CLAMP_TO_EDGE;
     bool flip = true;
     bool HDR = false;
+    bool HDRI = false;
 };
 
 class Texture2D : public Texture
@@ -23,6 +24,7 @@ public:
     ~Texture2D();
 
     void SetupTexture2D(const std::string& path, const TextureOptions& options = TextureOptions());
+    void SetupTextureHDR(const std::string& path);
     void SetupVoidTexture2D();
 
     // static unsigned int Create(const std::string& type, const std::string& path, const TextureOptions& options = TextureOptions());

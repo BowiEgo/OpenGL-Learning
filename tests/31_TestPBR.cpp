@@ -13,8 +13,10 @@
 #include "KeyCodes.h"
 
 #include "Core/Geometry/BoxGeometry.h"
+#include "Core/Geometry/QuadGeometry.h"
 #include "Core/Geometry/SphereGeometry.h"
 #include "Core/Material/StandardMaterial.h"
+#include "Core/Material/CubemapMaterial.h"
 
 #include "Core/InstanceMesh.h"
 
@@ -32,6 +34,71 @@ namespace test {
         m_Camera = std::make_shared<PerspectiveCamera>();
         m_Camera->SetPosition({ 0.0f, 0.0f, 24.0f });
         m_Scene->Add(m_Camera);
+        // --------------------
+        // Environment
+        // --------------------
+        m_Envmap_FBO = EnvCubemapFBO::Create(m_Scene); // must be a private member for now.
+        // BRDFtexture
+        std::string normalizedVertSrc = R"(
+            #version 330 core
+            layout (location = 0) in vec3 a_Position;
+            layout (location = 1) in vec3 a_Normal;
+            layout (location = 2) in vec2 a_TexCoords;
+
+            uniform int u_Normalized_Index;
+
+            out vec2 v_TexCoords;
+
+            void main()
+            {
+                vec2 final_pos;
+                float screenNr = 4;
+                if (u_Normalized_Index == 0)
+                    final_pos = vec2(a_Position.x - 3.0, - a_Position.y + 3.0);
+
+                if (u_Normalized_Index == 1)
+                    final_pos = vec2(a_Position.x - 3.0, - a_Position.y + 1.0);
+
+                if (u_Normalized_Index == 2)
+                    final_pos = vec2(a_Position.x - 3.0, - a_Position.y - 1.0);
+
+                if (u_Normalized_Index == 3)
+                    final_pos = vec2(a_Position.x - 3.0, - a_Position.y - 3.0);
+                
+                gl_Position = vec4(final_pos, 0.0, screenNr);
+
+                v_TexCoords = a_TexCoords;
+            }
+        )";
+        std::string normalizedFragSrc = R"(
+            #version 330 core
+            layout (location = 0) out vec4 FragColor;
+            
+            in vec2 v_TexCoords;
+
+            uniform sampler2D u_Texture_Diffuse1;
+
+            uniform int u_Normalized_Index;
+
+            void main()
+            {
+                vec4 screenTexture = texture(u_Texture_Diffuse1, v_TexCoords);
+
+                FragColor = vec4(screenTexture.rgb, 1.0);
+            }
+        )";
+        // materials
+        Ref<ShaderMaterial> brdf_material = std::make_shared<ShaderMaterial>(std::make_shared<Shader>(normalizedVertSrc, normalizedFragSrc));
+        brdf_material->UpdateShaderUniform("u_Normalized_Index", 0);
+        brdf_material->AddTexture(m_Envmap_FBO->GetBRDFLutTexture());
+        m_Mesh_BRDF = std::make_shared<Mesh>(std::make_shared<QuadGeometry>(), brdf_material);
+
+        // skybox
+        Ref<CubemapMaterial> skybox_material = std::make_shared<CubemapMaterial>();
+        skybox_material->SetCubemapTexture(m_Envmap_FBO->GetEnvmap());
+        Ref<Mesh> skybox_mesh = std::make_shared<Mesh>(std::make_shared<BoxGeometry>(), skybox_material);
+        m_Scene->SetSkybox(skybox_mesh);
+        // irradianceMap
         // --------------------
         // Light
         // --------------------
@@ -59,6 +126,7 @@ namespace test {
         // --------------------
         // Spheres
         // --------------------
+        // Ref<TextureCubemap> irradiance_texture = std::make_shared<TextureCubemap>("Texture_Environment", m_Envmap_FBO->GetEnvmapID());
         // geometry
         Ref<SphereGeometry> geometry_sphere = std::make_shared<SphereGeometry>(1.0f, 64, 64);
         // textures
@@ -72,7 +140,6 @@ namespace test {
                 std::make_shared<Texture2D>("Texture_AO", "../res/textures/" + m_PBR_Textures[i] + "/ao.png"),
             });
         }
-
         // shader
         std::string vertSrc = FileSystem::ReadFile("../res/shaders/ModelLoading.vert");
         std::string fragSrc = FileSystem::ReadFile("../res/shaders/PBR.frag");
@@ -80,19 +147,22 @@ namespace test {
         int nrRows    = 7;
         int nrColumns = 7;
         float spacing = 2.5;
-        for (int row = 0; row < nrRows; ++row) 
+        for (int row = 0; row < nrRows; ++row)
         {
             for (int col = 0; col < nrColumns; ++col) 
             {
                 Ref<Shader> shader_sphere = std::make_shared<Shader>(vertSrc, fragSrc);
                 Ref<ShaderMaterial> material_sphere = std::make_shared<ShaderMaterial>(shader_sphere);
                 material_sphere->UpdateShaderUniform("u_Metallic", (float)row / (float)nrRows);
-                material_sphere->UpdateShaderUniform("u_Albedo",   glm::vec3(0.5f, 0.0f, 0.0f));
+                material_sphere->UpdateShaderUniform("u_Albedo",   m_Sphere_Color);
                 material_sphere->UpdateShaderUniform("u_AO",       1.0f);
                 // we clamp the roughness to 0.05 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look a bit off
                 // on direct lighting.
                 material_sphere->UpdateShaderUniform("u_Roughness", glm::clamp((float)col / (float)nrColumns, 0.05f, 1.0f));
-        
+                material_sphere->AddTexture("irradianceMap", m_Envmap_FBO->GetIrradianceMap());
+                material_sphere->AddTexture("prefilterMap", m_Envmap_FBO->GetPrefilterMap());
+                material_sphere->AddTexture("brdfLUT", m_Envmap_FBO->GetBRDFLutTexture());
+
                 if (row < PBR_Texture_Boundle.size())
                 {
                     material_sphere->AddTexture("albedoMap", PBR_Texture_Boundle[row][0]);
@@ -101,11 +171,12 @@ namespace test {
                     material_sphere->AddTexture("roughnessMap", PBR_Texture_Boundle[row][3]);
                     material_sphere->AddTexture("aoMap", PBR_Texture_Boundle[row][4]);
                 }
+
                 Ref<Mesh> mesh_sphere = std::make_shared<Mesh>(geometry_sphere, material_sphere);
 
                 mesh_sphere->SetPosition(glm::vec3(
-                    (col - (nrColumns / 2)) * spacing, 
-                    (row - (nrRows / 2)) * spacing, 
+                    (col - (nrColumns / 2)) * spacing,
+                    (row - (nrRows / 2)) * spacing,
                     0.0f
                 ));
 
@@ -131,10 +202,18 @@ namespace test {
         GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
-        for (auto mesh : m_Sphere_Meshes) {
-            mesh->GetMaterial()->UpdateShaderUniform("u_Map_Disabled", m_Map_Disabled);
+        OnViewPortResize();
+
+        for (auto mesh : m_Sphere_Meshes)
+        {
+            mesh->GetMaterial()->UpdateShaderUniform("u_IrradianceMapEnabled", m_IrradianceMapEnabled);
+            mesh->GetMaterial()->UpdateShaderUniform("u_PrefilterMapEnabled", m_PrefilterMapEnabled);
+            mesh->GetMaterial()->UpdateShaderUniform("u_Map_Enabled", m_Map_Enabled);
+            mesh->GetMaterial()->UpdateShaderUniform("u_Albedo",   m_Sphere_Color);
         }
+
         m_Scene->Draw();
+        // m_Scene->Draw(m_Mesh_BRDF.get());
     }
 
     void TestPBR::OnImGuiRender()
@@ -142,6 +221,11 @@ namespace test {
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::Text("CameraPosition %.3f, %.3f, %.3f", m_Camera->GetPosition().x, m_Camera->GetPosition().y, m_Camera->GetPosition().z);
 
-        ImGui::Bullet();ImGui::Text("TextureMapping");ImGui::SameLine();ImGui::ToggleButton("TextureMapping", &m_Map_Disabled);
+        ImGui::Bullet();ImGui::Text("IrradianceMapping");ImGui::SameLine();ImGui::ToggleButton("IrradianceMapping", &m_IrradianceMapEnabled);
+        ImGui::Bullet();ImGui::Text("PrefilterMapping");ImGui::SameLine();ImGui::ToggleButton("PrefilterMapping", &m_PrefilterMapEnabled);
+        ImGui::Bullet();ImGui::Text("TextureMapping");ImGui::SameLine();ImGui::ToggleButton("TextureMapping", &m_Map_Enabled);
+
+        ImGui::Bullet();ImGui::Text("SphereColor");
+        ImGui::ColorEdit4("SphereColor", glm::value_ptr(m_Sphere_Color));
     }
 }

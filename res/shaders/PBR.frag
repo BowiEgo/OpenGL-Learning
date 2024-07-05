@@ -16,15 +16,19 @@ uniform float u_Metallic;
 uniform float u_Roughness;
 uniform float u_AO;
 
-uniform bool u_Map_Disabled;
+uniform bool u_Map_Enabled;
 uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
 uniform sampler2D metallicMap;
 uniform sampler2D roughnessMap;
 uniform sampler2D aoMap;
-// IBL
+// IBL diffuse
 uniform samplerCube irradianceMap;
 uniform bool u_IrradianceMapEnabled;
+// IBL reflect
+uniform samplerCube prefilterMap;
+uniform sampler2D   brdfLUT;
+uniform bool u_PrefilterMapEnabled;
 
 // lights
 #define MAX_LIGHTS 32
@@ -48,23 +52,6 @@ uniform PointLight u_PointLights[MAX_LIGHTS];
 uniform vec3 u_CameraPosition;
 
 const float PI = 3.14159265359;
-// ----------------------------------------------------------------------------
-vec3 getNormalFromMap()
-{
-    vec3 tangentNormal = texture(normalMap, v_TexCoords).xyz * 2.0 - 1.0;
-
-    vec3 Q1  = dFdx(v_FragPosition);
-    vec3 Q2  = dFdy(v_FragPosition);
-    vec2 st1 = dFdx(v_TexCoords);
-    vec2 st2 = dFdy(v_TexCoords);
-
-    vec3 N   = normalize(v_Normal);
-    vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
-    vec3 B  = -normalize(cross(N, T));
-    mat3 TBN = mat3(T, B, N);
-
-    return normalize(TBN * tangentNormal);
-}
 // ----------------------------------------------------------------------------
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
@@ -108,7 +95,7 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 // ----------------------------------------------------------------------------
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 {
-    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }   
 // ----------------------------------------------------------------------------
 void main()
@@ -118,7 +105,7 @@ void main()
     float roughness;
     float ao;
 
-    if (u_Map_Disabled) {
+    if (u_Map_Enabled) {
         albedo    = pow(texture(albedoMap, v_TexCoords).rgb, vec3(2.2));
         metallic  = texture(metallicMap, v_TexCoords).r;
         roughness = texture(roughnessMap, v_TexCoords).r;
@@ -132,6 +119,7 @@ void main()
     
     vec3 N = normalize(v_Normal);
     vec3 V = normalize(u_CameraPosition - v_FragPosition);
+    vec3 R = reflect(-V, N);
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
@@ -180,14 +168,27 @@ void main()
     vec3 ambient = vec3(0.1) * albedo * ao;
     if (u_IrradianceMapEnabled)
     {
-        vec3 kS = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+        // ambient lighting (we now use IBL as the ambient term)
+        vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+
+        vec3 kS = F;
         vec3 kD = vec3(1.0) - kS;
-        vec3 irradiance = vec3(0.1);
-        if (textureSize(irradianceMap, 0).x > 0) {
-            irradiance = texture(irradianceMap, N).rgb;
-        }
+        kD *= 1.0 - metallic;
+
+        vec3 irradiance = texture(irradianceMap, N).rgb;
         vec3 diffuse    = irradiance * albedo;
-        ambient         = (kD * diffuse) * ao;
+
+        vec3 specular = vec3(0.0);
+        if (u_PrefilterMapEnabled)
+        {
+            // sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
+            const float MAX_REFLECTION_LOD = 4.0;
+            vec3 prefilteredColor = textureLod(prefilterMap, R,  roughness * MAX_REFLECTION_LOD).rgb;    
+            vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
+            specular = prefilteredColor * (F * brdf.x + brdf.y);
+        }
+
+        ambient = (kD * diffuse + specular) * ao;
     }
 
     vec3 color = ambient + Lo;
